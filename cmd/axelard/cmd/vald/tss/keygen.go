@@ -29,11 +29,10 @@ import (
 	tss "github.com/axelarnetwork/axelar-core/x/tss/types"
 	voting "github.com/axelarnetwork/axelar-core/x/vote/exported"
 )
-// const addressForChain = "cosmos150lcfqj44zx8aljqn4za4pp2384k5gw3hpypm2"
-// const keyForTest = "00b183d4a1e6ba3fa5a036afabeb4644f1a24ad2b11cf3e6da2de96454c9fb8a"
-const addressForChain = "cosmos1exfcnjtc30msg2py3utlf0mmlq8ex32aadxlf3"
-const keyForTest = "85bc470c18f113a15384660980fc8e4000f9d5aacc129b02ef4851c4126d82bb"
-//const id = "1245919222ew3s3236862375567563533d293374d3"
+
+const validator1 = "cosmos1exfcnjtc30msg2py3utlf0mmlq8ex32aadxlf3"
+const validator2 = "cosmos150lcfqj44zx8aljqn4za4pp2384k5gw3hpypm2"
+
 // ProcessKeygenStart starts the communication with the keygen protocol
 func (mgr *Mgr) ProcessKeygenStart(e tmEvents.Event) error {
 	//_, keyID, threshold, participants, participantShareCounts, timeout, _ := parseKeygenStartParams(mgr.cdc, e.Attributes)
@@ -41,11 +40,11 @@ func (mgr *Mgr) ProcessKeygenStart(e tmEvents.Event) error {
 	// 	return err
 	// }
 
-	argAddr := sdk.AccAddress([]byte("cosmos1exfcnjtc30msg2py3utlf0mmlq8ex32aadxlf3"))
-	argAddr2 := sdk.AccAddress([]byte("cosmos150lcfqj44zx8aljqn4za4pp2384k5gw3hpypm2"))
+	argAddr := sdk.AccAddress([]byte(validator1))
+	argAddr2 := sdk.AccAddress([]byte(validator2))
 	//me := sdk.AccAddress([]byte(mgr.principalAddr))
 	index := 0
-	if mgr.principalAddr == "cosmos150lcfqj44zx8aljqn4za4pp2384k5gw3hpypm2" {
+	if mgr.principalAddr == validator2 {
 		fmt.Println("here")
 		index = 1
 	}
