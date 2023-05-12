@@ -1,0 +1,113 @@
+syntax = "proto3";
+package axelarnet.v1beta1;
+
+option go_package = "github.com/axelarnetwork/axelar-core/x/axelarnet/types";
+
+import "google/protobuf/any.proto";
+import "gogoproto/gogo.proto";
+import "cosmos/base/v1beta1/coin.proto";
+import "cosmos_proto/cosmos.proto";
+import "nexus/exported/v1beta1/types.proto";
+
+option (gogoproto.goproto_getters_all) = false;
+
+// MsgLink represents a message to link a cross-chain address to an Axelar
+// address
+message LinkRequest {
+  bytes sender = 1 [ (gogoproto.casttype) =
+                         "github.com/cosmos/cosmos-sdk/types.AccAddress" ];
+  string recipient_addr = 2;
+  string recipient_chain = 3;
+  string asset = 4;
+}
+
+message LinkResponse { string deposit_addr = 1; };
+
+// MsgConfirmDeposit represents a deposit confirmation message
+message ConfirmDepositRequest {
+  bytes sender = 1 [ (gogoproto.casttype) =
+                         "github.com/cosmos/cosmos-sdk/types.AccAddress" ];
+  bytes tx_id = 2 [ (gogoproto.customname) = "TxID" ];
+  cosmos.base.v1beta1.Coin token = 3 [ (gogoproto.nullable) = false ];
+
+  bytes deposit_address = 4
+      [ (gogoproto.casttype) =
+            "github.com/cosmos/cosmos-sdk/types.AccAddress" ];
+}
+
+message ConfirmDepositResponse {}
+
+// MsgExecutePendingTransfers represents a message to trigger transfer all
+// pending transfers
+message ExecutePendingTransfersRequest {
+  bytes sender = 1 [ (gogoproto.casttype) =
+                         "github.com/cosmos/cosmos-sdk/types.AccAddress" ];
+}
+
+message ExecutePendingTransfersResponse {}
+
+// MSgRegisterIBCPath represents a message to register an IBC tracing path for
+// a cosmos chain
+message RegisterIBCPathRequest {
+  bytes sender = 1 [ (gogoproto.casttype) =
+                         "github.com/cosmos/cosmos-sdk/types.AccAddress" ];
+  string chain = 2;
+  string path = 3;
+}
+
+message RegisterIBCPathResponse {}
+
+// MsgAddCosmosBasedChain represents a message to register a cosmos based chain
+// to nexus
+message AddCosmosBasedChainRequest {
+  bytes sender = 1 [ (gogoproto.casttype) =
+                         "github.com/cosmos/cosmos-sdk/types.AccAddress" ];
+  nexus.exported.v1beta1.Chain chain = 2 [ (gogoproto.nullable) = false ];
+}
+
+message AddCosmosBasedChainResponse {}
+
+// RegisterAssetRequest represents a message to register an asset to a cosmos
+// based chain
+message RegisterAssetRequest {
+  bytes sender = 1 [ (gogoproto.casttype) =
+                         "github.com/cosmos/cosmos-sdk/types.AccAddress" ];
+  string chain = 2;
+  string denom = 3;
+}
+
+message RegisterAssetResponse {}
+
+message RefundMsgRequest {
+  string Creator = 1;
+  bytes sender = 2 [ (gogoproto.casttype) =
+                         "github.com/cosmos/cosmos-sdk/types.AccAddress" ];
+  google.protobuf.Any inner_message = 3
+      [ (cosmos_proto.accepts_interface) = "Refundable" ];
+}
+
+message RefundMsgResponse {
+  bytes data = 1;
+  string log = 2;
+}
+
+// RouteIBCTransfersRequest represents a message to route pending transfers to
+// cosmos based chains
+message RouteIBCTransfersRequest {
+  bytes sender = 1 [ (gogoproto.casttype) =
+                         "github.com/cosmos/cosmos-sdk/types.AccAddress" ];
+}
+
+message RouteIBCTransfersResponse {}
+
+// RegisterFeeCollectorRequest represents a message to register axelarnet fee
+// collector account
+message RegisterFeeCollectorRequest {
+  bytes sender = 1 [ (gogoproto.casttype) =
+                         "github.com/cosmos/cosmos-sdk/types.AccAddress" ];
+  bytes fee_collector = 2
+      [ (gogoproto.casttype) =
+            "github.com/cosmos/cosmos-sdk/types.AccAddress" ];
+}
+
+message RegisterFeeCollectorResponse {}
