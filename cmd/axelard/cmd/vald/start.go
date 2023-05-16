@@ -65,8 +65,10 @@ import (
 	"github.com/axelarnetwork/axelar-core/x/tss/tofnd"
 	tssTypes "github.com/axelarnetwork/axelar-core/x/tss/types"
 )
-// const addressForChain = "cosmos150lcfqj44zx8aljqn4za4pp2384k5gw3hpypm2" go run cmd/axelard/main.go vald-start --validator-addr cosmos1exfcnjtc30msg2py3utlf0mmlq8ex32aadxlf3 --validator-key 85bc470c18f113a15384660980fc8e4000f9d5aacc129b02ef4851c4126d82bb
-// const keyForTest = "00b183d4a1e6ba3fa5a036afabeb4644f1a24ad2b11cf3e6da2de96454c9fb8a" go run cmd/axelard/main.go vald-start --validator-addr cosmos150lcfqj44zx8aljqn4za4pp2384k5gw3hpypm2 --validator-key 00b183d4a1e6ba3fa5a036afabeb4644f1a24ad2b11cf3e6da2de96454c9fb8a
+// const addressForChain = "cosmos150lcfqj44zx8aljqn4za4pp2384k5gw3hpypm2" 
+//go run cmd/axelard/main.go vald-start --validator-addr cosmos1exfcnjtc30msg2py3utlf0mmlq8ex32aadxlf3 --validator-key 85bc470c18f113a15384660980fc8e4000f9d5aacc129b02ef4851c4126d82bb
+// const keyForTest = "00b183d4a1e6ba3fa5a036afabeb4644f1a24ad2b11cf3e6da2de96454c9fb8a" 
+//go run cmd/axelard/main.go vald-start --validator-addr cosmos150lcfqj44zx8aljqn4za4pp2384k5gw3hpypm2 --validator-key 00b183d4a1e6ba3fa5a036afabeb4644f1a24ad2b11cf3e6da2de96454c9fb8a
 const addressForChain = "cosmos1exfcnjtc30msg2py3utlf0mmlq8ex32aadxlf3"
 const keyForTest = "85bc470c18f113a15384660980fc8e4000f9d5aacc129b02ef4851c4126d82bb"
 // RW grants -rw------- file permissions
@@ -136,6 +138,7 @@ func GetValdCommand() *cobra.Command {
 
 			valAddr := serverCtx.Viper.GetString("validator-addr")
 			valKey := serverCtx.Viper.GetString("validator-key")
+			
 			// valList := serverCtx.Viper.GetString("validator-key")
 			if valAddr == "" {
 				return fmt.Errorf("validator address not set")
@@ -368,7 +371,8 @@ func Consume(subscriber <-chan ctypes.ResultEvent, tssMgr *tss.Mgr) jobs.Job {
 				go func() {
 					defer recovery(errChan)
 					d := e.Data.(tmtypes.EventDataTx).Result.Log
-				
+					fmt.Println("---------------")
+					
 					var events []EventMsg
 					if err := json.Unmarshal([]byte(d), &events); err != nil {
 						errChan <- err

@@ -454,14 +454,43 @@ func parseHeartBeatParams(cdc *codec.LegacyAmino, attributes map[string]string) 
 }
 
 func parseMsgParams(e tmtypes.TMEventData) (sessionID string, from string, payload *tofnd.TrafficOut) {
+
 	dd := e.(tmtypes.EventDataTx).Tx
 					ddd := (dd[39:249])
+					//fmt.Println("+++++++++++++++++++++++")
 					 msg:= new(axelarnet.RefundMsgRequest)
-					 msg.Unmarshal(ddd)
+					// fmt.Println(dd)
+					 err := msg.Unmarshal(ddd)
+					 
 					//  if err := json.Unmarshal([]byte(ddd), &msg); err != nil {
 					// 	errChan <- err
 					// }
 					msgVal := new(tss.ProcessKeygenTrafficRequest)
+					// msgVal.Unmarshal(msg.InnerMessage.Value)
+					
+					//fmt.Println("+++++++++++++++++++++++")
+					if err != nil{
+						ddd := (dd[39:303])
+
+						err = msg.Unmarshal(ddd)
+					// fmt.Println(ddd)
+					//  if err := json.Unmarshal([]byte(ddd), &msg); err != nil {
+					// 	errChan <- err
+					// }
+					//msgVal := new(tss.ProcessKeygenTrafficRequest)
+					
+					}
+					if err != nil{
+						ddd := (dd[39:304])
+
+					 msg.Unmarshal(ddd)
+					// fmt.Println(ddd)
+					//  if err := json.Unmarshal([]byte(ddd), &msg); err != nil {
+					// 	errChan <- err
+					// }
+					//msgVal := new(tss.ProcessKeygenTrafficRequest)
+					
+					}
 					msgVal.Unmarshal(msg.InnerMessage.Value)
 	// parsers := []*parse.AttributeParser{
 	// 	{Key: tss.AttributeKeySessionID, Map: parse.IdentityMap},

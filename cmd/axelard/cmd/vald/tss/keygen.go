@@ -117,8 +117,9 @@ rand.Seed(time.Now().UnixNano())
 
 // ProcessKeygenMsg forwards blockchain messages to the keygen protocol
 func (mgr *Mgr) ProcessKeygenMsg(e tmtypes.TMEventData) error {
-	
+//	fmt.Println("process")
 	keyID, from, payload := parseMsgParams(e)
+//	fmt.Println("still")
 	msgIn := prepareTrafficIn(mgr.principalAddr, from, keyID, payload, mgr.Logger)
 	fmt.Println(from)
 	stream, ok := mgr.getKeygenStream(keyID)
@@ -209,7 +210,9 @@ func (mgr *Mgr) handleIntermediateKeygenMsgs(keyID string, intermediate <-chan *
 		tssMsg := &tss.ProcessKeygenTrafficRequest{Sender: argAddr, SessionID: keyID, Payload: msg}
 
 		refundableMsg := axelarnet.NewRefundMsgRequest(argAddr, tssMsg)
-		fmt.Println(tssMsg.Sender.String())
+		//m,_:=tssMsg.Marshal()
+		//fmt.Println(len(m))
+		//fmt.Println(tssMsg.Marshal())
 		resp, err := mgr.broadcaster.BroadcastTx(refundableMsg, false)
 		fmt.Println(resp)
 		if err != nil {
