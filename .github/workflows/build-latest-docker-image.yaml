@@ -1,0 +1,69 @@
+name: Build and push latest docker image
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      buildDebug:
+        description: Whether or build the debug image ("true"/"false")
+        required: true
+        default: "false"
+
+jobs:
+  build-and-push-latest-docker-image:
+    strategy:
+      matrix:
+        os:
+          - ubuntu-18.04
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - uses: nelonoel/branch-name@v1.0.1
+
+      - id: set-tag
+        name: Set image tag
+        run: |
+          TAG="latest"
+
+          if [[ "$BRANCH_NAME" != "main" ]]; then
+            TAG=$(echo $BRANCH_NAME | tr "/" "-")
+          fi
+
+          echo '::set-output name=TAG::'$TAG
+
+      - name: Set up ssh agent
+        uses: webfactory/ssh-agent@v0.5.2
+        with:
+          ssh-private-key: ${{ secrets.CICD_RSA_KEY }}
+
+      - name: Build docker image (normal)
+        run: |
+          make docker-image
+
+      - name: Push to ECR (normal)
+        uses: jwalton/gh-ecr-push@v1
+        with:
+          access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          region: us-east-2
+          local-image: axelar/core
+          image: axelar-core:${{ steps.set-tag.outputs.TAG }}
+
+      - name: Build docker image (debug)
+        if: github.event.inputs.buildDebug != 'false'
+        run: |
+          make docker-image-debug
+
+      - name: Push to ECR (debug)
+        uses: jwalton/gh-ecr-push@v1
+        if: github.event.inputs.buildDebug != 'false'
+        with:
+          access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          region: us-east-2
+          local-image: axelar/core-debug
+          image: axelar-core:${{ steps.set-tag.outputs.TAG }}-debug

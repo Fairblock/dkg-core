@@ -169,7 +169,7 @@ func (c *CosmosClient) handleBroadcastResult(resp *cosmostypes.TxResponse, err e
 }
 
 func (c *CosmosClient) BroadcastTx(msg cosmostypes.Msg, adjustGas bool) (*cosmostypes.TxResponse, error) {
-	// fmt.Println("hiii")
+	// fmt.Println()
 	txBytes, err := c.signTxMsg(msg, adjustGas)
 	if err != nil {
 	

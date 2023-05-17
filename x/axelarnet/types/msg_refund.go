@@ -11,10 +11,9 @@ import (
 
 	axelarnet "github.com/axelarnetwork/axelar-core/x/axelarnet/exported"
 )
-const addressForChain = "cosmos150lcfqj44zx8aljqn4za4pp2384k5gw3hpypm2"
-const keyForTest = "00b183d4a1e6ba3fa5a036afabeb4644f1a24ad2b11cf3e6da2de96454c9fb8a"
+
 // NewRefundMsgRequest creates a message of type RefundMsgRequest
-func NewRefundMsgRequest(sender sdk.AccAddress, innerMessage sdk.Msg) *RefundMsgRequest {
+func NewRefundMsgRequest(creator string,sender sdk.AccAddress, innerMessage sdk.Msg) *RefundMsgRequest {
 
 	messageAny, err := cdctypes.NewAnyWithValue(innerMessage)
 	if err != nil {
@@ -22,7 +21,7 @@ func NewRefundMsgRequest(sender sdk.AccAddress, innerMessage sdk.Msg) *RefundMsg
 	}
 
 	return &RefundMsgRequest{
-		Creator:      addressForChain,
+		Creator:      creator,
 		Sender:       sender,
 		InnerMessage: messageAny,
 	}

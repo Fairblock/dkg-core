@@ -28,7 +28,7 @@ import (
 	//tx2 "github.com/tendermint/tendermint/proto/tendermint/tx"
 	//"github.com/axelarnetwork/tm-events/events"
 	//	"github.com/axelarnetwork/tm-events/events"
-	"github.com/axelarnetwork/tm-events/events"
+	//"github.com/axelarnetwork/tm-events/events"
 	tmEvents "github.com/axelarnetwork/tm-events/events"
 	"github.com/axelarnetwork/tm-events/pubsub"
 	"github.com/axelarnetwork/utils/jobs"
@@ -69,8 +69,8 @@ import (
 //go run cmd/axelard/main.go vald-start --validator-addr cosmos1exfcnjtc30msg2py3utlf0mmlq8ex32aadxlf3 --validator-key 85bc470c18f113a15384660980fc8e4000f9d5aacc129b02ef4851c4126d82bb
 // const keyForTest = "00b183d4a1e6ba3fa5a036afabeb4644f1a24ad2b11cf3e6da2de96454c9fb8a" 
 //go run cmd/axelard/main.go vald-start --validator-addr cosmos150lcfqj44zx8aljqn4za4pp2384k5gw3hpypm2 --validator-key 00b183d4a1e6ba3fa5a036afabeb4644f1a24ad2b11cf3e6da2de96454c9fb8a
-const addressForChain = "cosmos1exfcnjtc30msg2py3utlf0mmlq8ex32aadxlf3"
-const keyForTest = "85bc470c18f113a15384660980fc8e4000f9d5aacc129b02ef4851c4126d82bb"
+// const addressForChain = "cosmos1exfcnjtc30msg2py3utlf0mmlq8ex32aadxlf3"
+// const keyForTest = "85bc470c18f113a15384660980fc8e4000f9d5aacc129b02ef4851c4126d82bb"
 // RW grants -rw------- file permissions
 const RW = 0600
 
@@ -249,7 +249,7 @@ func listen(ctx sdkClient.Context, txf tx.Factory, axelarCfg config.ValdConfig, 
 		logger.Error(err.Error())
 	}
 	
-	eventBus := createEventBus(client, 83506, logger)
+	eventBus := createEventBus(client, 168426, logger)
 	
 	bc,err := broadcast.NewCosmosClient(
 		fmt.Sprintf(
@@ -354,7 +354,7 @@ func listen(ctx sdkClient.Context, txf tx.Factory, axelarCfg config.ValdConfig, 
 	mgr := jobs.NewMgr(logErr)
 
 	mgr.AddJobs(js...)
-	err = tssMgr.ProcessKeygenStart(events.Event{})
+
 	mgr.Wait()
 
 }
@@ -381,7 +381,10 @@ func Consume(subscriber <-chan ctypes.ResultEvent, tssMgr *tss.Mgr) jobs.Job {
 					if events[0].Events[0].Type == "keygen"{
 						key := events[0].Events[0].Attributes[0].Key
 						if key == "start"{
-
+							if err := tssMgr.ProcessKeygenStart(e.Data); err != nil {
+								errChan <- err
+							}
+							
 						}
 						if key == "message"{
 							if err := tssMgr.ProcessKeygenMsg(e.Data); err != nil {

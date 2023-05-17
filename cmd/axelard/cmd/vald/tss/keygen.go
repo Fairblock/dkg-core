@@ -2,26 +2,29 @@ package tss
 
 import (
 	"context"
+	"encoding/json"
 	"math/rand"
+	"strconv"
 	"time"
 
 	//"encoding/json"
 	// "crypto/sha256"
 	"fmt"
 	"sort"
-	"strconv"
 
-	tmEvents "github.com/axelarnetwork/tm-events/events"
+	//"strconv"
+
+	//tmEvents "github.com/axelarnetwork/tm-events/events"
 	"github.com/btcsuite/btcd/btcec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	tmtypes "github.com/tendermint/tendermint/types"
 
 	//sdkFlags "github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/cosmos/cosmos-sdk/codec"
+	//"github.com/cosmos/cosmos-sdk/codec"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	//	"github.com/axelarnetwork/axelar-core/cmd/axelard/cmd/vald/broadcaster/types"
-	"github.com/axelarnetwork/axelar-core/cmd/axelard/cmd/vald/parse"
+	//"github.com/axelarnetwork/axelar-core/cmd/axelard/cmd/vald/parse"
 	//	"github.com/axelarnetwork/axelar-core/utils"
 	axelarnet "github.com/axelarnetwork/axelar-core/x/axelarnet/types"
 	//tssexported "github.com/axelarnetwork/axelar-core/x/tss/exported"
@@ -30,26 +33,32 @@ import (
 	voting "github.com/axelarnetwork/axelar-core/x/vote/exported"
 )
 
-const validator1 = "cosmos1exfcnjtc30msg2py3utlf0mmlq8ex32aadxlf3"
-const validator2 = "cosmos150lcfqj44zx8aljqn4za4pp2384k5gw3hpypm2"
+
 
 // ProcessKeygenStart starts the communication with the keygen protocol
-func (mgr *Mgr) ProcessKeygenStart(e tmEvents.Event) error {
-	//_, keyID, threshold, participants, participantShareCounts, timeout, _ := parseKeygenStartParams(mgr.cdc, e.Attributes)
-	// if err != nil {
-	// 	return err
-	// }
-
-	argAddr := sdk.AccAddress([]byte(validator1))
-	argAddr2 := sdk.AccAddress([]byte(validator2))
-	//me := sdk.AccAddress([]byte(mgr.principalAddr))
-	index := 0
-	if mgr.principalAddr == validator2 {
-		fmt.Println("here")
-		index = 1
+func (mgr *Mgr) ProcessKeygenStart(e tmtypes.TMEventData) error {
+    keyID, threshold, participants, timeout, height, err := parseKeygenStartParams(e)
+	if err != nil {
+		return err
 	}
-	participants := []string{argAddr.String(), argAddr2.String()}
-	return mgr.thresholdKeygenStart(e, "keyID3", 10000, 2, index, participants)
+fmt.Println("this")
+index := -1
+var list []string
+for i := 0; i < len(participants); i++ {
+	list = append(list, sdk.AccAddress([]byte(participants[i])).String())
+	if mgr.principalAddr == participants[i] {
+		fmt.Println("here")
+		index = i
+	}
+}
+fmt.Println("this2")
+	// argAddr := sdk.AccAddress([]byte(validator1))
+	// argAddr2 := sdk.AccAddress([]byte(validator2))
+	//me := sdk.AccAddress([]byte(mgr.principalAddr))
+	
+	
+	//participants := []string{argAddr.String(), argAddr2.String()}
+	return mgr.thresholdKeygenStart(height, keyID, timeout, threshold, index, list)
 	// case tssexported.Multisig.SimpleString():
 	// 	return mgr.multiSigKeygenStart(keyID, participantShareCounts[myIndex])
 
@@ -67,13 +76,13 @@ func randSeq(n int) string {
     }
     return string(b)
 }
-func (mgr *Mgr) thresholdKeygenStart(e tmEvents.Event, keyID string, timeout int64, threshold uint32, myIndex int, participants []string) error {
+func (mgr *Mgr) thresholdKeygenStart(height int64, keyID string, timeout int64, threshold uint32, myIndex int, participants []string) error {
 	done := false
-	session := mgr.timeoutQueue.Enqueue(keyID, e.Height+timeout)
+	session := mgr.timeoutQueue.Enqueue(keyID, height +timeout)
 rand.Seed(time.Now().UnixNano())
 
 	// participants = []string{"rr", "tt"}
-	stream, cancel, err := mgr.startKeygen(randSeq(35), 1, uint32(myIndex), participants)
+	stream, cancel, err := mgr.startKeygen(randSeq(35), threshold, uint32(myIndex), participants)
 	if err != nil {
 		return err
 	}
@@ -117,11 +126,11 @@ rand.Seed(time.Now().UnixNano())
 
 // ProcessKeygenMsg forwards blockchain messages to the keygen protocol
 func (mgr *Mgr) ProcessKeygenMsg(e tmtypes.TMEventData) error {
-//	fmt.Println("process")
+	//fmt.Println("process")
 	keyID, from, payload := parseMsgParams(e)
-//	fmt.Println("still")
+	//fmt.Println(keyID)
 	msgIn := prepareTrafficIn(mgr.principalAddr, from, keyID, payload, mgr.Logger)
-	fmt.Println(from)
+	
 	stream, ok := mgr.getKeygenStream(keyID)
 	if !ok {
 		mgr.Logger.Info(fmt.Sprintf("no keygen session with id %s. This process does not participate", keyID))
@@ -134,38 +143,38 @@ func (mgr *Mgr) ProcessKeygenMsg(e tmtypes.TMEventData) error {
 	return nil
 }
 
-func parseKeygenStartParams(cdc *codec.LegacyAmino, attributes map[string]string) (
-	keyType, keyID string, threshold uint32, participants []string, participantShareCounts []uint32, timeout int64, err error) {
+func parseKeygenStartParams(e tmtypes.TMEventData) (keyID string, threshold uint32, participants []string, timeout int64, height int64, err error) {
+	height = e.(tmtypes.EventDataTx).Height
+	dd := e.(tmtypes.EventDataTx).Tx
+	//fmt.Println(string(dd))
+	ddd := (dd[29:194])
+	msg:= new(axelarnet.MsgStartKeygen)
+	err = msg.Unmarshal(ddd)
+// for i := 0; i < len(dd); i++ {
+// 	for j := i + 1; j < len(dd); j++ {
+// 		ddd := (dd[i:j])
+// 	msg:= new(axelarnet.MsgStartKeygen)
 
-	parsers := []*parse.AttributeParser{
-		{Key: tss.AttributeKeyKeyType, Map: parse.IdentityMap},
-		{Key: tss.AttributeKeyKeyID, Map: parse.IdentityMap},
-		{Key: tss.AttributeKeyThreshold, Map: func(s string) (interface{}, error) {
-			t, err := strconv.ParseInt(s, 10, 32)
-			if err != nil {
-				return 0, err
-			}
-			return uint32(t), nil
-		}},
-		{Key: tss.AttributeKeyParticipants, Map: func(s string) (interface{}, error) {
-			cdc.MustUnmarshalJSON([]byte(s), &participants)
-			return participants, nil
-		}},
-		{Key: tss.AttributeKeyParticipantShareCounts, Map: func(s string) (interface{}, error) {
-			cdc.MustUnmarshalJSON([]byte(s), &participantShareCounts)
-			return participantShareCounts, nil
-		}},
-		{Key: tss.AttributeKeyTimeout, Map: func(s string) (interface{}, error) {
-			return strconv.ParseInt(s, 10, 64)
-		}},
-	}
+// 	err = msg.Unmarshal(ddd)
+// 		fmt.Println(j)
+// 		fmt.Println(i)
+// 	fmt.Println(msg)
+// 	}}
+//fmt.Println(msg.Participants)
+var participant_list []string
+err = json.Unmarshal([]byte(msg.Participants), &participant_list)
+if err != nil {
+	panic(err)
+}
+fmt.Println("here")
+t, err := strconv.ParseUint(msg.Threshold,10,32)
+timeout, err = strconv.ParseInt(msg.Timeout,10,64)
+fmt.Println(msg.KeyID)
+fmt.Println("here2")
 
-	results, err := parse.Parse(attributes, parsers)
-	if err != nil {
-		return "", "", 0, nil, nil, 0, err
-	}
 
-	return results[0].(string), results[1].(string), results[2].(uint32), results[3].([]string), results[4].([]uint32), results[5].(int64), nil
+return msg.KeyID,uint32(t),participant_list , timeout, height, nil
+
 }
 
 func (mgr *Mgr) startKeygen(keyID string, threshold uint32, myIndex uint32, participants []string) (Stream, context.CancelFunc, error) {
@@ -206,12 +215,12 @@ func (mgr *Mgr) handleIntermediateKeygenMsgs(keyID string, intermediate <-chan *
 			keyID, mgr.principalAddr, msg.ToPartyUid, msg.IsBroadcast))
 		// sender is set by broadcaster
 		argAddr := sdk.AccAddress([]byte(mgr.principalAddr))
-
+		
 		tssMsg := &tss.ProcessKeygenTrafficRequest{Sender: argAddr, SessionID: keyID, Payload: msg}
 
-		refundableMsg := axelarnet.NewRefundMsgRequest(argAddr, tssMsg)
+		refundableMsg := axelarnet.NewRefundMsgRequest(mgr.principalAddr,argAddr, tssMsg)
 		//m,_:=tssMsg.Marshal()
-		//fmt.Println(len(m))
+		//fmt.Println(refundableMsg.Sender)
 		//fmt.Println(tssMsg.Marshal())
 		resp, err := mgr.broadcaster.BroadcastTx(refundableMsg, false)
 		fmt.Println(resp)
@@ -272,7 +281,7 @@ func (mgr *Mgr) handleKeygenResult(keyID string, resultChan <-chan interface{}) 
 
 	pollKey := voting.NewPollKey(tss.ModuleName, keyID)
 	vote := &tss.VotePubKeyRequest{Sender: mgr.cliCtx.FromAddress, PollKey: pollKey, Result: result}
-	_ = axelarnet.NewRefundMsgRequest(mgr.cliCtx.FromAddress, vote)
+	_ = axelarnet.NewRefundMsgRequest(mgr.principalAddr,mgr.cliCtx.FromAddress, vote)
 
 	//_, err := mgr.broadcaster.Broadcast(mgr.cliCtx.WithBroadcastMode(sdkFlags.BroadcastBlock), refundableMsg)
 	return nil
