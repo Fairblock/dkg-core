@@ -42,5 +42,5 @@ type Staking interface {
 
 // Axelarnet provides access to the axelarnet functionality
 type Axelarnet interface {
-	SetPendingRefund(ctx sdk.Context, req axelarnettypes.RefundMsgRequest, fee sdk.Coin) error
+	SetPendingRefund(ctx sdk.Context, req axelarnettypes.MsgRefundMsgRequest, fee sdk.Coin) error
 }

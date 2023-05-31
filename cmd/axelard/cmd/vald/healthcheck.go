@@ -19,7 +19,7 @@ import (
 
 	"github.com/axelarnetwork/axelar-core/cmd/axelard/cmd/vald/config"
 	"github.com/axelarnetwork/axelar-core/cmd/axelard/cmd/vald/tss"
-	"github.com/axelarnetwork/tm-events/events"
+	//"github.com/axelarnetwork/tm-events/events"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -151,7 +151,7 @@ func checkTofnd(txf tx.Factory, axelarCfg config.ValdConfig,ctx context.Context,
 	// 	Threshold: 2,
 	// }
 
-	err = tssMgr.ProcessKeygenStart(events.Event{})
+	err = tssMgr.ProcessKeygenStart([]tss.EventMsg{}, 0)
 
 	if err != nil {
 		return fmt.Errorf("failed to invoke tofnd grpc: %s", err.Error())

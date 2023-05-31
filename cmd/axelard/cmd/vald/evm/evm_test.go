@@ -403,7 +403,7 @@ func TestMgr_ProccessTokenConfirmation(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Len(t, broadcaster.BroadcastCalls(), 1)
 		msg := unwrapRefundMsg(broadcaster.BroadcastCalls()[0].Msgs[0])
-		assert.False(t,msg.(*evmTypes.VoteConfirmTokenRequest).Confirmed)
+		assert.False(t, msg.(*evmTypes.VoteConfirmTokenRequest).Confirmed)
 	}).Repeat(repeats))
 }
 
@@ -641,6 +641,5 @@ func createTokenLogs(denom string, gateway, tokenAddr common.Address, deploySig 
 }
 
 func unwrapRefundMsg(msg sdk.Msg) sdk.Msg {
-	return msg.(*axelarnetTypes.RefundMsgRequest).GetInnerMessage()
+	return msg.(*axelarnetTypes.RefundableMsgRequest).GetInnerMessage()
 }
-

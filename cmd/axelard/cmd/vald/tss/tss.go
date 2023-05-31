@@ -7,7 +7,7 @@ import (
 	"io"
 	"sync"
 	"time"
-
+	"github.com/tendermint/tendermint/abci/types"
 	broadcast "github.com/axelarnetwork/axelar-core/cmd/axelard/cmd/vald/broadcaster"
 	sdkClient "github.com/cosmos/cosmos-sdk/client"
 
@@ -21,13 +21,29 @@ import (
 	"github.com/axelarnetwork/axelar-core/cmd/axelard/cmd/vald/parse"
 	"github.com/axelarnetwork/axelar-core/cmd/axelard/cmd/vald/tss/rpc"
 	axelarnet "github.com/axelarnetwork/axelar-core/x/axelarnet/types"
-	tmtypes "github.com/tendermint/tendermint/types"
+
+	//tstypes "github.com/axelarnetwork/axelar-core/cmd/axelard/cmd/vald/tss"
 	//snapshot "github.com/axelarnetwork/axelar-core/x/snapshot/exported"
 	"github.com/axelarnetwork/axelar-core/x/tss/exported"
 	"github.com/axelarnetwork/axelar-core/x/tss/tofnd"
 	tss "github.com/axelarnetwork/axelar-core/x/tss/types"
 	tmEvents "github.com/axelarnetwork/tm-events/events"
 )
+
+type KeygenEvent struct {
+	Type       string             `json:"type"`
+	Attributes []KeygenAttributes `json:"attributes"`
+}
+
+type KeygenAttributes struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
+}
+
+type EventMsg struct {
+	MsgIndex int           `json:"msg_index"`
+	Events   []KeygenEvent `json:"events"`
+}
 
 // Session defines a tss session which is either signing or keygen
 type Session struct {
@@ -291,8 +307,8 @@ func (mgr *Mgr) ProcessHeartBeatEvent(e tmEvents.Event) error {
 	}
 
 	tssMsg := tss.NewHeartBeatRequest(mgr.cliCtx.FromAddress, present)
-	refundableMsg := axelarnet.NewRefundMsgRequest(mgr.principalAddr,mgr.cliCtx.FromAddress, tssMsg)
-_=refundableMsg
+	refundableMsg := axelarnet.NewMsgRefundMsgRequest(mgr.principalAddr, mgr.cliCtx.FromAddress, tssMsg)
+	_ = refundableMsg
 	mgr.Logger.Info(fmt.Sprintf("operator %s sending heartbeat acknowledging keys: %s", mgr.principalAddr, present))
 	//mgr.Logger.Info((refundableMsg.String()))
 	// txRes, err := mgr.broadcaster.Broadcast(mgr.cliCtx.WithBroadcastMode(sdkFlags.BroadcastBlock), refundableMsg)
@@ -453,60 +469,32 @@ func parseHeartBeatParams(cdc *codec.LegacyAmino, attributes map[string]string) 
 	return results[0].([]tss.KeyInfo)
 }
 
-func parseMsgParams(e tmtypes.TMEventData) (sessionID string, from string, payload *tofnd.TrafficOut) {
+func parseMsgParams(e []types.Event) (sessionID string, from string, payload *tofnd.TrafficOut) {
+	//fmt.Println("here")
 
-	dd := e.(tmtypes.EventDataTx).Tx
+	innerMsg := e[4].Attributes[0].Value
+	//fmt.Println([]byte(innerMsg))
+	// tx := e.(tmtypes.EventDataTx).Tx
 
+	// tx_slice := (tx[39:246])
 
-	// for i := 0; i < len(dd); i++ {
-	// for j := i + 1; j < len(dd); j++ {
-	// 	ddd := (dd[i:j])
-	// msg:= new(axelarnet.RefundMsgRequest)
+	 msg:= new(axelarnet.MsgRefundMsgRequest)
 
-	// err := msg.Unmarshal(ddd)
-	// if err == nil{
-	// 	fmt.Println(j)
+	 msg.Unmarshal(innerMsg)
+
+	msgVal := new(tss.ProcessKeygenTrafficRequest)
+	// for i := 0; i < len([]byte(innerMsg)); i++ {
 	// 	fmt.Println(i)
-	// fmt.Println(msg)}
-	// }}
-	
-					ddd := (dd[39:246])
-					fmt.Println("+++++++++++++++++++++++")
-					 msg:= new(axelarnet.RefundMsgRequest)
-					// fmt.Println(dd)
-					msg.Unmarshal(ddd)
-					 //fmt.Println(msg.InnerMessage)
-					//  if err := json.Unmarshal([]byte(ddd), &msg); err != nil {
-					// 	errChan <- err
-					// }
-					msgVal := new(tss.ProcessKeygenTrafficRequest)
-					// msgVal.Unmarshal(msg.InnerMessage.Value)
-					
-					//fmt.Println("+++++++++++++++++++++++")
-					// if err != nil{
-					// 	ddd := (dd[39:303])
+	// 	msgVal.Unmarshal([]byte(innerMsg)[i:])
+	// 	fmt.Println(msgVal)
+	// }
 
-					// 	err = msg.Unmarshal(ddd)
-					// // fmt.Println(ddd)
-					// //  if err := json.Unmarshal([]byte(ddd), &msg); err != nil {
-					// // 	errChan <- err
-					// // }
-					// //msgVal := new(tss.ProcessKeygenTrafficRequest)
-					
-					// }
-					// if err != nil{
-					// 	ddd := (dd[39:304])
+	msgVal.Unmarshal(msg.InnerMessage.Value)
+	//msgVal.Payload.IsBroadcast = true
+	//fmt.Println((innerMsg))
+	//  msgVal2 := new(tss.ProcessKeygenTrafficRequest)
 
-					//  msg.Unmarshal(ddd)
-					// // fmt.Println(ddd)
-					// //  if err := json.Unmarshal([]byte(ddd), &msg); err != nil {
-					// // 	errChan <- err
-					// // }
-					// //msgVal := new(tss.ProcessKeygenTrafficRequest)
-					
-					// }
-					msgVal.Unmarshal(msg.InnerMessage.Value)
-
+	// msgVal2.Unmarshal([]byte(msgVal.SessionID))
 	// parsers := []*parse.AttributeParser{
 	// 	{Key: tss.AttributeKeySessionID, Map: parse.IdentityMap},
 	// 	{Key: sdk.AttributeKeySender, Map: parse.IdentityMap},
@@ -520,10 +508,56 @@ func parseMsgParams(e tmtypes.TMEventData) (sessionID string, from string, paylo
 	// if err != nil {
 	// 	panic(err)
 	// }
+	
 	return msgVal.SessionID, msgVal.Sender.String(), msgVal.Payload
-// return "","",nil
+	// return "","",nil
 }
+func parseMsgParamsDispute(e []KeygenEvent) (sessionID string, from string, payload *tofnd.TrafficOut) {
+	
+//panic(e)
+	 innerMsg := e[0].Attributes[0].Value
+	 id :=  e[0].Attributes[1].Value
+	 from =  e[0].Attributes[2].Value
+	 
+	// //fmt.Println([]byte(innerMsg))
+	// // tx := e.(tmtypes.EventDataTx).Tx
 
+	// // tx_slice := (tx[39:246])
+	// fmt.Println("---------------------------------------------------------------------------------------------------------: ",e[0])
+	//  msg:= new(axelarnet.MsgRefundMsgRequest)
+
+	//  msg.Unmarshal(innerMsg)
+
+	// msgVal := new(tss.ProcessKeygenTrafficRequest)
+	// for i := 0; i < len([]byte(innerMsg)); i++ {
+	// 	fmt.Println(i)
+	// 	msgVal.Unmarshal([]byte(innerMsg)[i:])
+	// 	fmt.Println(msgVal)
+	// }
+
+	//msgVal.Unmarshal(msg.InnerMessage.Value)
+	//msgVal.Payload.IsBroadcast = true
+	//fmt.Println((innerMsg))
+	//  msgVal2 := new(tss.ProcessKeygenTrafficRequest)
+
+	// msgVal2.Unmarshal([]byte(msgVal.SessionID))
+	// parsers := []*parse.AttributeParser{
+	// 	{Key: tss.AttributeKeySessionID, Map: parse.IdentityMap},
+	// 	{Key: sdk.AttributeKeySender, Map: parse.IdentityMap},
+	// 	{Key: tss.AttributeKeyPayload, Map: func(s string) (interface{}, error) {
+	// 		cdc.MustUnmarshalJSON([]byte(s), &payload)
+	// 		return payload, nil
+	// 	}},
+	// }
+
+	// results, err := parse.Parse(attributes, parsers)
+	// if err != nil {
+	// 	panic(err)
+	// }
+	tofndT := tofnd.TrafficOut{ToPartyUid:"" ,Payload: []byte(innerMsg), IsBroadcast: true}
+	return id, sdk.AccAddress([]byte(from)).String(),&tofndT
+	// return "","",nil
+}
 func prepareTrafficIn(principalAddr string, from string, sessionID string, payload *tofnd.TrafficOut, logger log.Logger) *tofnd.MessageIn {
 	msgIn := &tofnd.MessageIn{
 		Data: &tofnd.MessageIn_Traffic{

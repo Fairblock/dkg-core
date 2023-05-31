@@ -77,14 +77,14 @@ func (k Keeper) RegisterIBCPath(ctx sdk.Context, chain, path string) error {
 }
 
 // SetPendingRefund saves pending refundable message
-func (k Keeper) SetPendingRefund(ctx sdk.Context, req types.RefundMsgRequest, fee sdk.Coin) error {
+func (k Keeper) SetPendingRefund(ctx sdk.Context, req types.MsgRefundMsgRequest, fee sdk.Coin) error {
 	hash := sha256.Sum256(k.cdc.MustMarshalLengthPrefixed(&req))
 	k.getStore(ctx).Set(pendingRefundPrefix.Append(utils.KeyFromBz(hash[:])), &fee)
 	return nil
 }
 
 // GetPendingRefund retrieves a pending refundable message
-func (k Keeper) GetPendingRefund(ctx sdk.Context, req types.RefundMsgRequest) (sdk.Coin, bool) {
+func (k Keeper) GetPendingRefund(ctx sdk.Context, req types.MsgRefundMsgRequest) (sdk.Coin, bool) {
 	var fee sdk.Coin
 	hash := sha256.Sum256(k.cdc.MustMarshalLengthPrefixed(&req))
 	ok := k.getStore(ctx).Get(pendingRefundPrefix.Append(utils.KeyFromBz(hash[:])), &fee)
@@ -93,7 +93,7 @@ func (k Keeper) GetPendingRefund(ctx sdk.Context, req types.RefundMsgRequest) (s
 }
 
 // DeletePendingRefund retrieves a pending refundable message
-func (k Keeper) DeletePendingRefund(ctx sdk.Context, req types.RefundMsgRequest) {
+func (k Keeper) DeletePendingRefund(ctx sdk.Context, req types.MsgRefundMsgRequest) {
 	hash := sha256.Sum256(k.cdc.MustMarshalLengthPrefixed(&req))
 	k.getStore(ctx).Delete(pendingRefundPrefix.Append(utils.KeyFromBz(hash[:])))
 }

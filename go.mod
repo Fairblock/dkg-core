@@ -12,6 +12,7 @@ require (
 	github.com/btcsuite/btcutil v1.0.3-0.20201208143702-a53e38424cce
 	github.com/cosmos/cosmos-sdk v0.44.7
 	github.com/cosmos/ibc-go v1.2.0
+	github.com/drand/kyber-bls12381 v0.2.6
 	github.com/ethereum/go-ethereum v1.10.11
 	github.com/gogo/protobuf v1.3.3
 	github.com/golang/protobuf v1.5.2
@@ -35,6 +36,7 @@ require (
 	github.com/tendermint/tm-db v0.6.4
 	github.com/tklauser/go-sysconf v0.3.7 // indirect
 	github.com/tyler-smith/go-bip39 v1.1.0 // indirect
+	golang.org/x/crypto v0.7.0 // indirect
 	google.golang.org/genproto v0.0.0-20210828152312-66f60bf46e71
 	google.golang.org/grpc v1.42.0
 	google.golang.org/protobuf v1.27.1

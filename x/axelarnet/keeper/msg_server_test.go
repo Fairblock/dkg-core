@@ -429,15 +429,15 @@ func TestHandleMsgRefundRequest(t *testing.T) {
 		bankKeeper      *mock.BankKeeperMock
 		ctx             sdk.Context
 		router          sdk.Router
-		msg             *types.RefundMsgRequest
+		msg             *types.MsgRefundMsgRequest
 	)
 	setup := func() {
 		axelarnetKeeper = &mock.BaseKeeperMock{
 			LoggerFunc: func(ctx sdk.Context) log.Logger { return log.TestingLogger() },
-			GetPendingRefundFunc: func(sdk.Context, types.RefundMsgRequest) (sdk.Coin, bool) {
+			GetPendingRefundFunc: func(sdk.Context, types.MsgRefundMsgRequest) (sdk.Coin, bool) {
 				return sdk.NewCoin("uaxl", sdk.NewInt(1000)), true
 			},
-			DeletePendingRefundFunc: func(sdk.Context, types.RefundMsgRequest) { return },
+			DeletePendingRefundFunc: func(sdk.Context, types.MsgRefundMsgRequest) { return },
 		}
 		bankKeeper = &mock.BankKeeperMock{
 			SendCoinsFromModuleToAccountFunc: func(sdk.Context, string, sdk.AccAddress, sdk.Coins) error { return nil },
@@ -463,7 +463,7 @@ func TestHandleMsgRefundRequest(t *testing.T) {
 			TypeUrl: rand.StrBetween(5, 20),
 			Value:   rand.Bytes(int(rand.I64Between(100, 1000))),
 		}
-		msg = &types.RefundMsgRequest{
+		msg = &types.MsgRefundMsgRequest{
 			Sender:       rand.AccAddr(),
 			InnerMessage: &any,
 		}
@@ -475,7 +475,7 @@ func TestHandleMsgRefundRequest(t *testing.T) {
 	t.Run("should return error when failed to route inner message", testutils.Func(func(t *testing.T) {
 		setup()
 
-		msg = types.NewRefundMsgRequest(rand.AccAddr(), randomMsgLink())
+		msg = types.NewMsgRefundMsgRequest(rand.AccAddr(), randomMsgLink())
 
 		_, err := server.RefundMsg(sdk.WrapSDKContext(ctx), msg)
 		assert.Error(t, err)
@@ -489,7 +489,7 @@ func TestHandleMsgRefundRequest(t *testing.T) {
 		}
 		router.AddRoute(sdk.NewRoute("evm", evmHandler))
 		voteReq := &evmtypes.VoteConfirmChainRequest{Name: rand.StrBetween(5, 20)}
-		msg = types.NewRefundMsgRequest(rand.AccAddr(), voteReq)
+		msg = types.NewMsgRefundMsgRequest(rand.AccAddr(), voteReq)
 
 		_, err := server.RefundMsg(sdk.WrapSDKContext(ctx), msg)
 		assert.Error(t, err)
@@ -497,9 +497,9 @@ func TestHandleMsgRefundRequest(t *testing.T) {
 
 	t.Run("should not refund transaction fee when no pending refund", testutils.Func(func(t *testing.T) {
 		setup()
-		axelarnetKeeper.GetPendingRefundFunc = func(sdk.Context, types.RefundMsgRequest) (sdk.Coin, bool) { return sdk.Coin{}, false }
+		axelarnetKeeper.GetPendingRefundFunc = func(sdk.Context, types.MsgRefundMsgRequest) (sdk.Coin, bool) { return sdk.Coin{}, false }
 
-		msg = types.NewRefundMsgRequest(rand.AccAddr(), &tsstypes.HeartBeatRequest{})
+		msg = types.NewMsgRefundMsgRequest(rand.AccAddr(), &tsstypes.HeartBeatRequest{})
 
 		_, err := server.RefundMsg(sdk.WrapSDKContext(ctx), msg)
 		assert.NoError(t, err)
@@ -508,7 +508,7 @@ func TestHandleMsgRefundRequest(t *testing.T) {
 	t.Run("should refund transaction fee when executed inner message successfully", testutils.Func(func(t *testing.T) {
 		setup()
 
-		msg = types.NewRefundMsgRequest(rand.AccAddr(), &tsstypes.HeartBeatRequest{})
+		msg = types.NewMsgRefundMsgRequest(rand.AccAddr(), &tsstypes.HeartBeatRequest{})
 
 		_, err := server.RefundMsg(sdk.WrapSDKContext(ctx), msg)
 		assert.NoError(t, err)

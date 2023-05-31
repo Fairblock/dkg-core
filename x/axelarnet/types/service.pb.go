@@ -95,7 +95,7 @@ type MsgServiceClient interface {
 	RegisterIBCPath(ctx context.Context, in *RegisterIBCPathRequest, opts ...grpc.CallOption) (*RegisterIBCPathResponse, error)
 	AddCosmosBasedChain(ctx context.Context, in *AddCosmosBasedChainRequest, opts ...grpc.CallOption) (*AddCosmosBasedChainResponse, error)
 	RegisterAsset(ctx context.Context, in *RegisterAssetRequest, opts ...grpc.CallOption) (*RegisterAssetResponse, error)
-	RefundMsg(ctx context.Context, in *RefundMsgRequest, opts ...grpc.CallOption) (*RefundMsgResponse, error)
+	RefundMsg(ctx context.Context, in *MsgRefundMsgRequest, opts ...grpc.CallOption) (*RefundMsgResponse, error)
 	RouteIBCTransfers(ctx context.Context, in *RouteIBCTransfersRequest, opts ...grpc.CallOption) (*RouteIBCTransfersResponse, error)
 	RegisterFeeCollector(ctx context.Context, in *RegisterFeeCollectorRequest, opts ...grpc.CallOption) (*RegisterFeeCollectorResponse, error)
 }
@@ -162,7 +162,7 @@ func (c *msgServiceClient) RegisterAsset(ctx context.Context, in *RegisterAssetR
 	return out, nil
 }
 
-func (c *msgServiceClient) RefundMsg(ctx context.Context, in *RefundMsgRequest, opts ...grpc.CallOption) (*RefundMsgResponse, error) {
+func (c *msgServiceClient) RefundMsg(ctx context.Context, in *MsgRefundMsgRequest, opts ...grpc.CallOption) (*RefundMsgResponse, error) {
 	out := new(RefundMsgResponse)
 	err := c.cc.Invoke(ctx, "/axelarnet.v1beta1.MsgService/RefundMsg", in, out, opts...)
 	if err != nil {
@@ -197,7 +197,7 @@ type MsgServiceServer interface {
 	RegisterIBCPath(context.Context, *RegisterIBCPathRequest) (*RegisterIBCPathResponse, error)
 	AddCosmosBasedChain(context.Context, *AddCosmosBasedChainRequest) (*AddCosmosBasedChainResponse, error)
 	RegisterAsset(context.Context, *RegisterAssetRequest) (*RegisterAssetResponse, error)
-	RefundMsg(context.Context, *RefundMsgRequest) (*RefundMsgResponse, error)
+	RefundMsg(context.Context, *MsgRefundMsgRequest) (*RefundMsgResponse, error)
 	RouteIBCTransfers(context.Context, *RouteIBCTransfersRequest) (*RouteIBCTransfersResponse, error)
 	RegisterFeeCollector(context.Context, *RegisterFeeCollectorRequest) (*RegisterFeeCollectorResponse, error)
 }
@@ -224,7 +224,7 @@ func (*UnimplementedMsgServiceServer) AddCosmosBasedChain(ctx context.Context, r
 func (*UnimplementedMsgServiceServer) RegisterAsset(ctx context.Context, req *RegisterAssetRequest) (*RegisterAssetResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RegisterAsset not implemented")
 }
-func (*UnimplementedMsgServiceServer) RefundMsg(ctx context.Context, req *RefundMsgRequest) (*RefundMsgResponse, error) {
+func (*UnimplementedMsgServiceServer) RefundMsg(ctx context.Context, req *MsgRefundMsgRequest) (*RefundMsgResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RefundMsg not implemented")
 }
 func (*UnimplementedMsgServiceServer) RouteIBCTransfers(ctx context.Context, req *RouteIBCTransfersRequest) (*RouteIBCTransfersResponse, error) {
@@ -347,7 +347,7 @@ func _MsgService_RegisterAsset_Handler(srv interface{}, ctx context.Context, dec
 }
 
 func _MsgService_RefundMsg_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RefundMsgRequest)
+	in := new(MsgRefundMsgRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -359,7 +359,7 @@ func _MsgService_RefundMsg_Handler(srv interface{}, ctx context.Context, dec fun
 		FullMethod: "/axelarnet.v1beta1.MsgService/RefundMsg",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServiceServer).RefundMsg(ctx, req.(*RefundMsgRequest))
+		return srv.(MsgServiceServer).RefundMsg(ctx, req.(*MsgRefundMsgRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

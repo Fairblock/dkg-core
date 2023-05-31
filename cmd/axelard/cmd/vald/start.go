@@ -79,20 +79,7 @@ const RWX = 0700
 
 var once sync.Once
 var cleanupCommands []func()
-type KeygenEvent struct {
-    Type      string              `json:"type"`
-    Attributes []KeygenAttributes `json:"attributes"`
-}
 
-type KeygenAttributes struct {
-    Key   string `json:"key"`
-    Value string `json:"value"`
-}
-
-type EventMsg struct {
-    MsgIndex int              `json:"msg_index"`
-    Events   []KeygenEvent    `json:"events"`
-}
 // GetValdCommand returns the command to start vald
 func GetValdCommand() *cobra.Command {
 	cmd := &cobra.Command{
@@ -211,8 +198,8 @@ func listen(ctx sdkClient.Context, txf tx.Factory, axelarCfg config.ValdConfig, 
 	// if err != nil {
 	// 	panic(sdkerrors.Wrap(err, "failed to read broadcaster account info from keyring"))
 	// }
-	fmt.Println(valAddr)
-	fmt.Println(valKey)
+	//fmt.Println(valAddr)
+	//fmt.Println(valKey)
 	ctx = ctx.
 		WithFromAddress(sdk.AccAddress{}).
 		WithFromName("seti")
@@ -249,7 +236,7 @@ func listen(ctx sdkClient.Context, txf tx.Factory, axelarCfg config.ValdConfig, 
 		logger.Error(err.Error())
 	}
 	
-	eventBus := createEventBus(client, 168426, logger)
+	eventBus := createEventBus(client, 250000, logger)
 	
 	bc,err := broadcast.NewCosmosClient(
 		fmt.Sprintf(
@@ -358,8 +345,8 @@ func listen(ctx sdkClient.Context, txf tx.Factory, axelarCfg config.ValdConfig, 
 	mgr.Wait()
 
 }
-
-
+//go run cmd/axelard/main.go vald-start --validator-addr cosmos1u0sv2a225ualg7t35pxux8453t4d3huv8966p9 --validator-key 28c1d3cb9c1ce8fb04f26f55fc859d9ed262feb1b1fc5dc06ad502c947a932e7
+//go run cmd/axelard/main.go vald-start --validator-addr cosmos1gh7gxcfcmvxq6vysh0dtey26erpaawjnfpc289 --validator-key  58ef035d49e62e6a214cc8c1501db1a3218e777fe3b623cbec9c1465ed710b78
 // Consume processes all events from the given subscriber with the given function.
 // Do not consume the same subscriber multiple times.
 func Consume(subscriber <-chan ctypes.ResultEvent, tssMgr *tss.Mgr) jobs.Job {
@@ -371,23 +358,32 @@ func Consume(subscriber <-chan ctypes.ResultEvent, tssMgr *tss.Mgr) jobs.Job {
 				go func() {
 					defer recovery(errChan)
 					d := e.Data.(tmtypes.EventDataTx).Result.Log
-					fmt.Println("---------------")
+					fmt.Println("event : ", d)
+					e2 := e.Data.(tmtypes.EventDataTx).Result.Events
 					
-					var events []EventMsg
+					var events []tss.EventMsg
 					if err := json.Unmarshal([]byte(d), &events); err != nil {
 						errChan <- err
 					}
-					
+					//fmt.Println(e.Data)
 					if events[0].Events[0].Type == "keygen"{
+
 						key := events[0].Events[0].Attributes[0].Key
+						
 						if key == "start"{
-							if err := tssMgr.ProcessKeygenStart(e.Data); err != nil {
+							if err := tssMgr.ProcessKeygenStart(events, e.Data.(tmtypes.EventDataTx).Height); err != nil {
 								errChan <- err
 							}
 							
 						}
 						if key == "message"{
-							if err := tssMgr.ProcessKeygenMsg(e.Data); err != nil {
+							
+							if err := tssMgr.ProcessKeygenMsg(e2); err != nil {
+								errChan <- err
+							}
+						}
+						if key == "dispute"{
+							if err := tssMgr.ProcessKeygenMsgDispute(events[0].Events); err != nil {
 								errChan <- err
 							}
 						}

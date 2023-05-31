@@ -272,7 +272,7 @@ func local_request_MsgService_RegisterAsset_0(ctx context.Context, marshaler run
 }
 
 func request_MsgService_RefundMsg_0(ctx context.Context, marshaler runtime.Marshaler, client MsgServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq RefundMsgRequest
+	var protoReq MsgRefundMsgRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -289,7 +289,7 @@ func request_MsgService_RefundMsg_0(ctx context.Context, marshaler runtime.Marsh
 }
 
 func local_request_MsgService_RefundMsg_0(ctx context.Context, marshaler runtime.Marshaler, server MsgServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq RefundMsgRequest
+	var protoReq MsgRefundMsgRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)

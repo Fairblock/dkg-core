@@ -42,7 +42,7 @@ func (d CheckRefundFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate
 
 		fee := feeTx.GetFee()
 		if len(fee) > 0 {
-			req := msgs[0].(*axelarnetTypes.RefundMsgRequest)
+			req := msgs[0].(*axelarnetTypes.MsgRefundMsgRequest)
 			err := d.axelarnet.SetPendingRefund(ctx, *req, fee[0])
 			if err != nil {
 				return ctx, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
@@ -60,7 +60,7 @@ func (d CheckRefundFeeDecorator) qualifyForRefund(ctx sdk.Context, msgs []sdk.Ms
 	}
 
 	switch msg := msgs[0].(type) {
-	case *axelarnetTypes.RefundMsgRequest:
+	case *axelarnetTypes.MsgRefundMsgRequest:
 		if msgRegistered(d.registry, msg.InnerMessage.GetTypeUrl()) {
 			// Validator must be bonded
 			sender := msg.GetSigners()[0]

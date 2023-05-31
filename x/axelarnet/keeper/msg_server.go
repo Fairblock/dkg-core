@@ -247,7 +247,7 @@ func (s msgServer) RegisterAsset(c context.Context, req *types.RegisterAssetRequ
 	return &types.RegisterAssetResponse{}, nil
 }
 
-func (s msgServer) RefundMsg(c context.Context, req *types.RefundMsgRequest) (*types.RefundMsgResponse, error) {
+func (s msgServer) RefundMsg(c context.Context, req *types.MsgRefundMsgRequest) (*types.RefundMsgResponse, error) {
 	ctx := sdk.UnwrapSDKContext(c)
 
 	msg := req.GetInnerMessage()

@@ -161,5 +161,5 @@ func randomOutpointInfo() btc.OutPointInfo {
 }
 
 func unwrapRefundMsg(msg sdk.Msg) sdk.Msg {
-	return msg.(*axelarnet.RefundMsgRequest).GetInnerMessage()
+	return msg.(*axelarnet.RefundableMsgRequest).GetInnerMessage()
 }

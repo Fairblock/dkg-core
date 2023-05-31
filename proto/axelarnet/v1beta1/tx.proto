@@ -90,6 +90,17 @@ message RefundMsgResponse {
   bytes data = 1;
   string log = 2;
 }
+message MsgRefundMsgRequest {
+  string              creator       = 1;
+  string               sender        = 2;
+  string inner_message = 3;
+}
+message MsgFileDispute {
+  string creator = 1;
+  Dispute dispute = 2;
+  uint64 idOfAccuser = 3;
+  string keyId = 4;
+}
 
 // RouteIBCTransfersRequest represents a message to route pending transfers to
 // cosmos based chains
