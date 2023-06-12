@@ -118,10 +118,10 @@ func queryRecovery(ctx sdk.Context, k types.TSSKeeper, s types.Snapshotter, keyI
 	pubKeyBytes := ecdsaPK.SerializeCompressed()
 
 	// get voted group recover info
-	groupRecoverInfo := k.GetGroupRecoveryInfo(ctx, keyID)
-	if groupRecoverInfo == nil {
-		return nil, fmt.Errorf("could not obtain group info for key ID %s", keyID)
-	}
+	// groupRecoverInfo := k.GetGroupRecoveryInfo(ctx, keyID)
+	// if groupRecoverInfo == nil {
+	// 	return nil, fmt.Errorf("could not obtain group info for key ID %s", keyID)
+	// }
 
 	privateRecoverInfo := k.GetPrivateRecoveryInfo(ctx, address, keyID)
 	if privateRecoverInfo == nil {
@@ -134,7 +134,7 @@ func queryRecovery(ctx sdk.Context, k types.TSSKeeper, s types.Snapshotter, keyI
 		PartyShareCounts: participantShareCounts,
 		KeygenOutput: &tofnd.KeygenOutput{
 			PubKey:             pubKeyBytes,
-			GroupRecoverInfo:   groupRecoverInfo,
+		//	GroupRecoverInfo:   groupRecoverInfo,
 			PrivateRecoverInfo: privateRecoverInfo,
 		},
 	}

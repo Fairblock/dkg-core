@@ -326,7 +326,7 @@ func (s msgServer) VotePubKey(c context.Context, req *types.VotePubKeyRequest) (
 
 		voteData = &types.KeygenVoteData{
 			PubKey:            pubKey,
-			GroupRecoveryInfo: res.Data.GetGroupRecoverInfo(),
+		//	GroupRecoveryInfo: res.Data.GetGroupRecoverInfo(),
 		}
 
 	default:

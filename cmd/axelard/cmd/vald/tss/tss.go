@@ -167,6 +167,7 @@ type Mgr struct {
 	//multiSigClient rpc.MultiSigClient
 	cliCtx sdkClient.Context
 	keygen *sync.RWMutex
+	keyId string
 	//sign           *sync.RWMutex
 	keygenStreams map[string]*LockableStream
 	//signStreams    map[string]*LockableStream
@@ -176,6 +177,8 @@ type Mgr struct {
 	Logger        log.Logger
 	broadcaster   *broadcast.CosmosClient
 	cdc           *codec.LegacyAmino
+	startHeight    int
+	currentHeight int
 }
 
 // Connect connects to tofnd gRPC Server
@@ -519,7 +522,8 @@ func parseMsgParamsDispute(e []KeygenEvent) (sessionID string, from string, payl
 	 id :=  e[0].Attributes[1].Value
 	 from =  e[0].Attributes[2].Value
 	 
-	// //fmt.Println([]byte(innerMsg))
+//	fmt.Println(innerMsg)
+//	fmt.Println([]byte(innerMsg))
 	// // tx := e.(tmtypes.EventDataTx).Tx
 
 	// // tx_slice := (tx[39:246])

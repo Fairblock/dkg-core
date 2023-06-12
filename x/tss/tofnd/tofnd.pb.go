@@ -178,8 +178,8 @@ func (m *RecoverResponse) GetResponse() RecoverResponse_Response {
 // Keygen's success response
 type KeygenOutput struct {
 	PubKey             []byte `protobuf:"bytes,1,opt,name=pub_key,json=pubKey,proto3" json:"pub_key,omitempty"`
-	GroupRecoverInfo   []byte `protobuf:"bytes,2,opt,name=group_recover_info,json=groupRecoverInfo,proto3" json:"group_recover_info,omitempty"`
-	PrivateRecoverInfo []byte `protobuf:"bytes,3,opt,name=private_recover_info,json=privateRecoverInfo,proto3" json:"private_recover_info,omitempty"`
+	PrivateRecoverInfo   []byte `protobuf:"bytes,2,opt,name=group_recover_info,json=groupRecoverInfo,proto3" json:"group_recover_info,omitempty"`
+	//PrivateRecoverInfo []byte `protobuf:"bytes,3,opt,name=private_recover_info,json=privateRecoverInfo,proto3" json:"private_recover_info,omitempty"`
 }
 
 func (m *KeygenOutput) Reset()         { *m = KeygenOutput{} }
@@ -222,12 +222,12 @@ func (m *KeygenOutput) GetPubKey() []byte {
 	return nil
 }
 
-func (m *KeygenOutput) GetGroupRecoverInfo() []byte {
-	if m != nil {
-		return m.GroupRecoverInfo
-	}
-	return nil
-}
+// func (m *KeygenOutput) GetGroupRecoverInfo() []byte {
+// 	if m != nil {
+// 		return m.GroupRecoverInfo
+// 	}
+// 	return nil
+// }
 
 func (m *KeygenOutput) GetPrivateRecoverInfo() []byte {
 	if m != nil {
@@ -1181,13 +1181,13 @@ func (m *KeygenOutput) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x1a
 	}
-	if len(m.GroupRecoverInfo) > 0 {
-		i -= len(m.GroupRecoverInfo)
-		copy(dAtA[i:], m.GroupRecoverInfo)
-		i = encodeVarintTofnd(dAtA, i, uint64(len(m.GroupRecoverInfo)))
-		i--
-		dAtA[i] = 0x12
-	}
+	// if len(m.GroupRecoverInfo) > 0 {
+	// 	i -= len(m.GroupRecoverInfo)
+	// 	copy(dAtA[i:], m.GroupRecoverInfo)
+	// 	i = encodeVarintTofnd(dAtA, i, uint64(len(m.GroupRecoverInfo)))
+	// 	i--
+	// 	dAtA[i] = 0x12
+	// }
 	if len(m.PubKey) > 0 {
 		i -= len(m.PubKey)
 		copy(dAtA[i:], m.PubKey)
@@ -1901,10 +1901,10 @@ func (m *KeygenOutput) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovTofnd(uint64(l))
 	}
-	l = len(m.GroupRecoverInfo)
-	if l > 0 {
-		n += 1 + l + sovTofnd(uint64(l))
-	}
+	// l = len(m.GroupRecoverInfo)
+	// if l > 0 {
+	// 	n += 1 + l + sovTofnd(uint64(l))
+	// }
 	l = len(m.PrivateRecoverInfo)
 	if l > 0 {
 		n += 1 + l + sovTofnd(uint64(l))
@@ -2488,41 +2488,41 @@ func (m *KeygenOutput) Unmarshal(dAtA []byte) error {
 				m.PubKey = []byte{}
 			}
 			iNdEx = postIndex
+		// case 2:
+		// 	if wireType != 2 {
+		// 		return fmt.Errorf("proto: wrong wireType = %d for field GroupRecoverInfo", wireType)
+		// 	}
+		// 	var byteLen int
+		// 	for shift := uint(0); ; shift += 7 {
+		// 		if shift >= 64 {
+		// 			return ErrIntOverflowTofnd
+		// 		}
+		// 		if iNdEx >= l {
+		// 			return io.ErrUnexpectedEOF
+		// 		}
+		// 		b := dAtA[iNdEx]
+		// 		iNdEx++
+		// 		byteLen |= int(b&0x7F) << shift
+		// 		if b < 0x80 {
+		// 			break
+		// 		}
+		// 	}
+		// 	if byteLen < 0 {
+		// 		return ErrInvalidLengthTofnd
+		// 	}
+		// 	postIndex := iNdEx + byteLen
+		// 	if postIndex < 0 {
+		// 		return ErrInvalidLengthTofnd
+		// 	}
+		// 	if postIndex > l {
+		// 		return io.ErrUnexpectedEOF
+		// 	}
+		// 	// m.GroupRecoverInfo = append(m.GroupRecoverInfo[:0], dAtA[iNdEx:postIndex]...)
+		// 	// if m.GroupRecoverInfo == nil {
+		// 	// 	m.GroupRecoverInfo = []byte{}
+		// 	// }
+		// 	iNdEx = postIndex
 		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field GroupRecoverInfo", wireType)
-			}
-			var byteLen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTofnd
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				byteLen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if byteLen < 0 {
-				return ErrInvalidLengthTofnd
-			}
-			postIndex := iNdEx + byteLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTofnd
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.GroupRecoverInfo = append(m.GroupRecoverInfo[:0], dAtA[iNdEx:postIndex]...)
-			if m.GroupRecoverInfo == nil {
-				m.GroupRecoverInfo = []byte{}
-			}
-			iNdEx = postIndex
-		case 3:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field PrivateRecoverInfo", wireType)
 			}

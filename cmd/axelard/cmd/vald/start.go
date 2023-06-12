@@ -236,7 +236,7 @@ func listen(ctx sdkClient.Context, txf tx.Factory, axelarCfg config.ValdConfig, 
 		logger.Error(err.Error())
 	}
 	
-	eventBus := createEventBus(client, 250000, logger)
+	eventBus := createEventBus(client, 396620, logger)
 	
 	bc,err := broadcast.NewCosmosClient(
 		fmt.Sprintf(
@@ -274,7 +274,10 @@ func listen(ctx sdkClient.Context, txf tx.Factory, axelarCfg config.ValdConfig, 
 	if err != nil {
 		panic(err)
 	}
-	
+	out, err := client.Subscribe(context.Background(), "", "tm.event = 'NewBlockHeader'")
+	if err != nil {
+		panic(err)
+	}
 	//keygenStart := subscribe(tssTypes.EventTypeKeygen, tssTypes.ModuleName, tssTypes.AttributeValueStart)
 	//queryHeartBeat := createNewBlockEventQuery(tssTypes.EventTypeHeartBeat, tssTypes.ModuleName, tssTypes.AttributeValueSend)
 	// heartbeat, err := tmEvents.Subscribe(eventBus, queryHeartBeat)
@@ -324,6 +327,7 @@ func listen(ctx sdkClient.Context, txf tx.Factory, axelarCfg config.ValdConfig, 
 		//  tmEvents.Consume(heartbeat, tssMgr.ProcessHeartBeatEvent),
 		// tmEvents.Consume(keygenStart, tssMgr.ProcessKeygenStart),
 		Consume(subscriber, tssMgr),
+		ConsumeH(out, tssMgr),
 		// tmEvents.Consume(signStart, tssMgr.ProcessSignStart),
 		// tmEvents.Consume(signMsg, tssMgr.ProcessSignMsg),
 		// tmEvents.Consume(btcConf, btcMgr.ProcessConfirmation),
@@ -371,6 +375,7 @@ func Consume(subscriber <-chan ctypes.ResultEvent, tssMgr *tss.Mgr) jobs.Job {
 						key := events[0].Events[0].Attributes[0].Key
 						
 						if key == "start"{
+							
 							if err := tssMgr.ProcessKeygenStart(events, e.Data.(tmtypes.EventDataTx).Height); err != nil {
 								errChan <- err
 							}
@@ -396,7 +401,25 @@ func Consume(subscriber <-chan ctypes.ResultEvent, tssMgr *tss.Mgr) jobs.Job {
 		}
 	}
 }
+func ConsumeH(subscriber <-chan ctypes.ResultEvent, tssMgr *tss.Mgr) jobs.Job {
 
+	return func(errChan chan<- error) {
+		for {
+			select {
+			case e := <-subscriber:
+				go func() {
+					
+					newBlockHeader := e.Data.(tmtypes.EventDataNewBlockHeader)
+
+					height := newBlockHeader.Header.Height
+					//fmt.Println(height)
+					tssMgr.CheckTimeout(int(height));
+				}()
+			
+			}
+		}
+	}
+}
 func recovery(errChan chan<- error) {
 	if r := recover(); r != nil {
 		errChan <- fmt.Errorf("job panicked:%s", r)
