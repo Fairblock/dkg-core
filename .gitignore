@@ -19,3 +19,5 @@
 /.vscode/
 /x/evm/client/cli/testdata/
 /node_modules/
+
+*.txt

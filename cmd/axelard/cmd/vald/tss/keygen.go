@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"io/ioutil"
+	//"math/big"
 	"math/rand"
 	"strconv"
 	"time"
@@ -65,7 +66,7 @@ type P2pSad struct {
 func (mgr *Mgr) CheckTimeout(height int) error{
 	mgr.currentHeight = height
 	if mgr.startHeight > 0{
-		if height > mgr.startHeight + 20{
+		if height > mgr.startHeight + 30{
 			_, ok := mgr.getKeygenStream(mgr.keyId)
 			if ok{
 			mgr.ProcessTimeout()}
@@ -281,11 +282,11 @@ func (mgr *Mgr) startKeygen(keyID string, threshold uint32, myIndex uint32, part
 
 func (mgr *Mgr) handleIntermediateKeygenMsgs(keyID string, intermediate <-chan *tofnd.TrafficOut) error {
 for{
-if mgr.currentHeight >= mgr.startHeight + 20{
-	if mgr.currentHeight > mgr.startHeight + 40{
+if mgr.currentHeight >= mgr.startHeight + 30{
+	if mgr.currentHeight > mgr.startHeight + 60{
 		panic("timeout")
 	}
-	mgr.startHeight = mgr.startHeight + 20
+	mgr.startHeight = mgr.startHeight + 30
 	break
 }}
 	for msg := range intermediate {
@@ -386,12 +387,20 @@ func (mgr *Mgr) handleKeygenResult(keyID string, resultChan <-chan interface{}) 
 			pk := suite.G1().Point()
 			pk.UnmarshalBinary(pkBytes)
 			share:= res.Data.GetPrivateRecoverInfo()
-			shareB := share[4:]
+			fmt.Println(share)
+			shareB := share[4:len(share)-2]
+			index := share[len(share)-1]
+
 			for i, j := 0, len(shareB)-1; i < j; i, j = i+1, j-1 {
 				shareB[i], shareB[j] = shareB[j], shareB[i]
 			}
+		
 			_ = suite
 			shareS := suite.G1().Scalar().SetBytes(shareB)
+			
+			filenamePk := fmt.Sprintf("pk-%d.txt", index)
+			filenameShare := fmt.Sprintf("share-%d.txt", index)
+			//fmt.Println()
 			//shareS.String()
 // 			pk := suite.G1().Point()
 // //panic(dispute.AddressOfAccusee)
@@ -403,12 +412,12 @@ func (mgr *Mgr) handleKeygenResult(keyID string, resultChan <-chan interface{}) 
 		// }
 	//	data := []byte("Hello, World!") // Replace with your actual []byte data
 
-		err := ioutil.WriteFile("pk-"+mgr.principalAddr+".txt", pkBytes, 0644)
+		err := ioutil.WriteFile(filenamePk, pkBytes, 0644)
 		if err != nil {
 			fmt.Printf("Failed to write to file: %s\n", err)
 			
 		}
-		err = ioutil.WriteFile("share-"+mgr.principalAddr+".txt",shareB , 0644)
+		err = ioutil.WriteFile(filenameShare,shareB , 0644)
 		if err != nil {
 			fmt.Printf("Failed to write to file: %s\n", err)
 			
