@@ -9,9 +9,9 @@ import (
 )
 
 // DefaultGenesis represents the default genesis state
-func DefaultGenesis() *GenesisState {
-	return &GenesisState{DefaultParams()}
-}
+// func DefaultGenesis() *GenesisState {
+// 	return &GenesisState{DefaultParams()}
+// }
 
 // Validate validates the genesis state
 func (m GenesisState) Validate() error {

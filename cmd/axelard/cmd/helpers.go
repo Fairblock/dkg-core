@@ -5,28 +5,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"strconv"
-	"strings"
+	// "strconv"
+	// "strings"
 
-	"github.com/axelarnetwork/axelar-core/utils"
+	//"github.com/axelarnetwork/axelar-core/utils"
 )
 
-func parseThreshold(str string) (utils.Threshold, error) {
-	tokens := strings.Split(str, "/")
 
-	if len(tokens) != 2 {
-		return utils.Threshold{}, fmt.Errorf("malformed fraction")
-	}
-	numerator, err := strconv.ParseInt(tokens[0], 10, 64)
-	if err != nil {
-		return utils.Threshold{}, err
-	}
-	denominator, err := strconv.ParseInt(tokens[1], 10, 64)
-	if err != nil {
-		return utils.Threshold{}, err
-	}
-	return utils.Threshold{Numerator: numerator, Denominator: denominator}, nil
-}
 
 func getByteCodes(file string) ([]byte, error) {
 	jsonStr, err := ioutil.ReadFile(file)

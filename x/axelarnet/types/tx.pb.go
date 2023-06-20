@@ -5,7 +5,7 @@ package types
 
 import (
 	fmt "fmt"
-	exported "github.com/axelarnetwork/axelar-core/x/nexus/exported"
+	//exported "github.com/axelarnetwork/axelar-core/x/nexus/exported"
 	types1 "github.com/cosmos/cosmos-sdk/codec/types"
 	github_com_cosmos_cosmos_sdk_types "github.com/cosmos/cosmos-sdk/types"
 	types "github.com/cosmos/cosmos-sdk/types"
@@ -340,7 +340,7 @@ var xxx_messageInfo_RegisterIBCPathResponse proto.InternalMessageInfo
 // to nexus
 type AddCosmosBasedChainRequest struct {
 	Sender github_com_cosmos_cosmos_sdk_types.AccAddress `protobuf:"bytes,1,opt,name=sender,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"sender,omitempty"`
-	Chain  exported.Chain                                `protobuf:"bytes,2,opt,name=chain,proto3" json:"chain"`
+	// Chain  exported.Chain                                `protobuf:"bytes,2,opt,name=chain,proto3" json:"chain"`
 }
 
 func (m *AddCosmosBasedChainRequest) Reset()         { *m = AddCosmosBasedChainRequest{} }
@@ -2145,14 +2145,14 @@ func (m *AddCosmosBasedChainRequest) MarshalToSizedBuffer(dAtA []byte) (int, err
 	_ = i
 	var l int
 	_ = l
-	{
-		size, err := m.Chain.MarshalToSizedBuffer(dAtA[:i])
-		if err != nil {
-			return 0, err
-		}
-		i -= size
-		i = encodeVarintTx(dAtA, i, uint64(size))
-	}
+	// {
+	// 	size, err := m.Chain.MarshalToSizedBuffer(dAtA[:i])
+	// 	if err != nil {
+	// 		return 0, err
+	// 	}
+	// 	i -= size
+	// 	i = encodeVarintTx(dAtA, i, uint64(size))
+	// }
 	i--
 	dAtA[i] = 0x12
 	if len(m.Sender) > 0 {
@@ -2590,7 +2590,7 @@ func (m *AddCosmosBasedChainRequest) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovTx(uint64(l))
 	}
-	l = m.Chain.Size()
+	// l = m.Chain.Size()
 	n += 1 + l + sovTx(uint64(l))
 	return n
 }
@@ -3643,9 +3643,9 @@ func (m *AddCosmosBasedChainRequest) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if err := m.Chain.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
+			// if err := m.Chain.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			// 	return err
+			// }
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex

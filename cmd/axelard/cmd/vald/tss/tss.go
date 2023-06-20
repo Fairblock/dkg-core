@@ -22,12 +22,10 @@ import (
 	"github.com/axelarnetwork/axelar-core/cmd/axelard/cmd/vald/tss/rpc"
 	axelarnet "github.com/axelarnetwork/axelar-core/x/axelarnet/types"
 
-	//tstypes "github.com/axelarnetwork/axelar-core/cmd/axelard/cmd/vald/tss"
-	//snapshot "github.com/axelarnetwork/axelar-core/x/snapshot/exported"
-	"github.com/axelarnetwork/axelar-core/x/tss/exported"
+	
 	"github.com/axelarnetwork/axelar-core/x/tss/tofnd"
 	tss "github.com/axelarnetwork/axelar-core/x/tss/types"
-	tmEvents "github.com/axelarnetwork/tm-events/events"
+	//tmEvents "github.com/axelarnetwork/tm-events/events"
 )
 
 type KeygenEvent struct {
@@ -244,110 +242,6 @@ func (mgr *Mgr) Recover(recoverJSON []byte) error {
 	return nil
 }
 
-// ProcessHeartBeatEvent broadcasts the heartbeat
-func (mgr *Mgr) ProcessHeartBeatEvent(e tmEvents.Event) error {
-	grpcCtx, cancel := context.WithTimeout(context.Background(), mgr.Timeout)
-	defer cancel()
-
-	// tofnd health check using a dummy ID
-	// TODO: we should have a specific GRPC to do this diagnostic
-	request := &tofnd.KeyPresenceRequest{
-		KeyUid: "dummyID",
-	}
-
-	response, err := mgr.client.KeyPresence(grpcCtx, request)
-	if err != nil {
-		return sdkerrors.Wrapf(err, "failed to invoke KeyPresence grpc")
-	}
-
-	switch response.Response {
-	case tofnd.RESPONSE_UNSPECIFIED, tofnd.RESPONSE_FAIL:
-		return sdkerrors.Wrap(err, "tofnd not set up correctly")
-	case tofnd.RESPONSE_PRESENT, tofnd.RESPONSE_ABSENT:
-		// tofnd is working properly
-	default:
-		return sdkerrors.Wrap(err, "unknown tofnd response")
-	}
-
-	// check for keys presence according to the IDs included in the event
-	keyInfos := parseHeartBeatParams(mgr.cdc, e.Attributes)
-	var present []exported.KeyID
-
-	for _, keyInfo := range keyInfos {
-
-		grpcCtx, cancel = context.WithTimeout(context.Background(), mgr.Timeout)
-		defer cancel()
-
-		switch keyInfo.KeyType {
-		case exported.Threshold:
-			request = &tofnd.KeyPresenceRequest{
-				KeyUid: string(keyInfo.KeyID),
-			}
-			response, err = mgr.client.KeyPresence(grpcCtx, request)
-		// case exported.Multisig:
-		// 	request = &tofnd.KeyPresenceRequest{
-		// 		KeyUid: fmt.Sprintf("%s_%d", string(keyInfo.KeyID), 0),
-		// 	}
-		// 	response, err = mgr.multiSigClient.KeyPresence(grpcCtx, request)
-		default:
-			return sdkerrors.Wrapf(err, fmt.Sprintf("unrecognize key type %s", keyInfo.KeyType.SimpleString()))
-		}
-
-		if err != nil {
-			return sdkerrors.Wrapf(err, "failed to invoke KeyPresence grpc")
-		}
-
-		switch response.Response {
-		case tofnd.RESPONSE_UNSPECIFIED, tofnd.RESPONSE_FAIL:
-			return sdkerrors.Wrap(err, "tofnd not set up correctly")
-		case tofnd.RESPONSE_ABSENT:
-			// key is absent
-		case tofnd.RESPONSE_PRESENT:
-			present = append(present, keyInfo.KeyID)
-		default:
-			return sdkerrors.Wrap(err, "unknown tofnd response")
-		}
-	}
-
-	tssMsg := tss.NewHeartBeatRequest(mgr.cliCtx.FromAddress, present)
-	refundableMsg := axelarnet.NewMsgRefundMsgRequest(mgr.principalAddr, mgr.cliCtx.FromAddress, tssMsg)
-	_ = refundableMsg
-	mgr.Logger.Info(fmt.Sprintf("operator %s sending heartbeat acknowledging keys: %s", mgr.principalAddr, present))
-	//mgr.Logger.Info((refundableMsg.String()))
-	// txRes, err := mgr.broadcaster.Broadcast(mgr.cliCtx.WithBroadcastMode(sdkFlags.BroadcastBlock), refundableMsg)
-	// if err != nil {
-	// 	return sdkerrors.Wrap(err, "handler goroutine: failure to broadcast outgoing heartbeat msg")
-	// }
-
-	// refundRes, err := mgr.extractRefundMsgResponse(txRes)
-	// if err != nil {
-	// 	return sdkerrors.Wrap(err, "handler goroutine: failure to retrieve refund reply")
-	// }
-
-	// var heartbeatRes tss.HeartBeatResponse
-	// err = heartbeatRes.Unmarshal(refundRes.Data)
-	// if err != nil {
-	// 	return sdkerrors.Wrap(err, "handler goroutine: failure to retrieve heartbeat reply")
-	// }
-
-	// allGood := true
-	// if !heartbeatRes.KeygenIllegibility.Is(snapshot.None) {
-	// 	mgr.Logger.Error(fmt.Sprintf("operator %s unable to participate in keygen due to: %s",
-	// 		mgr.principalAddr, heartbeatRes.KeygenIllegibility.String()))
-	// 	allGood = false
-	// }
-	// if !heartbeatRes.SigningIllegibility.Is(snapshot.None) {
-	// 	mgr.Logger.Error(fmt.Sprintf("operator %s unable to participate in signing due to: %s",
-	// 		mgr.principalAddr, heartbeatRes.SigningIllegibility.String()))
-	// 	allGood = false
-	// }
-
-	// if allGood {
-	// 	mgr.Logger.Info(fmt.Sprintf("no keygen/signing issues reported for operator %s", mgr.principalAddr))
-	// }
-
-	return nil
-}
 
 // func (mgr *Mgr) abortSign(sigID string) (err error) {
 // 	stream, ok := mgr.getSignStream(sigID)

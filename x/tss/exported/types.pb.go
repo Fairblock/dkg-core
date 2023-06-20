@@ -5,7 +5,7 @@ package exported
 
 import (
 	fmt "fmt"
-	utils "github.com/axelarnetwork/axelar-core/utils"
+	//utils "github.com/axelarnetwork/axelar-core/utils"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
 	io "io"
@@ -176,130 +176,130 @@ func (KeyType) EnumDescriptor() ([]byte, []int) {
 	return fileDescriptor_6a3f02740fd114b9, []int{4}
 }
 
-// KeyRequirement defines requirements for keys
-type KeyRequirement struct {
-	KeyRole                    KeyRole                    `protobuf:"varint,1,opt,name=key_role,json=keyRole,proto3,enum=tss.exported.v1beta1.KeyRole" json:"key_role,omitempty"`
-	KeyType                    KeyType                    `protobuf:"varint,2,opt,name=key_type,json=keyType,proto3,enum=tss.exported.v1beta1.KeyType" json:"key_type,omitempty"`
-	MinKeygenThreshold         utils.Threshold            `protobuf:"bytes,3,opt,name=min_keygen_threshold,json=minKeygenThreshold,proto3" json:"min_keygen_threshold"`
-	SafetyThreshold            utils.Threshold            `protobuf:"bytes,4,opt,name=safety_threshold,json=safetyThreshold,proto3" json:"safety_threshold"`
-	KeyShareDistributionPolicy KeyShareDistributionPolicy `protobuf:"varint,5,opt,name=key_share_distribution_policy,json=keyShareDistributionPolicy,proto3,enum=tss.exported.v1beta1.KeyShareDistributionPolicy" json:"key_share_distribution_policy,omitempty"`
-	MaxTotalShareCount         int64                      `protobuf:"varint,6,opt,name=max_total_share_count,json=maxTotalShareCount,proto3" json:"max_total_share_count,omitempty"`
-	MinTotalShareCount         int64                      `protobuf:"varint,7,opt,name=min_total_share_count,json=minTotalShareCount,proto3" json:"min_total_share_count,omitempty"`
-	KeygenVotingThreshold      utils.Threshold            `protobuf:"bytes,8,opt,name=keygen_voting_threshold,json=keygenVotingThreshold,proto3" json:"keygen_voting_threshold"`
-	SignVotingThreshold        utils.Threshold            `protobuf:"bytes,9,opt,name=sign_voting_threshold,json=signVotingThreshold,proto3" json:"sign_voting_threshold"`
-	KeygenTimeout              int64                      `protobuf:"varint,10,opt,name=keygen_timeout,json=keygenTimeout,proto3" json:"keygen_timeout,omitempty"`
-	SignTimeout                int64                      `protobuf:"varint,11,opt,name=sign_timeout,json=signTimeout,proto3" json:"sign_timeout,omitempty"`
-}
+// // KeyRequirement defines requirements for keys
+// type KeyRequirement struct {
+// 	KeyRole                    KeyRole                    `protobuf:"varint,1,opt,name=key_role,json=keyRole,proto3,enum=tss.exported.v1beta1.KeyRole" json:"key_role,omitempty"`
+// 	KeyType                    KeyType                    `protobuf:"varint,2,opt,name=key_type,json=keyType,proto3,enum=tss.exported.v1beta1.KeyType" json:"key_type,omitempty"`
+// 	MinKeygenThreshold         utils.Threshold            `protobuf:"bytes,3,opt,name=min_keygen_threshold,json=minKeygenThreshold,proto3" json:"min_keygen_threshold"`
+// 	SafetyThreshold            utils.Threshold            `protobuf:"bytes,4,opt,name=safety_threshold,json=safetyThreshold,proto3" json:"safety_threshold"`
+// 	KeyShareDistributionPolicy KeyShareDistributionPolicy `protobuf:"varint,5,opt,name=key_share_distribution_policy,json=keyShareDistributionPolicy,proto3,enum=tss.exported.v1beta1.KeyShareDistributionPolicy" json:"key_share_distribution_policy,omitempty"`
+// 	MaxTotalShareCount         int64                      `protobuf:"varint,6,opt,name=max_total_share_count,json=maxTotalShareCount,proto3" json:"max_total_share_count,omitempty"`
+// 	MinTotalShareCount         int64                      `protobuf:"varint,7,opt,name=min_total_share_count,json=minTotalShareCount,proto3" json:"min_total_share_count,omitempty"`
+// 	KeygenVotingThreshold      utils.Threshold            `protobuf:"bytes,8,opt,name=keygen_voting_threshold,json=keygenVotingThreshold,proto3" json:"keygen_voting_threshold"`
+// 	SignVotingThreshold        utils.Threshold            `protobuf:"bytes,9,opt,name=sign_voting_threshold,json=signVotingThreshold,proto3" json:"sign_voting_threshold"`
+// 	KeygenTimeout              int64                      `protobuf:"varint,10,opt,name=keygen_timeout,json=keygenTimeout,proto3" json:"keygen_timeout,omitempty"`
+// 	SignTimeout                int64                      `protobuf:"varint,11,opt,name=sign_timeout,json=signTimeout,proto3" json:"sign_timeout,omitempty"`
+// }
 
-func (m *KeyRequirement) Reset()         { *m = KeyRequirement{} }
-func (m *KeyRequirement) String() string { return proto.CompactTextString(m) }
-func (*KeyRequirement) ProtoMessage()    {}
-func (*KeyRequirement) Descriptor() ([]byte, []int) {
-	return fileDescriptor_6a3f02740fd114b9, []int{0}
-}
-func (m *KeyRequirement) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *KeyRequirement) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_KeyRequirement.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *KeyRequirement) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_KeyRequirement.Merge(m, src)
-}
-func (m *KeyRequirement) XXX_Size() int {
-	return m.Size()
-}
-func (m *KeyRequirement) XXX_DiscardUnknown() {
-	xxx_messageInfo_KeyRequirement.DiscardUnknown(m)
-}
+// func (m *KeyRequirement) Reset()         { *m = KeyRequirement{} }
+// func (m *KeyRequirement) String() string { return proto.CompactTextString(m) }
+// func (*KeyRequirement) ProtoMessage()    {}
+// func (*KeyRequirement) Descriptor() ([]byte, []int) {
+// 	return fileDescriptor_6a3f02740fd114b9, []int{0}
+// }
+// func (m *KeyRequirement) XXX_Unmarshal(b []byte) error {
+// 	return m.Unmarshal(b)
+// }
+// func (m *KeyRequirement) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+// 	if deterministic {
+// 		return xxx_messageInfo_KeyRequirement.Marshal(b, m, deterministic)
+// 	} else {
+// 		b = b[:cap(b)]
+// 		n, err := m.MarshalToSizedBuffer(b)
+// 		if err != nil {
+// 			return nil, err
+// 		}
+// 		return b[:n], nil
+// 	}
+// }
+// func (m *KeyRequirement) XXX_Merge(src proto.Message) {
+// 	xxx_messageInfo_KeyRequirement.Merge(m, src)
+// }
+// func (m *KeyRequirement) XXX_Size() int {
+// 	return m.Size()
+// }
+// func (m *KeyRequirement) XXX_DiscardUnknown() {
+// 	xxx_messageInfo_KeyRequirement.DiscardUnknown(m)
+// }
 
-var xxx_messageInfo_KeyRequirement proto.InternalMessageInfo
+// var xxx_messageInfo_KeyRequirement proto.InternalMessageInfo
 
-func (m *KeyRequirement) GetKeyRole() KeyRole {
-	if m != nil {
-		return m.KeyRole
-	}
-	return Unknown
-}
+// func (m *KeyRequirement) GetKeyRole() KeyRole {
+// 	if m != nil {
+// 		return m.KeyRole
+// 	}
+// 	return Unknown
+// }
 
-func (m *KeyRequirement) GetKeyType() KeyType {
-	if m != nil {
-		return m.KeyType
-	}
-	return KEY_TYPE_UNSPECIFIED
-}
+// func (m *KeyRequirement) GetKeyType() KeyType {
+// 	if m != nil {
+// 		return m.KeyType
+// 	}
+// 	return KEY_TYPE_UNSPECIFIED
+// }
 
-func (m *KeyRequirement) GetMinKeygenThreshold() utils.Threshold {
-	if m != nil {
-		return m.MinKeygenThreshold
-	}
-	return utils.Threshold{}
-}
+// func (m *KeyRequirement) GetMinKeygenThreshold() utils.Threshold {
+// 	if m != nil {
+// 		return m.MinKeygenThreshold
+// 	}
+// 	return utils.Threshold{}
+// }
 
-func (m *KeyRequirement) GetSafetyThreshold() utils.Threshold {
-	if m != nil {
-		return m.SafetyThreshold
-	}
-	return utils.Threshold{}
-}
+// func (m *KeyRequirement) GetSafetyThreshold() utils.Threshold {
+// 	if m != nil {
+// 		return m.SafetyThreshold
+// 	}
+// 	return utils.Threshold{}
+// }
 
-func (m *KeyRequirement) GetKeyShareDistributionPolicy() KeyShareDistributionPolicy {
-	if m != nil {
-		return m.KeyShareDistributionPolicy
-	}
-	return Unspecified
-}
+// func (m *KeyRequirement) GetKeyShareDistributionPolicy() KeyShareDistributionPolicy {
+// 	if m != nil {
+// 		return m.KeyShareDistributionPolicy
+// 	}
+// 	return Unspecified
+// }
 
-func (m *KeyRequirement) GetMaxTotalShareCount() int64 {
-	if m != nil {
-		return m.MaxTotalShareCount
-	}
-	return 0
-}
+// func (m *KeyRequirement) GetMaxTotalShareCount() int64 {
+// 	if m != nil {
+// 		return m.MaxTotalShareCount
+// 	}
+// 	return 0
+// }
 
-func (m *KeyRequirement) GetMinTotalShareCount() int64 {
-	if m != nil {
-		return m.MinTotalShareCount
-	}
-	return 0
-}
+// func (m *KeyRequirement) GetMinTotalShareCount() int64 {
+// 	if m != nil {
+// 		return m.MinTotalShareCount
+// 	}
+// 	return 0
+// }
 
-func (m *KeyRequirement) GetKeygenVotingThreshold() utils.Threshold {
-	if m != nil {
-		return m.KeygenVotingThreshold
-	}
-	return utils.Threshold{}
-}
+// func (m *KeyRequirement) GetKeygenVotingThreshold() utils.Threshold {
+// 	if m != nil {
+// 		return m.KeygenVotingThreshold
+// 	}
+// 	return utils.Threshold{}
+// }
 
-func (m *KeyRequirement) GetSignVotingThreshold() utils.Threshold {
-	if m != nil {
-		return m.SignVotingThreshold
-	}
-	return utils.Threshold{}
-}
+// func (m *KeyRequirement) GetSignVotingThreshold() utils.Threshold {
+// 	if m != nil {
+// 		return m.SignVotingThreshold
+// 	}
+// 	return utils.Threshold{}
+// }
 
-func (m *KeyRequirement) GetKeygenTimeout() int64 {
-	if m != nil {
-		return m.KeygenTimeout
-	}
-	return 0
-}
+// func (m *KeyRequirement) GetKeygenTimeout() int64 {
+// 	if m != nil {
+// 		return m.KeygenTimeout
+// 	}
+// 	return 0
+// }
 
-func (m *KeyRequirement) GetSignTimeout() int64 {
-	if m != nil {
-		return m.SignTimeout
-	}
-	return 0
-}
+// func (m *KeyRequirement) GetSignTimeout() int64 {
+// 	if m != nil {
+// 		return m.SignTimeout
+// 	}
+// 	return 0
+// }
 
 // SignInfo holds information about a sign request
 type SignInfo struct {
@@ -445,7 +445,7 @@ func init() {
 	proto.RegisterEnum("tss.exported.v1beta1.AckType", AckType_name, AckType_value)
 	proto.RegisterEnum("tss.exported.v1beta1.SigStatus", SigStatus_name, SigStatus_value)
 	proto.RegisterEnum("tss.exported.v1beta1.KeyType", KeyType_name, KeyType_value)
-	proto.RegisterType((*KeyRequirement)(nil), "tss.exported.v1beta1.KeyRequirement")
+	//proto.RegisterType((*KeyRequirement)(nil), "tss.exported.v1beta1.KeyRequirement")
 	proto.RegisterType((*SignInfo)(nil), "tss.exported.v1beta1.SignInfo")
 	proto.RegisterType((*PubKeyInfo)(nil), "tss.exported.v1beta1.PubKeyInfo")
 }
@@ -527,113 +527,113 @@ var fileDescriptor_6a3f02740fd114b9 = []byte{
 	0x1d, 0xc6, 0x7d, 0x87, 0x08, 0x00, 0x00,
 }
 
-func (m *KeyRequirement) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
+// func (m *KeyRequirement) Marshal() (dAtA []byte, err error) {
+// 	size := m.Size()
+// 	dAtA = make([]byte, size)
+// 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	return dAtA[:n], nil
+// }
 
-func (m *KeyRequirement) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
+// func (m *KeyRequirement) MarshalTo(dAtA []byte) (int, error) {
+// 	size := m.Size()
+// 	return m.MarshalToSizedBuffer(dAtA[:size])
+// }
 
-func (m *KeyRequirement) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.SignTimeout != 0 {
-		i = encodeVarintTypes(dAtA, i, uint64(m.SignTimeout))
-		i--
-		dAtA[i] = 0x58
-	}
-	if m.KeygenTimeout != 0 {
-		i = encodeVarintTypes(dAtA, i, uint64(m.KeygenTimeout))
-		i--
-		dAtA[i] = 0x50
-	}
-	{
-		size, err := m.SignVotingThreshold.MarshalToSizedBuffer(dAtA[:i])
-		if err != nil {
-			return 0, err
-		}
-		i -= size
-		i = encodeVarintTypes(dAtA, i, uint64(size))
-	}
-	i--
-	dAtA[i] = 0x4a
-	{
-		size, err := m.KeygenVotingThreshold.MarshalToSizedBuffer(dAtA[:i])
-		if err != nil {
-			return 0, err
-		}
-		i -= size
-		i = encodeVarintTypes(dAtA, i, uint64(size))
-	}
-	i--
-	dAtA[i] = 0x42
-	if m.MinTotalShareCount != 0 {
-		i = encodeVarintTypes(dAtA, i, uint64(m.MinTotalShareCount))
-		i--
-		dAtA[i] = 0x38
-	}
-	if m.MaxTotalShareCount != 0 {
-		i = encodeVarintTypes(dAtA, i, uint64(m.MaxTotalShareCount))
-		i--
-		dAtA[i] = 0x30
-	}
-	if m.KeyShareDistributionPolicy != 0 {
-		i = encodeVarintTypes(dAtA, i, uint64(m.KeyShareDistributionPolicy))
-		i--
-		dAtA[i] = 0x28
-	}
-	{
-		size, err := m.SafetyThreshold.MarshalToSizedBuffer(dAtA[:i])
-		if err != nil {
-			return 0, err
-		}
-		i -= size
-		i = encodeVarintTypes(dAtA, i, uint64(size))
-	}
-	i--
-	dAtA[i] = 0x22
-	{
-		size, err := m.MinKeygenThreshold.MarshalToSizedBuffer(dAtA[:i])
-		if err != nil {
-			return 0, err
-		}
-		i -= size
-		i = encodeVarintTypes(dAtA, i, uint64(size))
-	}
-	i--
-	dAtA[i] = 0x1a
-	if m.KeyType != 0 {
-		i = encodeVarintTypes(dAtA, i, uint64(m.KeyType))
-		i--
-		dAtA[i] = 0x10
-	}
-	if m.KeyRole != 0 {
-		i = encodeVarintTypes(dAtA, i, uint64(m.KeyRole))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
-}
+// func (m *KeyRequirement) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+// 	i := len(dAtA)
+// 	_ = i
+// 	var l int
+// 	_ = l
+// 	if m.SignTimeout != 0 {
+// 		i = encodeVarintTypes(dAtA, i, uint64(m.SignTimeout))
+// 		i--
+// 		dAtA[i] = 0x58
+// 	}
+// 	if m.KeygenTimeout != 0 {
+// 		i = encodeVarintTypes(dAtA, i, uint64(m.KeygenTimeout))
+// 		i--
+// 		dAtA[i] = 0x50
+// 	}
+// 	{
+// 		size, err := m.SignVotingThreshold.MarshalToSizedBuffer(dAtA[:i])
+// 		if err != nil {
+// 			return 0, err
+// 		}
+// 		i -= size
+// 		i = encodeVarintTypes(dAtA, i, uint64(size))
+// 	}
+// 	i--
+// 	dAtA[i] = 0x4a
+// 	{
+// 		size, err := m.KeygenVotingThreshold.MarshalToSizedBuffer(dAtA[:i])
+// 		if err != nil {
+// 			return 0, err
+// 		}
+// 		i -= size
+// 		i = encodeVarintTypes(dAtA, i, uint64(size))
+// 	}
+// 	i--
+// 	dAtA[i] = 0x42
+// 	if m.MinTotalShareCount != 0 {
+// 		i = encodeVarintTypes(dAtA, i, uint64(m.MinTotalShareCount))
+// 		i--
+// 		dAtA[i] = 0x38
+// 	}
+// 	if m.MaxTotalShareCount != 0 {
+// 		i = encodeVarintTypes(dAtA, i, uint64(m.MaxTotalShareCount))
+// 		i--
+// 		dAtA[i] = 0x30
+// 	}
+// 	if m.KeyShareDistributionPolicy != 0 {
+// 		i = encodeVarintTypes(dAtA, i, uint64(m.KeyShareDistributionPolicy))
+// 		i--
+// 		dAtA[i] = 0x28
+// 	}
+// 	{
+// 		size, err := m.SafetyThreshold.MarshalToSizedBuffer(dAtA[:i])
+// 		if err != nil {
+// 			return 0, err
+// 		}
+// 		i -= size
+// 		i = encodeVarintTypes(dAtA, i, uint64(size))
+// 	}
+// 	i--
+// 	dAtA[i] = 0x22
+// 	{
+// 		size, err := m.MinKeygenThreshold.MarshalToSizedBuffer(dAtA[:i])
+// 		if err != nil {
+// 			return 0, err
+// 		}
+// 		i -= size
+// 		i = encodeVarintTypes(dAtA, i, uint64(size))
+// 	}
+// 	i--
+// 	dAtA[i] = 0x1a
+// 	if m.KeyType != 0 {
+// 		i = encodeVarintTypes(dAtA, i, uint64(m.KeyType))
+// 		i--
+// 		dAtA[i] = 0x10
+// 	}
+// 	if m.KeyRole != 0 {
+// 		i = encodeVarintTypes(dAtA, i, uint64(m.KeyRole))
+// 		i--
+// 		dAtA[i] = 0x8
+// 	}
+// 	return len(dAtA) - i, nil
+// }
 
-func (m *SignInfo) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
+// func (m *SignInfo) Marshal() (dAtA []byte, err error) {
+// 	size := m.Size()
+// 	dAtA = make([]byte, size)
+// 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	return dAtA[:n], nil
+// }
 
 func (m *SignInfo) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
@@ -736,43 +736,43 @@ func encodeVarintTypes(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
-func (m *KeyRequirement) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.KeyRole != 0 {
-		n += 1 + sovTypes(uint64(m.KeyRole))
-	}
-	if m.KeyType != 0 {
-		n += 1 + sovTypes(uint64(m.KeyType))
-	}
-	l = m.MinKeygenThreshold.Size()
-	n += 1 + l + sovTypes(uint64(l))
-	l = m.SafetyThreshold.Size()
-	n += 1 + l + sovTypes(uint64(l))
-	if m.KeyShareDistributionPolicy != 0 {
-		n += 1 + sovTypes(uint64(m.KeyShareDistributionPolicy))
-	}
-	if m.MaxTotalShareCount != 0 {
-		n += 1 + sovTypes(uint64(m.MaxTotalShareCount))
-	}
-	if m.MinTotalShareCount != 0 {
-		n += 1 + sovTypes(uint64(m.MinTotalShareCount))
-	}
-	l = m.KeygenVotingThreshold.Size()
-	n += 1 + l + sovTypes(uint64(l))
-	l = m.SignVotingThreshold.Size()
-	n += 1 + l + sovTypes(uint64(l))
-	if m.KeygenTimeout != 0 {
-		n += 1 + sovTypes(uint64(m.KeygenTimeout))
-	}
-	if m.SignTimeout != 0 {
-		n += 1 + sovTypes(uint64(m.SignTimeout))
-	}
-	return n
-}
+// func (m *KeyRequirement) Size() (n int) {
+// 	if m == nil {
+// 		return 0
+// 	}
+// 	var l int
+// 	_ = l
+// 	if m.KeyRole != 0 {
+// 		n += 1 + sovTypes(uint64(m.KeyRole))
+// 	}
+// 	if m.KeyType != 0 {
+// 		n += 1 + sovTypes(uint64(m.KeyType))
+// 	}
+// 	l = m.MinKeygenThreshold.Size()
+// 	n += 1 + l + sovTypes(uint64(l))
+// 	l = m.SafetyThreshold.Size()
+// 	n += 1 + l + sovTypes(uint64(l))
+// 	if m.KeyShareDistributionPolicy != 0 {
+// 		n += 1 + sovTypes(uint64(m.KeyShareDistributionPolicy))
+// 	}
+// 	if m.MaxTotalShareCount != 0 {
+// 		n += 1 + sovTypes(uint64(m.MaxTotalShareCount))
+// 	}
+// 	if m.MinTotalShareCount != 0 {
+// 		n += 1 + sovTypes(uint64(m.MinTotalShareCount))
+// 	}
+// 	l = m.KeygenVotingThreshold.Size()
+// 	n += 1 + l + sovTypes(uint64(l))
+// 	l = m.SignVotingThreshold.Size()
+// 	n += 1 + l + sovTypes(uint64(l))
+// 	if m.KeygenTimeout != 0 {
+// 		n += 1 + sovTypes(uint64(m.KeygenTimeout))
+// 	}
+// 	if m.SignTimeout != 0 {
+// 		n += 1 + sovTypes(uint64(m.SignTimeout))
+// 	}
+// 	return n
+// }
 
 func (m *SignInfo) Size() (n int) {
 	if m == nil {
@@ -829,321 +829,321 @@ func sovTypes(x uint64) (n int) {
 func sozTypes(x uint64) (n int) {
 	return sovTypes(uint64((x << 1) ^ uint64((int64(x) >> 63))))
 }
-func (m *KeyRequirement) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowTypes
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: KeyRequirement: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: KeyRequirement: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field KeyRole", wireType)
-			}
-			m.KeyRole = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypes
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.KeyRole |= KeyRole(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field KeyType", wireType)
-			}
-			m.KeyType = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypes
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.KeyType |= KeyType(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field MinKeygenThreshold", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypes
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthTypes
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthTypes
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if err := m.MinKeygenThreshold.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 4:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field SafetyThreshold", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypes
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthTypes
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthTypes
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if err := m.SafetyThreshold.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 5:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field KeyShareDistributionPolicy", wireType)
-			}
-			m.KeyShareDistributionPolicy = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypes
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.KeyShareDistributionPolicy |= KeyShareDistributionPolicy(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 6:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field MaxTotalShareCount", wireType)
-			}
-			m.MaxTotalShareCount = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypes
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.MaxTotalShareCount |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 7:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field MinTotalShareCount", wireType)
-			}
-			m.MinTotalShareCount = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypes
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.MinTotalShareCount |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 8:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field KeygenVotingThreshold", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypes
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthTypes
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthTypes
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if err := m.KeygenVotingThreshold.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 9:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field SignVotingThreshold", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypes
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthTypes
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthTypes
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if err := m.SignVotingThreshold.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 10:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field KeygenTimeout", wireType)
-			}
-			m.KeygenTimeout = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypes
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.KeygenTimeout |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 11:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field SignTimeout", wireType)
-			}
-			m.SignTimeout = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypes
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.SignTimeout |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipTypes(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthTypes
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
+// func (m *KeyRequirement) Unmarshal(dAtA []byte) error {
+// 	l := len(dAtA)
+// 	iNdEx := 0
+// 	for iNdEx < l {
+// 		preIndex := iNdEx
+// 		var wire uint64
+// 		for shift := uint(0); ; shift += 7 {
+// 			if shift >= 64 {
+// 				return ErrIntOverflowTypes
+// 			}
+// 			if iNdEx >= l {
+// 				return io.ErrUnexpectedEOF
+// 			}
+// 			b := dAtA[iNdEx]
+// 			iNdEx++
+// 			wire |= uint64(b&0x7F) << shift
+// 			if b < 0x80 {
+// 				break
+// 			}
+// 		}
+// 		fieldNum := int32(wire >> 3)
+// 		wireType := int(wire & 0x7)
+// 		if wireType == 4 {
+// 			return fmt.Errorf("proto: KeyRequirement: wiretype end group for non-group")
+// 		}
+// 		if fieldNum <= 0 {
+// 			return fmt.Errorf("proto: KeyRequirement: illegal tag %d (wire type %d)", fieldNum, wire)
+// 		}
+// 		switch fieldNum {
+// 		case 1:
+// 			if wireType != 0 {
+// 				return fmt.Errorf("proto: wrong wireType = %d for field KeyRole", wireType)
+// 			}
+// 			m.KeyRole = 0
+// 			for shift := uint(0); ; shift += 7 {
+// 				if shift >= 64 {
+// 					return ErrIntOverflowTypes
+// 				}
+// 				if iNdEx >= l {
+// 					return io.ErrUnexpectedEOF
+// 				}
+// 				b := dAtA[iNdEx]
+// 				iNdEx++
+// 				m.KeyRole |= KeyRole(b&0x7F) << shift
+// 				if b < 0x80 {
+// 					break
+// 				}
+// 			}
+// 		case 2:
+// 			if wireType != 0 {
+// 				return fmt.Errorf("proto: wrong wireType = %d for field KeyType", wireType)
+// 			}
+// 			m.KeyType = 0
+// 			for shift := uint(0); ; shift += 7 {
+// 				if shift >= 64 {
+// 					return ErrIntOverflowTypes
+// 				}
+// 				if iNdEx >= l {
+// 					return io.ErrUnexpectedEOF
+// 				}
+// 				b := dAtA[iNdEx]
+// 				iNdEx++
+// 				m.KeyType |= KeyType(b&0x7F) << shift
+// 				if b < 0x80 {
+// 					break
+// 				}
+// 			}
+// 		case 3:
+// 			if wireType != 2 {
+// 				return fmt.Errorf("proto: wrong wireType = %d for field MinKeygenThreshold", wireType)
+// 			}
+// 			var msglen int
+// 			for shift := uint(0); ; shift += 7 {
+// 				if shift >= 64 {
+// 					return ErrIntOverflowTypes
+// 				}
+// 				if iNdEx >= l {
+// 					return io.ErrUnexpectedEOF
+// 				}
+// 				b := dAtA[iNdEx]
+// 				iNdEx++
+// 				msglen |= int(b&0x7F) << shift
+// 				if b < 0x80 {
+// 					break
+// 				}
+// 			}
+// 			if msglen < 0 {
+// 				return ErrInvalidLengthTypes
+// 			}
+// 			postIndex := iNdEx + msglen
+// 			if postIndex < 0 {
+// 				return ErrInvalidLengthTypes
+// 			}
+// 			if postIndex > l {
+// 				return io.ErrUnexpectedEOF
+// 			}
+// 			if err := m.MinKeygenThreshold.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+// 				return err
+// 			}
+// 			iNdEx = postIndex
+// 		case 4:
+// 			if wireType != 2 {
+// 				return fmt.Errorf("proto: wrong wireType = %d for field SafetyThreshold", wireType)
+// 			}
+// 			var msglen int
+// 			for shift := uint(0); ; shift += 7 {
+// 				if shift >= 64 {
+// 					return ErrIntOverflowTypes
+// 				}
+// 				if iNdEx >= l {
+// 					return io.ErrUnexpectedEOF
+// 				}
+// 				b := dAtA[iNdEx]
+// 				iNdEx++
+// 				msglen |= int(b&0x7F) << shift
+// 				if b < 0x80 {
+// 					break
+// 				}
+// 			}
+// 			if msglen < 0 {
+// 				return ErrInvalidLengthTypes
+// 			}
+// 			postIndex := iNdEx + msglen
+// 			if postIndex < 0 {
+// 				return ErrInvalidLengthTypes
+// 			}
+// 			if postIndex > l {
+// 				return io.ErrUnexpectedEOF
+// 			}
+// 			if err := m.SafetyThreshold.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+// 				return err
+// 			}
+// 			iNdEx = postIndex
+// 		case 5:
+// 			if wireType != 0 {
+// 				return fmt.Errorf("proto: wrong wireType = %d for field KeyShareDistributionPolicy", wireType)
+// 			}
+// 			m.KeyShareDistributionPolicy = 0
+// 			for shift := uint(0); ; shift += 7 {
+// 				if shift >= 64 {
+// 					return ErrIntOverflowTypes
+// 				}
+// 				if iNdEx >= l {
+// 					return io.ErrUnexpectedEOF
+// 				}
+// 				b := dAtA[iNdEx]
+// 				iNdEx++
+// 				m.KeyShareDistributionPolicy |= KeyShareDistributionPolicy(b&0x7F) << shift
+// 				if b < 0x80 {
+// 					break
+// 				}
+// 			}
+// 		case 6:
+// 			if wireType != 0 {
+// 				return fmt.Errorf("proto: wrong wireType = %d for field MaxTotalShareCount", wireType)
+// 			}
+// 			m.MaxTotalShareCount = 0
+// 			for shift := uint(0); ; shift += 7 {
+// 				if shift >= 64 {
+// 					return ErrIntOverflowTypes
+// 				}
+// 				if iNdEx >= l {
+// 					return io.ErrUnexpectedEOF
+// 				}
+// 				b := dAtA[iNdEx]
+// 				iNdEx++
+// 				m.MaxTotalShareCount |= int64(b&0x7F) << shift
+// 				if b < 0x80 {
+// 					break
+// 				}
+// 			}
+// 		case 7:
+// 			if wireType != 0 {
+// 				return fmt.Errorf("proto: wrong wireType = %d for field MinTotalShareCount", wireType)
+// 			}
+// 			m.MinTotalShareCount = 0
+// 			for shift := uint(0); ; shift += 7 {
+// 				if shift >= 64 {
+// 					return ErrIntOverflowTypes
+// 				}
+// 				if iNdEx >= l {
+// 					return io.ErrUnexpectedEOF
+// 				}
+// 				b := dAtA[iNdEx]
+// 				iNdEx++
+// 				m.MinTotalShareCount |= int64(b&0x7F) << shift
+// 				if b < 0x80 {
+// 					break
+// 				}
+// 			}
+// 		case 8:
+// 			if wireType != 2 {
+// 				return fmt.Errorf("proto: wrong wireType = %d for field KeygenVotingThreshold", wireType)
+// 			}
+// 			var msglen int
+// 			for shift := uint(0); ; shift += 7 {
+// 				if shift >= 64 {
+// 					return ErrIntOverflowTypes
+// 				}
+// 				if iNdEx >= l {
+// 					return io.ErrUnexpectedEOF
+// 				}
+// 				b := dAtA[iNdEx]
+// 				iNdEx++
+// 				msglen |= int(b&0x7F) << shift
+// 				if b < 0x80 {
+// 					break
+// 				}
+// 			}
+// 			if msglen < 0 {
+// 				return ErrInvalidLengthTypes
+// 			}
+// 			postIndex := iNdEx + msglen
+// 			if postIndex < 0 {
+// 				return ErrInvalidLengthTypes
+// 			}
+// 			if postIndex > l {
+// 				return io.ErrUnexpectedEOF
+// 			}
+// 			if err := m.KeygenVotingThreshold.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+// 				return err
+// 			}
+// 			iNdEx = postIndex
+// 		case 9:
+// 			if wireType != 2 {
+// 				return fmt.Errorf("proto: wrong wireType = %d for field SignVotingThreshold", wireType)
+// 			}
+// 			var msglen int
+// 			for shift := uint(0); ; shift += 7 {
+// 				if shift >= 64 {
+// 					return ErrIntOverflowTypes
+// 				}
+// 				if iNdEx >= l {
+// 					return io.ErrUnexpectedEOF
+// 				}
+// 				b := dAtA[iNdEx]
+// 				iNdEx++
+// 				msglen |= int(b&0x7F) << shift
+// 				if b < 0x80 {
+// 					break
+// 				}
+// 			}
+// 			if msglen < 0 {
+// 				return ErrInvalidLengthTypes
+// 			}
+// 			postIndex := iNdEx + msglen
+// 			if postIndex < 0 {
+// 				return ErrInvalidLengthTypes
+// 			}
+// 			if postIndex > l {
+// 				return io.ErrUnexpectedEOF
+// 			}
+// 			if err := m.SignVotingThreshold.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+// 				return err
+// 			}
+// 			iNdEx = postIndex
+// 		case 10:
+// 			if wireType != 0 {
+// 				return fmt.Errorf("proto: wrong wireType = %d for field KeygenTimeout", wireType)
+// 			}
+// 			m.KeygenTimeout = 0
+// 			for shift := uint(0); ; shift += 7 {
+// 				if shift >= 64 {
+// 					return ErrIntOverflowTypes
+// 				}
+// 				if iNdEx >= l {
+// 					return io.ErrUnexpectedEOF
+// 				}
+// 				b := dAtA[iNdEx]
+// 				iNdEx++
+// 				m.KeygenTimeout |= int64(b&0x7F) << shift
+// 				if b < 0x80 {
+// 					break
+// 				}
+// 			}
+// 		case 11:
+// 			if wireType != 0 {
+// 				return fmt.Errorf("proto: wrong wireType = %d for field SignTimeout", wireType)
+// 			}
+// 			m.SignTimeout = 0
+// 			for shift := uint(0); ; shift += 7 {
+// 				if shift >= 64 {
+// 					return ErrIntOverflowTypes
+// 				}
+// 				if iNdEx >= l {
+// 					return io.ErrUnexpectedEOF
+// 				}
+// 				b := dAtA[iNdEx]
+// 				iNdEx++
+// 				m.SignTimeout |= int64(b&0x7F) << shift
+// 				if b < 0x80 {
+// 					break
+// 				}
+// 			}
+// 		default:
+// 			iNdEx = preIndex
+// 			skippy, err := skipTypes(dAtA[iNdEx:])
+// 			if err != nil {
+// 				return err
+// 			}
+// 			if (skippy < 0) || (iNdEx+skippy) < 0 {
+// 				return ErrInvalidLengthTypes
+// 			}
+// 			if (iNdEx + skippy) > l {
+// 				return io.ErrUnexpectedEOF
+// 			}
+// 			iNdEx += skippy
+// 		}
+// 	}
 
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
+// 	if iNdEx > l {
+// 		return io.ErrUnexpectedEOF
+// 	}
+// 	return nil
+// }
 func (m *SignInfo) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0

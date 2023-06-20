@@ -5,11 +5,11 @@ package types
 
 import (
 	fmt "fmt"
-	github_com_axelarnetwork_axelar_core_x_snapshot_exported "github.com/axelarnetwork/axelar-core/x/snapshot/exported"
+	//github_com_axelarnetwork_axelar_core_x_snapshot_exported "github.com/axelarnetwork/axelar-core/x/snapshot/exported"
 	exported "github.com/axelarnetwork/axelar-core/x/tss/exported"
 	github_com_axelarnetwork_axelar_core_x_tss_exported "github.com/axelarnetwork/axelar-core/x/tss/exported"
 	tofnd "github.com/axelarnetwork/axelar-core/x/tss/tofnd"
-	exported1 "github.com/axelarnetwork/axelar-core/x/vote/exported"
+	//exported1 "github.com/axelarnetwork/axelar-core/x/vote/exported"
 	github_com_cosmos_cosmos_sdk_types "github.com/cosmos/cosmos-sdk/types"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
@@ -335,7 +335,7 @@ var xxx_messageInfo_ProcessSignTrafficResponse proto.InternalMessageInfo
 // VotePubKeyRequest represents the message to vote on a public key
 type VotePubKeyRequest struct {
 	Sender  github_com_cosmos_cosmos_sdk_types.AccAddress `protobuf:"bytes,1,opt,name=sender,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"sender,omitempty"`
-	PollKey exported1.PollKey                             `protobuf:"bytes,2,opt,name=poll_key,json=pollKey,proto3" json:"poll_key"`
+	//PollKey exported1.PollKey                             `protobuf:"bytes,2,opt,name=poll_key,json=pollKey,proto3" json:"poll_key"`
 	Result  *tofnd.MessageOut_KeygenResult                `protobuf:"bytes,3,opt,name=result,proto3" json:"result,omitempty"`
 }
 
@@ -412,7 +412,7 @@ var xxx_messageInfo_VotePubKeyResponse proto.InternalMessageInfo
 // VoteSigRequest represents a message to vote for a signature
 type VoteSigRequest struct {
 	Sender  github_com_cosmos_cosmos_sdk_types.AccAddress `protobuf:"bytes,1,opt,name=sender,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"sender,omitempty"`
-	PollKey exported1.PollKey                             `protobuf:"bytes,2,opt,name=poll_key,json=pollKey,proto3" json:"poll_key"`
+	//PollKey exported1.PollKey                             `protobuf:"bytes,2,opt,name=poll_key,json=pollKey,proto3" json:"poll_key"`
 	Result  *tofnd.MessageOut_SignResult                  `protobuf:"bytes,3,opt,name=result,proto3" json:"result,omitempty"`
 }
 
@@ -524,41 +524,41 @@ func (m *HeartBeatRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_HeartBeatRequest proto.InternalMessageInfo
 
-type HeartBeatResponse struct {
-	KeygenIllegibility  github_com_axelarnetwork_axelar_core_x_snapshot_exported.ValidatorIllegibility `protobuf:"varint,1,opt,name=keygen_illegibility,json=keygenIllegibility,proto3,casttype=github.com/axelarnetwork/axelar-core/x/snapshot/exported.ValidatorIllegibility" json:"keygen_illegibility,omitempty"`
-	SigningIllegibility github_com_axelarnetwork_axelar_core_x_snapshot_exported.ValidatorIllegibility `protobuf:"varint,2,opt,name=signing_illegibility,json=signingIllegibility,proto3,casttype=github.com/axelarnetwork/axelar-core/x/snapshot/exported.ValidatorIllegibility" json:"signing_illegibility,omitempty"`
-}
+// type HeartBeatResponse struct {
+// 	KeygenIllegibility  github_com_axelarnetwork_axelar_core_x_snapshot_exported.ValidatorIllegibility `protobuf:"varint,1,opt,name=keygen_illegibility,json=keygenIllegibility,proto3,casttype=github.com/axelarnetwork/axelar-core/x/snapshot/exported.ValidatorIllegibility" json:"keygen_illegibility,omitempty"`
+// 	SigningIllegibility github_com_axelarnetwork_axelar_core_x_snapshot_exported.ValidatorIllegibility `protobuf:"varint,2,opt,name=signing_illegibility,json=signingIllegibility,proto3,casttype=github.com/axelarnetwork/axelar-core/x/snapshot/exported.ValidatorIllegibility" json:"signing_illegibility,omitempty"`
+// }
 
-func (m *HeartBeatResponse) Reset()         { *m = HeartBeatResponse{} }
-func (m *HeartBeatResponse) String() string { return proto.CompactTextString(m) }
-func (*HeartBeatResponse) ProtoMessage()    {}
-func (*HeartBeatResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_58d13e1023e3ffaf, []int{13}
-}
-func (m *HeartBeatResponse) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *HeartBeatResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_HeartBeatResponse.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *HeartBeatResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_HeartBeatResponse.Merge(m, src)
-}
-func (m *HeartBeatResponse) XXX_Size() int {
-	return m.Size()
-}
-func (m *HeartBeatResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_HeartBeatResponse.DiscardUnknown(m)
-}
+// func (m *HeartBeatResponse) Reset()         { *m = HeartBeatResponse{} }
+// func (m *HeartBeatResponse) String() string { return proto.CompactTextString(m) }
+// func (*HeartBeatResponse) ProtoMessage()    {}
+// func (*HeartBeatResponse) Descriptor() ([]byte, []int) {
+// 	return fileDescriptor_58d13e1023e3ffaf, []int{13}
+// }
+// func (m *HeartBeatResponse) XXX_Unmarshal(b []byte) error {
+// 	return m.Unmarshal(b)
+// }
+// func (m *HeartBeatResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+// 	if deterministic {
+// 		return xxx_messageInfo_HeartBeatResponse.Marshal(b, m, deterministic)
+// 	} else {
+// 		b = b[:cap(b)]
+// 		n, err := m.MarshalToSizedBuffer(b)
+// 		if err != nil {
+// 			return nil, err
+// 		}
+// 		return b[:n], nil
+// 	}
+// }
+// func (m *HeartBeatResponse) XXX_Merge(src proto.Message) {
+// 	xxx_messageInfo_HeartBeatResponse.Merge(m, src)
+// }
+// func (m *HeartBeatResponse) XXX_Size() int {
+// 	return m.Size()
+// }
+// func (m *HeartBeatResponse) XXX_DiscardUnknown() {
+// 	xxx_messageInfo_HeartBeatResponse.DiscardUnknown(m)
+// }
 
 var xxx_messageInfo_HeartBeatResponse proto.InternalMessageInfo
 
@@ -766,7 +766,7 @@ func init() {
 	proto.RegisterType((*VoteSigRequest)(nil), "tss.v1beta1.VoteSigRequest")
 	proto.RegisterType((*VoteSigResponse)(nil), "tss.v1beta1.VoteSigResponse")
 	proto.RegisterType((*HeartBeatRequest)(nil), "tss.v1beta1.HeartBeatRequest")
-	proto.RegisterType((*HeartBeatResponse)(nil), "tss.v1beta1.HeartBeatResponse")
+	//proto.RegisterType((*HeartBeatResponse)(nil), "tss.v1beta1.HeartBeatResponse")
 	proto.RegisterType((*RegisterExternalKeysRequest)(nil), "tss.v1beta1.RegisterExternalKeysRequest")
 	proto.RegisterType((*RegisterExternalKeysRequest_ExternalKey)(nil), "tss.v1beta1.RegisterExternalKeysRequest.ExternalKey")
 	proto.RegisterType((*RegisterExternalKeysResponse)(nil), "tss.v1beta1.RegisterExternalKeysResponse")
@@ -1149,14 +1149,14 @@ func (m *VotePubKeyRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x1a
 	}
-	{
-		size, err := m.PollKey.MarshalToSizedBuffer(dAtA[:i])
-		if err != nil {
-			return 0, err
-		}
-		i -= size
-		i = encodeVarintTx(dAtA, i, uint64(size))
-	}
+	// {
+	// 	size, err := m.PollKey.MarshalToSizedBuffer(dAtA[:i])
+	// 	if err != nil {
+	// 		return 0, err
+	// 	}
+	// 	i -= size
+	// 	i = encodeVarintTx(dAtA, i, uint64(size))
+	// }
 	i--
 	dAtA[i] = 0x12
 	if len(m.Sender) > 0 {
@@ -1231,14 +1231,14 @@ func (m *VoteSigRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x1a
 	}
-	{
-		size, err := m.PollKey.MarshalToSizedBuffer(dAtA[:i])
-		if err != nil {
-			return 0, err
-		}
-		i -= size
-		i = encodeVarintTx(dAtA, i, uint64(size))
-	}
+	// {
+	// 	size, err := m.PollKey.MarshalToSizedBuffer(dAtA[:i])
+	// 	if err != nil {
+	// 		return 0, err
+	// 	}
+	// 	i -= size
+	// 	i = encodeVarintTx(dAtA, i, uint64(size))
+	// }
 	i--
 	dAtA[i] = 0x12
 	if len(m.Sender) > 0 {
@@ -1320,38 +1320,38 @@ func (m *HeartBeatRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *HeartBeatResponse) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
+// func (m *HeartBeatResponse) Marshal() (dAtA []byte, err error) {
+// 	size := m.Size()
+// 	dAtA = make([]byte, size)
+// 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	return dAtA[:n], nil
+// }
 
-func (m *HeartBeatResponse) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
+// func (m *HeartBeatResponse) MarshalTo(dAtA []byte) (int, error) {
+// 	size := m.Size()
+// 	return m.MarshalToSizedBuffer(dAtA[:size])
+// }
 
-func (m *HeartBeatResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.SigningIllegibility != 0 {
-		i = encodeVarintTx(dAtA, i, uint64(m.SigningIllegibility))
-		i--
-		dAtA[i] = 0x10
-	}
-	if m.KeygenIllegibility != 0 {
-		i = encodeVarintTx(dAtA, i, uint64(m.KeygenIllegibility))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
-}
+// func (m *HeartBeatResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+// 	i := len(dAtA)
+// 	_ = i
+// 	var l int
+// 	_ = l
+// 	if m.SigningIllegibility != 0 {
+// 		i = encodeVarintTx(dAtA, i, uint64(m.SigningIllegibility))
+// 		i--
+// 		dAtA[i] = 0x10
+// 	}
+// 	if m.KeygenIllegibility != 0 {
+// 		i = encodeVarintTx(dAtA, i, uint64(m.KeygenIllegibility))
+// 		i--
+// 		dAtA[i] = 0x8
+// 	}
+// 	return len(dAtA) - i, nil
+// }
 
 func (m *RegisterExternalKeysRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
@@ -1676,7 +1676,7 @@ func (m *VotePubKeyRequest) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovTx(uint64(l))
 	}
-	l = m.PollKey.Size()
+	// l = m.PollKey.Size()
 	n += 1 + l + sovTx(uint64(l))
 	if m.Result != nil {
 		l = m.Result.Size()
@@ -1708,7 +1708,7 @@ func (m *VoteSigRequest) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovTx(uint64(l))
 	}
-	l = m.PollKey.Size()
+	//l = m.PollKey.Size()
 	n += 1 + l + sovTx(uint64(l))
 	if m.Result != nil {
 		l = m.Result.Size()
@@ -1749,20 +1749,20 @@ func (m *HeartBeatRequest) Size() (n int) {
 	return n
 }
 
-func (m *HeartBeatResponse) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.KeygenIllegibility != 0 {
-		n += 1 + sovTx(uint64(m.KeygenIllegibility))
-	}
-	if m.SigningIllegibility != 0 {
-		n += 1 + sovTx(uint64(m.SigningIllegibility))
-	}
-	return n
-}
+// func (m *HeartBeatResponse) Size() (n int) {
+// 	if m == nil {
+// 		return 0
+// 	}
+// 	var l int
+// 	_ = l
+// 	if m.KeygenIllegibility != 0 {
+// 		n += 1 + sovTx(uint64(m.KeygenIllegibility))
+// 	}
+// 	if m.SigningIllegibility != 0 {
+// 		n += 1 + sovTx(uint64(m.SigningIllegibility))
+// 	}
+// 	return n
+// }
 
 func (m *RegisterExternalKeysRequest) Size() (n int) {
 	if m == nil {
@@ -2729,9 +2729,9 @@ func (m *VotePubKeyRequest) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if err := m.PollKey.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
+			// if err := m.PollKey.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			// 	return err
+			// }
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
@@ -2964,9 +2964,9 @@ func (m *VoteSigRequest) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if err := m.PollKey.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
+			// if err := m.PollKey.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			// 	return err
+			// }
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
@@ -3223,94 +3223,94 @@ func (m *HeartBeatRequest) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *HeartBeatResponse) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowTx
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: HeartBeatResponse: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: HeartBeatResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field KeygenIllegibility", wireType)
-			}
-			m.KeygenIllegibility = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.KeygenIllegibility |= github_com_axelarnetwork_axelar_core_x_snapshot_exported.ValidatorIllegibility(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field SigningIllegibility", wireType)
-			}
-			m.SigningIllegibility = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.SigningIllegibility |= github_com_axelarnetwork_axelar_core_x_snapshot_exported.ValidatorIllegibility(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipTx(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthTx
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
+// func (m *HeartBeatResponse) Unmarshal(dAtA []byte) error {
+// 	l := len(dAtA)
+// 	iNdEx := 0
+// 	for iNdEx < l {
+// 		preIndex := iNdEx
+// 		var wire uint64
+// 		for shift := uint(0); ; shift += 7 {
+// 			if shift >= 64 {
+// 				return ErrIntOverflowTx
+// 			}
+// 			if iNdEx >= l {
+// 				return io.ErrUnexpectedEOF
+// 			}
+// 			b := dAtA[iNdEx]
+// 			iNdEx++
+// 			wire |= uint64(b&0x7F) << shift
+// 			if b < 0x80 {
+// 				break
+// 			}
+// 		}
+// 		fieldNum := int32(wire >> 3)
+// 		wireType := int(wire & 0x7)
+// 		if wireType == 4 {
+// 			return fmt.Errorf("proto: HeartBeatResponse: wiretype end group for non-group")
+// 		}
+// 		if fieldNum <= 0 {
+// 			return fmt.Errorf("proto: HeartBeatResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+// 		}
+// 		switch fieldNum {
+// 		case 1:
+// 			if wireType != 0 {
+// 				return fmt.Errorf("proto: wrong wireType = %d for field KeygenIllegibility", wireType)
+// 			}
+// 			m.KeygenIllegibility = 0
+// 			for shift := uint(0); ; shift += 7 {
+// 				if shift >= 64 {
+// 					return ErrIntOverflowTx
+// 				}
+// 				if iNdEx >= l {
+// 					return io.ErrUnexpectedEOF
+// 				}
+// 				b := dAtA[iNdEx]
+// 				iNdEx++
+// 				m.KeygenIllegibility |= github_com_axelarnetwork_axelar_core_x_snapshot_exported.ValidatorIllegibility(b&0x7F) << shift
+// 				if b < 0x80 {
+// 					break
+// 				}
+// 			}
+// 		case 2:
+// 			if wireType != 0 {
+// 				return fmt.Errorf("proto: wrong wireType = %d for field SigningIllegibility", wireType)
+// 			}
+// 			m.SigningIllegibility = 0
+// 			for shift := uint(0); ; shift += 7 {
+// 				if shift >= 64 {
+// 					return ErrIntOverflowTx
+// 				}
+// 				if iNdEx >= l {
+// 					return io.ErrUnexpectedEOF
+// 				}
+// 				b := dAtA[iNdEx]
+// 				iNdEx++
+// 				m.SigningIllegibility |= github_com_axelarnetwork_axelar_core_x_snapshot_exported.ValidatorIllegibility(b&0x7F) << shift
+// 				if b < 0x80 {
+// 					break
+// 				}
+// 			}
+// 		default:
+// 			iNdEx = preIndex
+// 			skippy, err := skipTx(dAtA[iNdEx:])
+// 			if err != nil {
+// 				return err
+// 			}
+// 			if (skippy < 0) || (iNdEx+skippy) < 0 {
+// 				return ErrInvalidLengthTx
+// 			}
+// 			if (iNdEx + skippy) > l {
+// 				return io.ErrUnexpectedEOF
+// 			}
+// 			iNdEx += skippy
+// 		}
+// 	}
 
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
+// 	if iNdEx > l {
+// 		return io.ErrUnexpectedEOF
+// 	}
+// 	return nil
+// }
 func (m *RegisterExternalKeysRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0

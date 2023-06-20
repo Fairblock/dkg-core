@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"cosmossdk.io/math"
+	//"cosmossdk.io/math"
 	"github.com/axelarnetwork/axelar-core/app"
 	clienttx "github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
@@ -18,7 +18,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 	authsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+	
 	"github.com/pkg/errors"
 	"google.golang.org/grpc"
 )
@@ -32,7 +32,7 @@ type CosmosClient struct {
 	authClient      authtypes.QueryClient
 	txClient        tx.ServiceClient
 	grpcConn        grpc.ClientConn
-	bankQueryClient banktypes.QueryClient
+	
 	privateKey      secp256k1.PrivKey
 	publicKey       cryptotypes.PubKey
 	account         authtypes.BaseAccount
@@ -65,7 +65,7 @@ func NewCosmosClient(
 	}
 
 	authClient := authtypes.NewQueryClient(grpcConn)
-	bankClient := banktypes.NewQueryClient(grpcConn)
+	
 
 	keyBytes, err := hex.DecodeString(privateKeyHex)
 	if err != nil {
@@ -97,7 +97,7 @@ func NewCosmosClient(
 	}
 
 	return &CosmosClient{
-		bankQueryClient: bankClient,
+		
 		authClient:      authClient,
 		txClient:        tx.NewServiceClient(grpcConn),
 		grpcConn:        *grpcConn,
@@ -108,41 +108,9 @@ func NewCosmosClient(
 		chainID:         chainID,
 	}, nil
 }
-func (c *CosmosClient) GetBalance(denom string) (math.Int, error) {
-	resp, err := c.bankQueryClient.Balance(
-		context.Background(),
-		&banktypes.QueryBalanceRequest{
-			Address: c.GetAddress(),
-			Denom:   denom,
-		},
-	)
-	if err != nil {
-		return math.NewInt(-1), err
-	}
-	return math.NewIntFromBigInt(resp.Balance.Amount.BigInt()), nil
-}
 
-func (c *CosmosClient) SendToken(target, denom string, amount math.Int, adjustGas bool) (*cosmostypes.TxResponse, error) {
-	resp, err := c.BroadcastTx(&banktypes.MsgSend{
-		FromAddress: c.GetAddress(),
-		ToAddress:   target,
-		Amount:      cosmostypes.NewCoins(cosmostypes.NewCoin(denom, cosmostypes.NewIntFromBigInt(amount.BigInt()))),
-	}, adjustGas)
-	return resp, err
-}
 
-func (c *CosmosClient) MultiSend(denom string, totalAmount, eachAmt math.Int, targets []cosmostypes.AccAddress, adjustGas bool) (*cosmostypes.TxResponse, error) {
-	outputs := make([]banktypes.Output, len(targets))
-	for i, each := range targets {
-		outputs[i] = banktypes.NewOutput(each, cosmostypes.NewCoins(cosmostypes.NewCoin(denom, cosmostypes.NewIntFromBigInt(eachAmt.BigInt()))))
-	}
-	resp, err := c.BroadcastTx(&banktypes.MsgMultiSend{
-		Inputs:  []banktypes.Input{banktypes.NewInput(c.accAddress, cosmostypes.NewCoins(cosmostypes.NewCoin(denom, cosmostypes.NewIntFromBigInt(totalAmount.BigInt()))))},
-		Outputs: outputs,
-	}, adjustGas)
 
-	return resp, err
-}
 
 func (c *CosmosClient) GetAddress() string {
 	return c.account.Address

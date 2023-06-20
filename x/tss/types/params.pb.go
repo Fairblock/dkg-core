@@ -5,8 +5,8 @@ package types
 
 import (
 	fmt "fmt"
-	utils "github.com/axelarnetwork/axelar-core/utils"
-	exported "github.com/axelarnetwork/axelar-core/x/tss/exported"
+	//utils "github.com/axelarnetwork/axelar-core/utils"
+	//exported "github.com/axelarnetwork/axelar-core/x/tss/exported"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
 	io "io"
@@ -28,7 +28,7 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 // Params is the parameter set for this module
 type Params struct {
 	// KeyRequirements defines the requirement for each key role
-	KeyRequirements []exported.KeyRequirement `protobuf:"bytes,2,rep,name=key_requirements,json=keyRequirements,proto3" json:"key_requirements"`
+	//KeyRequirements []exported.KeyRequirement `protobuf:"bytes,2,rep,name=key_requirements,json=keyRequirements,proto3" json:"key_requirements"`
 	// SuspendDurationInBlocks defines the number of blocks a
 	// validator is disallowed to participate in any TSS ceremony after
 	// committing a malicious behaviour during signing
@@ -36,9 +36,9 @@ type Params struct {
 	// HeartBeatPeriodInBlocks defines the time period in blocks for tss to
 	// emit the event asking validators to send their heartbeats
 	HeartbeatPeriodInBlocks          int64           `protobuf:"varint,4,opt,name=heartbeat_period_in_blocks,json=heartbeatPeriodInBlocks,proto3" json:"heartbeat_period_in_blocks,omitempty"`
-	MaxMissedBlocksPerWindow         utils.Threshold `protobuf:"bytes,5,opt,name=max_missed_blocks_per_window,json=maxMissedBlocksPerWindow,proto3" json:"max_missed_blocks_per_window"`
+	//MaxMissedBlocksPerWindow         utils.Threshold `protobuf:"bytes,5,opt,name=max_missed_blocks_per_window,json=maxMissedBlocksPerWindow,proto3" json:"max_missed_blocks_per_window"`
 	UnbondingLockingKeyRotationCount int64           `protobuf:"varint,6,opt,name=unbonding_locking_key_rotation_count,json=unbondingLockingKeyRotationCount,proto3" json:"unbonding_locking_key_rotation_count,omitempty"`
-	ExternalMultisigThreshold        utils.Threshold `protobuf:"bytes,7,opt,name=external_multisig_threshold,json=externalMultisigThreshold,proto3" json:"external_multisig_threshold"`
+	//ExternalMultisigThreshold        utils.Threshold `protobuf:"bytes,7,opt,name=external_multisig_threshold,json=externalMultisigThreshold,proto3" json:"external_multisig_threshold"`
 	MaxSignQueueSize                 int64           `protobuf:"varint,8,opt,name=max_sign_queue_size,json=maxSignQueueSize,proto3" json:"max_sign_queue_size,omitempty"`
 	MaxSimultaneousSignShares        int64           `protobuf:"varint,9,opt,name=max_simultaneous_sign_shares,json=maxSimultaneousSignShares,proto3" json:"max_simultaneous_sign_shares,omitempty"`
 }
@@ -148,14 +148,14 @@ func (m *Params) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x40
 	}
-	{
-		size, err := m.ExternalMultisigThreshold.MarshalToSizedBuffer(dAtA[:i])
-		if err != nil {
-			return 0, err
-		}
-		i -= size
-		i = encodeVarintParams(dAtA, i, uint64(size))
-	}
+	// {
+	// 	size, err := m.ExternalMultisigThreshold.MarshalToSizedBuffer(dAtA[:i])
+	// 	if err != nil {
+	// 		return 0, err
+	// 	}
+	// 	i -= size
+	// 	i = encodeVarintParams(dAtA, i, uint64(size))
+	// }
 	i--
 	dAtA[i] = 0x3a
 	if m.UnbondingLockingKeyRotationCount != 0 {
@@ -163,14 +163,14 @@ func (m *Params) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x30
 	}
-	{
-		size, err := m.MaxMissedBlocksPerWindow.MarshalToSizedBuffer(dAtA[:i])
-		if err != nil {
-			return 0, err
-		}
-		i -= size
-		i = encodeVarintParams(dAtA, i, uint64(size))
-	}
+	// {
+	// 	size, err := m.MaxMissedBlocksPerWindow.MarshalToSizedBuffer(dAtA[:i])
+	// 	if err != nil {
+	// 		return 0, err
+	// 	}
+	// 	i -= size
+	// 	i = encodeVarintParams(dAtA, i, uint64(size))
+	// }
 	i--
 	dAtA[i] = 0x2a
 	if m.HeartbeatPeriodInBlocks != 0 {
@@ -183,20 +183,20 @@ func (m *Params) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x18
 	}
-	if len(m.KeyRequirements) > 0 {
-		for iNdEx := len(m.KeyRequirements) - 1; iNdEx >= 0; iNdEx-- {
-			{
-				size, err := m.KeyRequirements[iNdEx].MarshalToSizedBuffer(dAtA[:i])
-				if err != nil {
-					return 0, err
-				}
-				i -= size
-				i = encodeVarintParams(dAtA, i, uint64(size))
-			}
-			i--
-			dAtA[i] = 0x12
-		}
-	}
+	// if len(m.KeyRequirements) > 0 {
+	// 	for iNdEx := len(m.KeyRequirements) - 1; iNdEx >= 0; iNdEx-- {
+	// 		{
+	// 			size, err := m.KeyRequirements[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+	// 			if err != nil {
+	// 				return 0, err
+	// 			}
+	// 			i -= size
+	// 			i = encodeVarintParams(dAtA, i, uint64(size))
+	// 		}
+	// 		i--
+	// 		dAtA[i] = 0x12
+	// 	}
+	// }
 	return len(dAtA) - i, nil
 }
 
@@ -217,24 +217,24 @@ func (m *Params) Size() (n int) {
 	}
 	var l int
 	_ = l
-	if len(m.KeyRequirements) > 0 {
-		for _, e := range m.KeyRequirements {
-			l = e.Size()
-			n += 1 + l + sovParams(uint64(l))
-		}
-	}
+	// if len(m.KeyRequirements) > 0 {
+	// 	for _, e := range m.KeyRequirements {
+	// 		l = e.Size()
+	// 		n += 1 + l + sovParams(uint64(l))
+	// 	}
+	// }
 	if m.SuspendDurationInBlocks != 0 {
 		n += 1 + sovParams(uint64(m.SuspendDurationInBlocks))
 	}
 	if m.HeartbeatPeriodInBlocks != 0 {
 		n += 1 + sovParams(uint64(m.HeartbeatPeriodInBlocks))
 	}
-	l = m.MaxMissedBlocksPerWindow.Size()
+	// l = m.MaxMissedBlocksPerWindow.Size()
 	n += 1 + l + sovParams(uint64(l))
 	if m.UnbondingLockingKeyRotationCount != 0 {
 		n += 1 + sovParams(uint64(m.UnbondingLockingKeyRotationCount))
 	}
-	l = m.ExternalMultisigThreshold.Size()
+	// l = m.ExternalMultisigThreshold.Size()
 	n += 1 + l + sovParams(uint64(l))
 	if m.MaxSignQueueSize != 0 {
 		n += 1 + sovParams(uint64(m.MaxSignQueueSize))
@@ -309,10 +309,10 @@ func (m *Params) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.KeyRequirements = append(m.KeyRequirements, exported.KeyRequirement{})
-			if err := m.KeyRequirements[len(m.KeyRequirements)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
+			// m.KeyRequirements = append(m.KeyRequirements, exported.KeyRequirement{})
+			// if err := m.KeyRequirements[len(m.KeyRequirements)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			// 	return err
+			// }
 			iNdEx = postIndex
 		case 3:
 			if wireType != 0 {
@@ -381,9 +381,9 @@ func (m *Params) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if err := m.MaxMissedBlocksPerWindow.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
+			// if err := m.MaxMissedBlocksPerWindow.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			// 	return err
+			// }
 			iNdEx = postIndex
 		case 6:
 			if wireType != 0 {
@@ -433,9 +433,9 @@ func (m *Params) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if err := m.ExternalMultisigThreshold.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
+			// if err := m.ExternalMultisigThreshold.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			// 	return err
+			// }
 			iNdEx = postIndex
 		case 8:
 			if wireType != 0 {

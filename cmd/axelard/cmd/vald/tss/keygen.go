@@ -35,46 +35,47 @@ import (
 	//"github.com/axelarnetwork/axelar-core/cmd/axelard/cmd/vald/parse"
 	//	"github.com/axelarnetwork/axelar-core/utils"
 	axelarnet "github.com/axelarnetwork/axelar-core/x/axelarnet/types"
-	//tssexported "github.com/axelarnetwork/axelar-core/x/tss/exported"
+
 	"github.com/axelarnetwork/axelar-core/x/tss/tofnd"
 	tss "github.com/axelarnetwork/axelar-core/x/tss/types"
-	//voting "github.com/axelarnetwork/axelar-core/x/vote/exported"
 )
 
 type Share struct {
 	Scalar []byte `json:"scalar"`
 	Index  int    `json:"index"`
-	
 }
-type KeyShareRecoveryInfo struct{
-    X_i_ciphertext []byte  `json:"x_i_ciphertext"`
+type KeyShareRecoveryInfo struct {
+	X_i_ciphertext []byte `json:"x_i_ciphertext"`
 }
 type ShareInfoDispute struct {
-	Share Share  `json:"share"`
-	Kij   []byte `json:"kij"`
-	Proof [3][32]byte `json:"proof"`
-	Commit [][]byte `json:"commit"`
-	Faulter []byte `json:"faulter"`
-Accuser []byte `json:"accuser"`
-AccuserId uint64  `json:"accuserId"`
-FaulterId uint64 `json:"faulterId"`
-//CReal []byte `json:"cReal"`
+	Share     Share       `json:"share"`
+	Kij       []byte      `json:"kij"`
+	Proof     [3][32]byte `json:"proof"`
+	Commit    [][]byte    `json:"commit"`
+	Faulter   []byte      `json:"faulter"`
+	Accuser   []byte      `json:"accuser"`
+	AccuserId uint64      `json:"accuserId"`
+	FaulterId uint64      `json:"faulterId"`
+	//CReal []byte `json:"cReal"`
 }
 type P2pSad struct {
 	VssComplaint []ShareInfoDispute `json:"vss_complaint"`
 }
-func (mgr *Mgr) CheckTimeout(height int) error{
+
+func (mgr *Mgr) CheckTimeout(height int) error {
 	mgr.currentHeight = height
-	if mgr.startHeight > 0{
-		if height > mgr.startHeight + 30{
+	if mgr.startHeight > 0 {
+		if height > mgr.startHeight+30 {
 			_, ok := mgr.getKeygenStream(mgr.keyId)
-			if ok{
-			mgr.ProcessTimeout()}
-			
+			if ok {
+				mgr.ProcessTimeout()
+			}
+
 		}
 	}
 	return nil
 }
+
 // ProcessKeygenStart starts the communication with the keygen protocol
 func (mgr *Mgr) ProcessKeygenStart(e []EventMsg, height int64) error {
 	mgr.startHeight = int(height)
@@ -83,25 +84,18 @@ func (mgr *Mgr) ProcessKeygenStart(e []EventMsg, height int64) error {
 	if err != nil {
 		return err
 	}
-	//fmt.Println("this")
+
 	index := -1
 	var list []string
 	for i := 0; i < len(participants); i++ {
 		list = append(list, sdk.AccAddress([]byte(participants[i])).String())
 		if mgr.principalAddr == participants[i] {
-		//	fmt.Println("here")
+
 			index = i
 		}
 	}
-	//fmt.Println("this2")
-	// argAddr := sdk.AccAddress([]byte(validator1))
-	// argAddr2 := sdk.AccAddress([]byte(validator2))
-	//me := sdk.AccAddress([]byte(mgr.principalAddr))
 
-	//participants := []string{argAddr.String(), argAddr2.String()}
 	return mgr.thresholdKeygenStart(height, keyID, timeout, threshold, index, list)
-	// case tssexported.Multisig.SimpleString():
-	// 	return mgr.multiSigKeygenStart(keyID, participantShareCounts[myIndex])
 
 }
 func init() {
@@ -122,7 +116,6 @@ func (mgr *Mgr) thresholdKeygenStart(height int64, keyID string, timeout int64, 
 	session := mgr.timeoutQueue.Enqueue(keyID, height+timeout)
 	rand.Seed(time.Now().UnixNano())
 
-	// participants = []string{"rr", "tt"}
 	stream, cancel, err := mgr.startKeygen(randSeq(35), threshold, uint32(myIndex), participants)
 	if err != nil {
 		return err
@@ -140,9 +133,9 @@ func (mgr *Mgr) thresholdKeygenStart(height int64, keyID string, timeout int64, 
 	}()
 	go func() {
 		err := mgr.handleIntermediateKeygenMsgs(keyID, intermediateMsgs)
-		
+
 		if err != nil {
-			
+
 			errChan <- err
 		}
 	}()
@@ -157,7 +150,7 @@ func (mgr *Mgr) thresholdKeygenStart(height int64, keyID string, timeout int64, 
 		mgr.Logger.Info(fmt.Sprintf("aborted keygen protocol %s due to timeout", keyID))
 	}()
 	go func() {
-	
+
 		err := mgr.handleKeygenResult(keyID, result)
 		done = true
 
@@ -169,9 +162,9 @@ func (mgr *Mgr) thresholdKeygenStart(height int64, keyID string, timeout int64, 
 
 // ProcessKeygenMsg forwards blockchain messages to the keygen protocol
 func (mgr *Mgr) ProcessKeygenMsg(e []types.Event) error {
-	//	fmt.Println("process")
+
 	keyID, from, payload := parseMsgParams(e)
-		
+
 	msgIn := prepareTrafficIn(mgr.principalAddr, from, keyID, payload, mgr.Logger)
 
 	stream, ok := mgr.getKeygenStream(keyID)
@@ -187,10 +180,9 @@ func (mgr *Mgr) ProcessKeygenMsg(e []types.Event) error {
 }
 
 func (mgr *Mgr) ProcessKeygenMsgDispute(e []KeygenEvent) error {
-	//	fmt.Println("process")
-	//fmt.Println(e)
+
 	keyID, from, payload := parseMsgParamsDispute(e)
-	//	fmt.Println(keyID)
+
 	msgIn := prepareTrafficIn(mgr.principalAddr, from, keyID, payload, mgr.Logger)
 
 	stream, ok := mgr.getKeygenStream(keyID)
@@ -205,11 +197,8 @@ func (mgr *Mgr) ProcessKeygenMsgDispute(e []KeygenEvent) error {
 	return nil
 }
 func (mgr *Mgr) ProcessTimeout() error {
-	//	fmt.Println("process")
-	//fmt.Println(e)
-	
-	//	fmt.Println(keyID)
-	msgIn := prepareTrafficIn(mgr.principalAddr, mgr.principalAddr, mgr.keyId,&tofnd.TrafficOut{ToPartyUid:"timeout",Payload: []byte("timeout"), IsBroadcast:true} , mgr.Logger)
+
+	msgIn := prepareTrafficIn(mgr.principalAddr, mgr.principalAddr, mgr.keyId, &tofnd.TrafficOut{ToPartyUid: "timeout", Payload: []byte("timeout"), IsBroadcast: true}, mgr.Logger)
 
 	stream, ok := mgr.getKeygenStream(mgr.keyId)
 	if !ok {
@@ -228,23 +217,14 @@ func parseKeygenStartParams(e []EventMsg) (string, uint32, []string, int64, erro
 	participants := e[0].Events[0].Attributes[2].Value
 	timeout := e[0].Events[0].Attributes[3].Value
 
-	// height = e.(tmtypes.EventDataTx).Height
-	// dd := e.(tmtypes.EventDataTx).Tx
-	// fmt.Println(string(dd))
-	// ddd := (dd[29:194])
-	// msg:= new(axelarnet.MsgStartKeygen)
-	// err = msg.Unmarshal(ddd)
-
 	var participant_list []string
 	err := json.Unmarshal([]byte(participants), &participant_list)
 	if err != nil {
 		panic(err)
 	}
-	//fmt.Println("here")
+
 	threshold_uint64, err := strconv.ParseUint(t, 10, 32)
 	timeout_int, err := strconv.ParseInt(timeout, 10, 64)
-	// fmt.Println(msg.KeyID)
-	// fmt.Println("here2")
 
 	return keyID, uint32(threshold_uint64), participant_list, timeout_int, nil
 
@@ -267,7 +247,7 @@ func (mgr *Mgr) startKeygen(keyID string, threshold uint32, myIndex uint32, part
 			NewKeyUid: keyID,
 			Threshold: threshold,
 			PartyUids: participants,
-			//PartyShareCounts: participantShareCounts,
+
 			MyPartyIndex: myIndex,
 		},
 	}
@@ -281,62 +261,56 @@ func (mgr *Mgr) startKeygen(keyID string, threshold uint32, myIndex uint32, part
 }
 
 func (mgr *Mgr) handleIntermediateKeygenMsgs(keyID string, intermediate <-chan *tofnd.TrafficOut) error {
-for{
-if mgr.currentHeight >= mgr.startHeight + 30{
-	if mgr.currentHeight > mgr.startHeight + 60{
-		panic("timeout")
+	for {
+		if mgr.currentHeight >= mgr.startHeight+30 {
+			if mgr.currentHeight > mgr.startHeight+60 {
+				panic("timeout")
+			}
+			mgr.startHeight = mgr.startHeight + 30
+			break
+		}
 	}
-	mgr.startHeight = mgr.startHeight + 30
-	break
-}}
 	for msg := range intermediate {
 
 		mgr.Logger.Info(fmt.Sprintf("outgoing keygen msg: key [%.20s] from me [%.20s] to [%.20s] broadcast [%t]\n",
 			keyID, mgr.principalAddr, msg.ToPartyUid, msg.IsBroadcast))
 		argAddr := sdk.AccAddress([]byte(mgr.principalAddr))
 		// sender is set by broadcaster
-		if(msg.ToPartyUid == "r3"){
-		var p2pSad P2pSad
-		//fmt.Println("payload: ", msg.Payload[9:len(msg.Payload)-1])
-		err := json.Unmarshal((msg.Payload[9:len(msg.Payload)-1]), &p2pSad)
-		//fmt.Println(p2pSad)
-		if err != nil {
-		fmt.Println("Error:", err)
-			
-		}
-		
-		//fmt.Println("r3 complaints", p2pSad.VssComplaint[0].Commit)
-		for i := 0; i < len(p2pSad.VssComplaint); i++ {
-			complaint := p2pSad.VssComplaint[i]
-			byteSlice := make([]byte, 32) // Assuming you want to convert to a 4-byte slice
-			
-			binary.BigEndian.PutUint32(byteSlice, uint32(complaint.Share.Index))
-			fmt.Println("accuser: ",complaint.AccuserId)
-			fmt.Println("accusee: ", complaint.FaulterId)
-			msgR3 := axelarnet.MsgFileDispute{Creator: mgr.principalAddr, Dispute:&axelarnet.Dispute{AddressOfAccuser: complaint.Accuser,AddressOfAccusee: complaint.Faulter,Share: &axelarnet.Share{Value: complaint.Share.Scalar, Index:byteSlice,Id: uint64(complaint.Share.Index) },Commit:&axelarnet.Commit{Commitments: complaint.Commit},Kij:complaint.Kij,CZkProof: complaint.Proof[0][:],RZkProof: complaint.Proof[1][:],Id:1, AccuserId: uint64(complaint.AccuserId),FaulterId: uint64(complaint.FaulterId), CReal: complaint.Proof[2][:]},IdOfAccuser:uint64(complaint.Share.Index),KeyId: keyID }
-			//fmt.Println("-------------------------------------------------------------------")
-			//fmt.Println(complaint.Proof)
-			_, err := mgr.broadcaster.BroadcastTx(&msgR3, false)
-		//	fmt.Println(resp)
+		if msg.ToPartyUid == "r3" {
+			var p2pSad P2pSad
+
+			err := json.Unmarshal((msg.Payload[9 : len(msg.Payload)-1]), &p2pSad)
+
 			if err != nil {
-				return sdkerrors.Wrap(err, "handler goroutine: failure to broadcast outgoing keygen msg")
+				fmt.Println("Error:", err)
+
 			}
+
+			for i := 0; i < len(p2pSad.VssComplaint); i++ {
+				complaint := p2pSad.VssComplaint[i]
+				byteSlice := make([]byte, 32) // Assuming you want to convert to a 4-byte slice
+
+				binary.BigEndian.PutUint32(byteSlice, uint32(complaint.Share.Index))
+				fmt.Println("accuser: ", complaint.AccuserId)
+				fmt.Println("accusee: ", complaint.FaulterId)
+				msgR3 := axelarnet.MsgFileDispute{Creator: mgr.principalAddr, Dispute: &axelarnet.Dispute{AddressOfAccuser: complaint.Accuser, AddressOfAccusee: complaint.Faulter, Share: &axelarnet.Share{Value: complaint.Share.Scalar, Index: byteSlice, Id: uint64(complaint.Share.Index)}, Commit: &axelarnet.Commit{Commitments: complaint.Commit}, Kij: complaint.Kij, CZkProof: complaint.Proof[0][:], RZkProof: complaint.Proof[1][:], Id: 1, AccuserId: uint64(complaint.AccuserId), FaulterId: uint64(complaint.FaulterId), CReal: complaint.Proof[2][:]}, IdOfAccuser: uint64(complaint.Share.Index), KeyId: keyID}
+
+				_, err := mgr.broadcaster.BroadcastTx(&msgR3, false)
+
+				if err != nil {
+					return sdkerrors.Wrap(err, "handler goroutine: failure to broadcast outgoing keygen msg")
+				}
+			}
+
+			return nil
 		}
-	
-		return nil
-	}
-		
 
 		tssMsg := &tss.ProcessKeygenTrafficRequest{Sender: argAddr, SessionID: keyID, Payload: msg}
 
 		refundableMsg := axelarnet.NewMsgRefundMsgRequest(mgr.principalAddr, argAddr, tssMsg)
-	//	fmt.Println(tssMsg.SessionID, tssMsg.Sender.String(), tssMsg.Payload)
-		//fmt.Println(refundableMsg.Marshal())
-		//fmt.Println(refundableMsg.Sender)
-		//refundableMsgString := axelarnet.MsgRefundMsgRequest{Creator: refundableMsg.Creator, Sender: refundableMsg.Sender.String(),InnerMessage:string(refundableMsg.InnerMessage.Value)}
-		//fmt.Println(refundableMsg.InnerMessage.GetCachedValue())
+
 		_, err := mgr.broadcaster.BroadcastTx(refundableMsg, false)
-		//fmt.Println(resp)
+
 		if err != nil {
 			return sdkerrors.Wrap(err, "handler goroutine: failure to broadcast outgoing keygen msg")
 		}
@@ -375,66 +349,45 @@ func (mgr *Mgr) handleKeygenResult(keyID string, resultChan <-chan interface{}) 
 		if res.Data.GetPubKey() == nil {
 			return fmt.Errorf("public key missing from the result")
 		}
-		// if res.Data.GetGroupRecoverInfo() == nil {
-		// 	return fmt.Errorf("group recovery data missing from the result")
-		// }
-		// if res.Data.GetPrivateRecoverInfo() == nil {
-		// 	return fmt.Errorf("private recovery data missing from the result")
-		// }
-			pkBytes := res.Data.GetPubKey();
 
-			suite := bls.NewBLS12381Suite()
-			pk := suite.G1().Point()
-			pk.UnmarshalBinary(pkBytes)
-			share:= res.Data.GetPrivateRecoverInfo()
-			fmt.Println(share)
-			shareB := share[4:len(share)-2]
-			index := share[len(share)-1]
+		pkBytes := res.Data.GetPubKey()
 
-			for i, j := 0, len(shareB)-1; i < j; i, j = i+1, j-1 {
-				shareB[i], shareB[j] = shareB[j], shareB[i]
-			}
-		
-			_ = suite
-			shareS := suite.G1().Scalar().SetBytes(shareB)
-			
-			filenamePk := fmt.Sprintf("pk-%d.txt", index)
-			filenameShare := fmt.Sprintf("share-%d.txt", index)
-			//fmt.Println()
-			//shareS.String()
-// 			pk := suite.G1().Point()
-// //panic(dispute.AddressOfAccusee)
-// 	pk.UnmarshalBinary(pkBytes)
+		suite := bls.NewBLS12381Suite()
+		pk := suite.G1().Point()
+		pk.UnmarshalBinary(pkBytes)
+		share := res.Data.GetPrivateRecoverInfo()
+		fmt.Println(share)
+		shareB := share[4 : len(share)-2]
+		index := share[len(share)-1]
 
-		// btcecPK, err := btcec.ParsePubKey(res.Data.GetPubKey(), btcec.S256())
-		// if err != nil {
-		// 	return sdkerrors.Wrap(err, "failure to deserialize pubkey")
-		// }
-	//	data := []byte("Hello, World!") // Replace with your actual []byte data
+		for i, j := 0, len(shareB)-1; i < j; i, j = i+1, j-1 {
+			shareB[i], shareB[j] = shareB[j], shareB[i]
+		}
+
+		_ = suite
+		shareS := suite.G1().Scalar().SetBytes(shareB)
+
+		filenamePk := fmt.Sprintf("pk-%d.txt", index)
+		filenameShare := fmt.Sprintf("share-%d.txt", index)
 
 		err := ioutil.WriteFile(filenamePk, pkBytes, 0644)
 		if err != nil {
 			fmt.Printf("Failed to write to file: %s\n", err)
-			
+
 		}
-		err = ioutil.WriteFile(filenameShare,shareB , 0644)
+		err = ioutil.WriteFile(filenameShare, shareB, 0644)
 		if err != nil {
 			fmt.Printf("Failed to write to file: %s\n", err)
-			
+
 		}
-		mgr.Logger.Info(fmt.Sprintf("handler goroutine: received pubkey bytes from server! : ",pkBytes))
-		mgr.Logger.Info(fmt.Sprintf("handler goroutine: received pubkey from server! : ",pk.String()))
-		mgr.Logger.Info(fmt.Sprintf("handler goroutine: received share from server! : ",shareB))
-		mgr.Logger.Info(fmt.Sprintf("handler goroutine: received share from server! : ",shareS.String()))
+		mgr.Logger.Info(fmt.Sprintf("handler goroutine: received pubkey bytes from server! : ", pkBytes))
+		mgr.Logger.Info(fmt.Sprintf("handler goroutine: received pubkey from server! : ", pk.String()))
+		mgr.Logger.Info(fmt.Sprintf("handler goroutine: received share from server! : ", shareB))
+		mgr.Logger.Info(fmt.Sprintf("handler goroutine: received share from server! : ", shareS.String()))
 	default:
 		return fmt.Errorf("invalid data type")
 	}
 
-	// pollKey := voting.NewPollKey(tss.ModuleName, keyID)
-	// vote := &tss.VotePubKeyRequest{Sender: mgr.cliCtx.FromAddress, PollKey: pollKey, Result: result}
-	// _ = axelarnet.NewMsgRefundMsgRequest(mgr.principalAddr, mgr.cliCtx.FromAddress, vote)
-
-	//_, err := mgr.broadcaster.Broadcast(mgr.cliCtx.WithBroadcastMode(sdkFlags.BroadcastBlock), refundableMsg)
 	return nil
 }
 

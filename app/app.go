@@ -10,7 +10,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/rakyll/statik/fs"
-	"github.com/spf13/cast"
+	//"github.com/spf13/cast"
 	abci "github.com/tendermint/tendermint/abci/types"
 	tmjson "github.com/tendermint/tendermint/libs/json"
 	"github.com/tendermint/tendermint/libs/log"
@@ -21,36 +21,36 @@ import (
 	ibctransferkeeper "github.com/cosmos/ibc-go/modules/apps/transfer/keeper"
 	ibctransfertypes "github.com/cosmos/ibc-go/modules/apps/transfer/types"
 	ibc "github.com/cosmos/ibc-go/modules/core"
-	porttypes "github.com/cosmos/ibc-go/modules/core/05-port/types"
+	//porttypes "github.com/cosmos/ibc-go/modules/core/05-port/types"
 	ibchost "github.com/cosmos/ibc-go/modules/core/24-host"
 	ibckeeper "github.com/cosmos/ibc-go/modules/core/keeper"
 
 	axelarParams "github.com/axelarnetwork/axelar-core/app/params"
-	"github.com/axelarnetwork/axelar-core/x/ante"
-	"github.com/axelarnetwork/axelar-core/x/axelarnet"
-	axelarnetKeeper "github.com/axelarnetwork/axelar-core/x/axelarnet/keeper"
+	//"github.com/axelarnetwork/axelar-core/x/ante"
+	//"github.com/axelarnetwork/axelar-core/x/axelarnet"
+//	axelarnetKeeper "github.com/axelarnetwork/axelar-core/x/axelarnet/keeper"
 	axelarnetTypes "github.com/axelarnetwork/axelar-core/x/axelarnet/types"
-	"github.com/axelarnetwork/axelar-core/x/bitcoin"
-	btcKeeper "github.com/axelarnetwork/axelar-core/x/bitcoin/keeper"
-	btcTypes "github.com/axelarnetwork/axelar-core/x/bitcoin/types"
-	"github.com/axelarnetwork/axelar-core/x/evm"
-	evmKeeper "github.com/axelarnetwork/axelar-core/x/evm/keeper"
-	evmTypes "github.com/axelarnetwork/axelar-core/x/evm/types"
-	"github.com/axelarnetwork/axelar-core/x/nexus"
-	nexusKeeper "github.com/axelarnetwork/axelar-core/x/nexus/keeper"
-	nexusTypes "github.com/axelarnetwork/axelar-core/x/nexus/types"
-	"github.com/axelarnetwork/axelar-core/x/reward"
-	rewardKeeper "github.com/axelarnetwork/axelar-core/x/reward/keeper"
-	rewardTypes "github.com/axelarnetwork/axelar-core/x/reward/types"
-	"github.com/axelarnetwork/axelar-core/x/snapshot"
-	snapKeeper "github.com/axelarnetwork/axelar-core/x/snapshot/keeper"
-	snapTypes "github.com/axelarnetwork/axelar-core/x/snapshot/types"
-	"github.com/axelarnetwork/axelar-core/x/tss"
-	tssKeeper "github.com/axelarnetwork/axelar-core/x/tss/keeper"
+//	"github.com/axelarnetwork/axelar-core/x/bitcoin"
+	//btcKeeper "github.com/axelarnetwork/axelar-core/x/bitcoin/keeper"
+	//btcTypes "github.com/axelarnetwork/axelar-core/x/bitcoin/types"
+//	"github.com/axelarnetwork/axelar-core/x/evm"
+//	evmKeeper "github.com/axelarnetwork/axelar-core/x/evm/keeper"
+	//evmTypes "github.com/axelarnetwork/axelar-core/x/evm/types"
+	//"github.com/axelarnetwork/axelar-core/x/nexus"
+	//nexusKeeper "github.com/axelarnetwork/axelar-core/x/nexus/keeper"
+	//nexusTypes "github.com/axelarnetwork/axelar-core/x/nexus/types"
+	//"github.com/axelarnetwork/axelar-core/x/reward"
+	//rewardKeeper "github.com/axelarnetwork/axelar-core/x/reward/keeper"
+	//rewardTypes "github.com/axelarnetwork/axelar-core/x/reward/types"
+	//"github.com/axelarnetwork/axelar-core/x/snapshot"
+	//snapKeeper "github.com/axelarnetwork/axelar-core/x/snapshot/keeper"
+	//snapTypes "github.com/axelarnetwork/axelar-core/x/snapshot/types"
+	//"github.com/axelarnetwork/axelar-core/x/tss"
+	//tssKeeper "github.com/axelarnetwork/axelar-core/x/tss/keeper"
 	tssTypes "github.com/axelarnetwork/axelar-core/x/tss/types"
-	"github.com/axelarnetwork/axelar-core/x/vote"
-	voteKeeper "github.com/axelarnetwork/axelar-core/x/vote/keeper"
-	voteTypes "github.com/axelarnetwork/axelar-core/x/vote/types"
+//	"github.com/axelarnetwork/axelar-core/x/vote"
+	//voteKeeper "github.com/axelarnetwork/axelar-core/x/vote/keeper"
+	//voteTypes "github.com/axelarnetwork/axelar-core/x/vote/types"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	bam "github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
@@ -65,14 +65,14 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/cosmos/cosmos-sdk/x/auth"
-	authAnte "github.com/cosmos/cosmos-sdk/x/auth/ante"
+//	authAnte "github.com/cosmos/cosmos-sdk/x/auth/ante"
 	//authrest "github.com/cosmos/cosmos-sdk/x/auth/client/rest"
-	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	//authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authtx "github.com/cosmos/cosmos-sdk/x/auth/tx"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/cosmos/cosmos-sdk/x/bank"
-	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+	//bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/cosmos/cosmos-sdk/x/capability"
 	capabilitykeeper "github.com/cosmos/cosmos-sdk/x/capability/keeper"
@@ -87,22 +87,22 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/evidence"
 	evidencekeeper "github.com/cosmos/cosmos-sdk/x/evidence/keeper"
 	evidencetypes "github.com/cosmos/cosmos-sdk/x/evidence/types"
-	"github.com/cosmos/cosmos-sdk/x/feegrant"
-	feegrantkeeper "github.com/cosmos/cosmos-sdk/x/feegrant/keeper"
+//	"github.com/cosmos/cosmos-sdk/x/feegrant"
+//	feegrantkeeper "github.com/cosmos/cosmos-sdk/x/feegrant/keeper"
 	feegrantmodule "github.com/cosmos/cosmos-sdk/x/feegrant/module"
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 	"github.com/cosmos/cosmos-sdk/x/gov"
-	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
+//	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	"github.com/cosmos/cosmos-sdk/x/mint"
-	mintkeeper "github.com/cosmos/cosmos-sdk/x/mint/keeper"
+//	mintkeeper "github.com/cosmos/cosmos-sdk/x/mint/keeper"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	"github.com/cosmos/cosmos-sdk/x/params"
 	paramsclient "github.com/cosmos/cosmos-sdk/x/params/client"
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	paramproposal "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
+//	paramproposal "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
 	"github.com/cosmos/cosmos-sdk/x/slashing"
 	slashingkeeper "github.com/cosmos/cosmos-sdk/x/slashing/keeper"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
@@ -111,7 +111,7 @@ import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/cosmos/cosmos-sdk/x/upgrade"
 	upgradeclient "github.com/cosmos/cosmos-sdk/x/upgrade/client"
-	upgradekeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
+//	upgradekeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 )
 
@@ -146,14 +146,14 @@ var (
 		ibc.AppModuleBasic{},
 		transfer.AppModuleBasic{},
 
-		tss.AppModuleBasic{},
-		vote.AppModuleBasic{},
-		bitcoin.AppModuleBasic{},
-		evm.AppModuleBasic{},
-		snapshot.AppModuleBasic{},
-		nexus.AppModuleBasic{},
-		axelarnet.AppModuleBasic{},
-		reward.AppModuleBasic{},
+	//	tss.AppModuleBasic{},
+		// vote.AppModuleBasic{},
+		// bitcoin.AppModuleBasic{},
+		// evm.AppModuleBasic{},
+		// snapshot.AppModuleBasic{},
+		// nexus.AppModuleBasic{},
+		// axelarnet.AppModuleBasic{},
+		// reward.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -166,7 +166,7 @@ var (
 		govtypes.ModuleName:            {authtypes.Burner},
 		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
 		axelarnetTypes.ModuleName:      {authtypes.Minter, authtypes.Burner},
-		rewardTypes.ModuleName:         {authtypes.Minter},
+		//rewardTypes.ModuleName:         {authtypes.Minter},
 	}
 )
 
@@ -242,14 +242,14 @@ func NewAxelarApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		ibctransfertypes.StoreKey,
 		capabilitytypes.StoreKey,
 
-		voteTypes.StoreKey,
-		btcTypes.StoreKey,
-		evmTypes.StoreKey,
-		snapTypes.StoreKey,
-		tssTypes.StoreKey,
-		nexusTypes.StoreKey,
-		axelarnetTypes.StoreKey,
-		rewardTypes.StoreKey,
+		// voteTypes.StoreKey,
+		// btcTypes.StoreKey,
+		// evmTypes.StoreKey,
+		// snapTypes.StoreKey,
+		 tssTypes.StoreKey,
+		// nexusTypes.StoreKey,
+		// axelarnetTypes.StoreKey,
+		// rewardTypes.StoreKey,
 	)
 
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
@@ -271,160 +271,160 @@ func NewAxelarApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 	// set the BaseApp's parameter store
 	bApp.SetParamStore(app.getSubspace(baseapp.Paramspace))
 
-	// add keepers
-	accountK := authkeeper.NewAccountKeeper(
-		appCodec, keys[authtypes.StoreKey], app.getSubspace(authtypes.ModuleName), authtypes.ProtoBaseAccount, maccPerms,
-	)
-	bankK := bankkeeper.NewBaseKeeper(
-		appCodec, keys[banktypes.StoreKey], accountK, app.getSubspace(banktypes.ModuleName), app.ModuleAccountAddrs(),
-	)
-	stakingK := stakingkeeper.NewKeeper(
-		appCodec, keys[stakingtypes.StoreKey], accountK, bankK, app.getSubspace(stakingtypes.ModuleName),
-	)
+	// // add keepers
+	// accountK := authkeeper.NewAccountKeeper(
+	// 	appCodec, keys[authtypes.StoreKey], app.getSubspace(authtypes.ModuleName), authtypes.ProtoBaseAccount, maccPerms,
+	// )
+	// bankK := bankkeeper.NewBaseKeeper(
+	// 	appCodec, keys[banktypes.StoreKey], accountK, app.getSubspace(banktypes.ModuleName), app.ModuleAccountAddrs(),
+	// )
+	// stakingK := stakingkeeper.NewKeeper(
+	// 	appCodec, keys[stakingtypes.StoreKey], accountK, bankK, app.getSubspace(stakingtypes.ModuleName),
+	// )
 
-	mintK := mintkeeper.NewKeeper(
-		appCodec, keys[minttypes.StoreKey], app.getSubspace(minttypes.ModuleName), &stakingK,
-		accountK, bankK, authtypes.FeeCollectorName,
-	)
-	distrK := distrkeeper.NewKeeper(
-		appCodec, keys[distrtypes.StoreKey], app.getSubspace(distrtypes.ModuleName), accountK, bankK,
-		&stakingK, authtypes.FeeCollectorName, app.ModuleAccountAddrs(),
-	)
-	app.distrKeeper = distrK
-	slashingK := slashingkeeper.NewKeeper(
-		appCodec, keys[slashingtypes.StoreKey], &stakingK, app.getSubspace(slashingtypes.ModuleName),
-	)
-	app.slashingKeeper = slashingK
-	crisisK := crisiskeeper.NewKeeper(
-		app.getSubspace(crisistypes.ModuleName), invCheckPeriod, bankK, authtypes.FeeCollectorName,
-	)
-	app.crisisKeeper = crisisK
-	upgradeK := upgradekeeper.NewKeeper(skipUpgradeHeights, keys[upgradetypes.StoreKey], appCodec, homePath, app.BaseApp)
+	// mintK := mintkeeper.NewKeeper(
+	// 	appCodec, keys[minttypes.StoreKey], app.getSubspace(minttypes.ModuleName), &stakingK,
+	// 	accountK, bankK, authtypes.FeeCollectorName,
+	// )
+	// distrK := distrkeeper.NewKeeper(
+	// 	appCodec, keys[distrtypes.StoreKey], app.getSubspace(distrtypes.ModuleName), accountK, bankK,
+	// 	&stakingK, authtypes.FeeCollectorName, app.ModuleAccountAddrs(),
+	// )
+	// app.distrKeeper = distrK
+	// slashingK := slashingkeeper.NewKeeper(
+	// 	appCodec, keys[slashingtypes.StoreKey], &stakingK, app.getSubspace(slashingtypes.ModuleName),
+	// )
+	// app.slashingKeeper = slashingK
+	// crisisK := crisiskeeper.NewKeeper(
+	// 	app.getSubspace(crisistypes.ModuleName), invCheckPeriod, bankK, authtypes.FeeCollectorName,
+	// )
+	// app.crisisKeeper = crisisK
+	// upgradeK := upgradekeeper.NewKeeper(skipUpgradeHeights, keys[upgradetypes.StoreKey], appCodec, homePath, app.BaseApp)
 
-	evidenceK := evidencekeeper.NewKeeper(
-		appCodec, keys[evidencetypes.StoreKey], &stakingK, slashingK,
-	)
-	app.evidenceKeeper = *evidenceK
+	// evidenceK := evidencekeeper.NewKeeper(
+	// 	appCodec, keys[evidencetypes.StoreKey], &stakingK, slashingK,
+	// )
+	// app.evidenceKeeper = *evidenceK
 
-	feegrantK := feegrantkeeper.NewKeeper(appCodec, keys[feegrant.StoreKey], accountK)
+	// feegrantK := feegrantkeeper.NewKeeper(appCodec, keys[feegrant.StoreKey], accountK)
 
-	// register the proposal types
-	govRouter := govtypes.NewRouter()
-	govRouter.AddRoute(govtypes.RouterKey, govtypes.ProposalHandler).
-		AddRoute(paramproposal.RouterKey, params.NewParamChangeProposalHandler(paramsK)).
-		AddRoute(distrtypes.RouterKey, distr.NewCommunityPoolSpendProposalHandler(distrK)).
-		AddRoute(upgradetypes.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(upgradeK))
+	// // register the proposal types
+	// govRouter := govtypes.NewRouter()
+	// govRouter.AddRoute(govtypes.RouterKey, govtypes.ProposalHandler).
+	// 	AddRoute(paramproposal.RouterKey, params.NewParamChangeProposalHandler(paramsK)).
+	// 	AddRoute(distrtypes.RouterKey, distr.NewCommunityPoolSpendProposalHandler(distrK)).
+	// 	AddRoute(upgradetypes.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(upgradeK))
 
-	govK := govkeeper.NewKeeper(
-		appCodec, keys[govtypes.StoreKey], app.getSubspace(govtypes.ModuleName), accountK, bankK,
-		&stakingK, govRouter,
-	)
+	// govK := govkeeper.NewKeeper(
+	// 	appCodec, keys[govtypes.StoreKey], app.getSubspace(govtypes.ModuleName), accountK, bankK,
+	// 	&stakingK, govRouter,
+	// )
 
-	// register the staking hooks
-	// NOTE: stakingKeeper above is passed by reference, so that it will contain these hooks
-	stakingK = *stakingK.SetHooks(
-		stakingtypes.NewMultiStakingHooks(distrK.Hooks(), slashingK.Hooks()),
-	)
-	app.stakingKeeper = stakingK
+	// // register the staking hooks
+	// // NOTE: stakingKeeper above is passed by reference, so that it will contain these hooks
+	// stakingK = *stakingK.SetHooks(
+	// 	stakingtypes.NewMultiStakingHooks(distrK.Hooks(), slashingK.Hooks()),
+	// )
+	// app.stakingKeeper = stakingK
 
-	// add capability keeper and ScopeToModule for ibc module
-	app.capabilityKeeper = capabilitykeeper.NewKeeper(appCodec, keys[capabilitytypes.StoreKey], memKeys[capabilitytypes.MemStoreKey])
+	// // add capability keeper and ScopeToModule for ibc module
+	// app.capabilityKeeper = capabilitykeeper.NewKeeper(appCodec, keys[capabilitytypes.StoreKey], memKeys[capabilitytypes.MemStoreKey])
 
-	// grant capabilities for the ibc and ibc-transfer modules
-	scopedIBCK := app.capabilityKeeper.ScopeToModule(ibchost.ModuleName)
-	scopedTransferK := app.capabilityKeeper.ScopeToModule(ibctransfertypes.ModuleName)
+	// // grant capabilities for the ibc and ibc-transfer modules
+	// scopedIBCK := app.capabilityKeeper.ScopeToModule(ibchost.ModuleName)
+	// scopedTransferK := app.capabilityKeeper.ScopeToModule(ibctransfertypes.ModuleName)
 
-	// Create IBC Keeper
-	app.ibcKeeper = ibckeeper.NewKeeper(
-		appCodec, keys[ibchost.StoreKey], app.getSubspace(ibchost.ModuleName), app.stakingKeeper, upgradeK, scopedIBCK,
-	)
+	// // Create IBC Keeper
+	// app.ibcKeeper = ibckeeper.NewKeeper(
+	// 	appCodec, keys[ibchost.StoreKey], app.getSubspace(ibchost.ModuleName), app.stakingKeeper, upgradeK, scopedIBCK,
+	// )
 
-	// Create Transfer Keepers
-	app.transferKeeper = ibctransferkeeper.NewKeeper(
-		appCodec, keys[ibctransfertypes.StoreKey], app.getSubspace(ibctransfertypes.ModuleName),
-		app.ibcKeeper.ChannelKeeper, &app.ibcKeeper.PortKeeper,
-		accountK, bankK, scopedTransferK,
-	)
-	transferModule := transfer.NewAppModule(app.transferKeeper)
+	// // Create Transfer Keepers
+	// app.transferKeeper = ibctransferkeeper.NewKeeper(
+	// 	appCodec, keys[ibctransfertypes.StoreKey], app.getSubspace(ibctransfertypes.ModuleName),
+	// 	app.ibcKeeper.ChannelKeeper, &app.ibcKeeper.PortKeeper,
+	// 	accountK, bankK, scopedTransferK,
+	// )
+	// transferModule := transfer.NewAppModule(app.transferKeeper)
 
-	// axelar custom keepers
-	btcK := btcKeeper.NewKeeper(
-		appCodec, keys[btcTypes.StoreKey], app.getSubspace(btcTypes.ModuleName),
-	)
-	evmK := evmKeeper.NewKeeper(
-		appCodec, keys[evmTypes.StoreKey], app.paramsKeeper,
-	)
-	rewardK := rewardKeeper.NewKeeper(
-		appCodec, keys[rewardTypes.StoreKey], app.getSubspace(rewardTypes.ModuleName), bankK, distrK, stakingK,
-	)
-	tssK := tssKeeper.NewKeeper(
-		appCodec, keys[tssTypes.StoreKey], app.getSubspace(tssTypes.ModuleName), slashingK, rewardK,
-	)
+	// // axelar custom keepers
+	// btcK := btcKeeper.NewKeeper(
+	// 	appCodec, keys[btcTypes.StoreKey], app.getSubspace(btcTypes.ModuleName),
+	// )
+	// evmK := evmKeeper.NewKeeper(
+	// 	appCodec, keys[evmTypes.StoreKey], app.paramsKeeper,
+	// )
+	// rewardK := rewardKeeper.NewKeeper(
+	// 	appCodec, keys[rewardTypes.StoreKey], app.getSubspace(rewardTypes.ModuleName), bankK, distrK, stakingK,
+	// )
+	// tssK := tssKeeper.NewKeeper(
+	// 	appCodec, keys[tssTypes.StoreKey], app.getSubspace(tssTypes.ModuleName), slashingK, rewardK,
+	// )
 
-	snapK := snapKeeper.NewKeeper(
-		appCodec, keys[snapTypes.StoreKey], app.getSubspace(snapTypes.ModuleName), stakingK,
-		slashingK, tssK,
-	)
-	nexusK := nexusKeeper.NewKeeper(
-		appCodec, keys[nexusTypes.StoreKey], app.getSubspace(nexusTypes.ModuleName),
-	)
-	votingK := voteKeeper.NewKeeper(
-		appCodec, keys[voteTypes.StoreKey], snapK, stakingK, rewardK,
-	)
-	axelarnetK := axelarnetKeeper.NewKeeper(
-		appCodec, keys[axelarnetTypes.StoreKey], app.getSubspace(axelarnetTypes.ModuleName),
-	)
-	axelarnetModule := axelarnet.NewAppModule(axelarnetK, nexusK, bankK, app.transferKeeper, app.ibcKeeper.ChannelKeeper, accountK, bApp.MsgServiceRouter(), bApp.Router(), transferModule, logger)
+	// snapK := snapKeeper.NewKeeper(
+	// 	appCodec, keys[snapTypes.StoreKey], app.getSubspace(snapTypes.ModuleName), stakingK,
+	// 	slashingK, tssK,
+	// )
+	// nexusK := nexusKeeper.NewKeeper(
+	// 	appCodec, keys[nexusTypes.StoreKey], app.getSubspace(nexusTypes.ModuleName),
+	// )
+	// votingK := voteKeeper.NewKeeper(
+	// 	appCodec, keys[voteTypes.StoreKey], snapK, stakingK, rewardK,
+	// )
+	// axelarnetK := axelarnetKeeper.NewKeeper(
+	// 	appCodec, keys[axelarnetTypes.StoreKey], app.getSubspace(axelarnetTypes.ModuleName),
+	// )
+	// axelarnetModule := axelarnet.NewAppModule(axelarnetK, nexusK, bankK, app.transferKeeper, app.ibcKeeper.ChannelKeeper, accountK, bApp.MsgServiceRouter(), bApp.Router(), transferModule, logger)
 
 	// Create static IBC router, add transfer route, then set and seal it
-	ibcRouter := porttypes.NewRouter()
-	ibcRouter.AddRoute(ibctransfertypes.ModuleName, axelarnetModule)
+	// ibcRouter := porttypes.NewRouter()
+	// ibcRouter.AddRoute(ibctransfertypes.ModuleName, axelarnetModule)
 
-	// Setting Router will finalize all routes by sealing router
-	// No more routes can be added
-	app.ibcKeeper.SetRouter(ibcRouter)
+	// // Setting Router will finalize all routes by sealing router
+	// // No more routes can be added
+	// app.ibcKeeper.SetRouter(ibcRouter)
 
-	tssRouter := tssTypes.NewRouter()
-	tssRouter.AddRoute(evmTypes.ModuleName, evmKeeper.NewTssHandler(evmK, nexusK, tssK)).
-		AddRoute(btcTypes.ModuleName, btcKeeper.NewTssHandler(btcK, tssK))
-	tssK.SetRouter(tssRouter)
+	// tssRouter := tssTypes.NewRouter()
+	// tssRouter.AddRoute(evmTypes.ModuleName, evmKeeper.NewTssHandler(evmK, nexusK, tssK)).
+	// 	AddRoute(btcTypes.ModuleName, btcKeeper.NewTssHandler(btcK, tssK))
+	// tssK.SetRouter(tssRouter)
 
-	/****  Module Options ****/
+	// /****  Module Options ****/
 
-	// NOTE: we may consider parsing `appOpts` inside module constructors. For the moment
-	// we prefer to be more strict in what arguments the modules expect.
-	var skipGenesisInvariants = cast.ToBool(appOpts.Get(crisis.FlagSkipGenesisInvariants))
+	// // NOTE: we may consider parsing `appOpts` inside module constructors. For the moment
+	// // we prefer to be more strict in what arguments the modules expect.
+	// var skipGenesisInvariants = cast.ToBool(appOpts.Get(crisis.FlagSkipGenesisInvariants))
 
-	// NOTE: Any module instantiated in the module manager that is later modified
-	// must be passed by reference here.
-	app.mm = module.NewManager(
-		genutil.NewAppModule(accountK, stakingK, app.BaseApp.DeliverTx, encodingConfig.TxConfig),
-		auth.NewAppModule(appCodec, accountK, nil),
-		vesting.NewAppModule(accountK, bankK),
-		bank.NewAppModule(appCodec, bankK, accountK),
-		crisis.NewAppModule(&crisisK, skipGenesisInvariants),
-		gov.NewAppModule(appCodec, govK, accountK, bankK),
-		mint.NewAppModule(appCodec, mintK, accountK),
-		slashing.NewAppModule(appCodec, slashingK, accountK, bankK, stakingK),
-		distr.NewAppModule(appCodec, distrK, accountK, bankK, stakingK),
-		staking.NewAppModule(appCodec, stakingK, accountK, bankK),
-		upgrade.NewAppModule(upgradeK),
-		evidence.NewAppModule(*evidenceK),
-		params.NewAppModule(paramsK),
-		capability.NewAppModule(appCodec, *app.capabilityKeeper),
-		evidence.NewAppModule(app.evidenceKeeper),
-		ibc.NewAppModule(app.ibcKeeper),
-		transferModule,
+	// // NOTE: Any module instantiated in the module manager that is later modified
+	// // must be passed by reference here.
+	// app.mm = module.NewManager(
+	// 	genutil.NewAppModule(accountK, stakingK, app.BaseApp.DeliverTx, encodingConfig.TxConfig),
+	// 	auth.NewAppModule(appCodec, accountK, nil),
+	// 	vesting.NewAppModule(accountK, bankK),
+	// 	bank.NewAppModule(appCodec, bankK, accountK),
+	// 	crisis.NewAppModule(&crisisK, skipGenesisInvariants),
+	// 	gov.NewAppModule(appCodec, govK, accountK, bankK),
+	// 	mint.NewAppModule(appCodec, mintK, accountK),
+	// 	slashing.NewAppModule(appCodec, slashingK, accountK, bankK, stakingK),
+	// 	distr.NewAppModule(appCodec, distrK, accountK, bankK, stakingK),
+	// 	staking.NewAppModule(appCodec, stakingK, accountK, bankK),
+	// 	upgrade.NewAppModule(upgradeK),
+	// 	evidence.NewAppModule(*evidenceK),
+	// 	params.NewAppModule(paramsK),
+	// 	capability.NewAppModule(appCodec, *app.capabilityKeeper),
+	// 	evidence.NewAppModule(app.evidenceKeeper),
+	// 	ibc.NewAppModule(app.ibcKeeper),
+	// 	transferModule,
 
-		snapshot.NewAppModule(snapK),
-		tss.NewAppModule(tssK, snapK, votingK, nexusK, stakingK, rewardK),
-		vote.NewAppModule(votingK),
-		nexus.NewAppModule(nexusK, snapK, stakingK),
-		evm.NewAppModule(evmK, tssK, votingK, tssK, nexusK, snapK, logger),
-		bitcoin.NewAppModule(btcK, votingK, tssK, nexusK, snapK),
-		axelarnetModule,
-		reward.NewAppModule(rewardK, nexusK, mintK, stakingK, tssK, snapK),
-	)
+	// 	snapshot.NewAppModule(snapK),
+	// 	tss.NewAppModule(tssK, snapK, votingK, nexusK, stakingK, rewardK),
+	// 	vote.NewAppModule(votingK),
+	// 	nexus.NewAppModule(nexusK, snapK, stakingK),
+	// 	evm.NewAppModule(evmK, tssK, votingK, tssK, nexusK, snapK, logger),
+	// 	bitcoin.NewAppModule(btcK, votingK, tssK, nexusK, snapK),
+	// 	axelarnetModule,
+	// 	reward.NewAppModule(rewardK, nexusK, mintK, stakingK, tssK, snapK),
+	// )
 
 	// During begin block slashing happens after distr.BeginBlocker so that
 	// there is nothing left over in the validator fee pool, so as to keep the
@@ -445,10 +445,10 @@ func NewAxelarApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		govtypes.ModuleName,
 		stakingtypes.ModuleName,
 		tssTypes.ModuleName,
-		btcTypes.ModuleName,
-		evmTypes.ModuleName,
-		nexusTypes.ModuleName,
-		rewardTypes.ModuleName,
+		//btcTypes.ModuleName,
+		// evmTypes.ModuleName,
+	//	nexusTypes.ModuleName,
+	//	rewardTypes.ModuleName,
 	)
 
 	// Sets the order of Genesis - Order matters, genutil is to always come last
@@ -470,18 +470,18 @@ func NewAxelarApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 		evidencetypes.ModuleName,
 		ibctransfertypes.ModuleName,
 
-		snapTypes.ModuleName,
-		tssTypes.ModuleName,
-		btcTypes.ModuleName,
-		evmTypes.ModuleName,
-		nexusTypes.ModuleName,
-		voteTypes.ModuleName,
-		axelarnetTypes.ModuleName,
-		rewardTypes.ModuleName,
+		// snapTypes.ModuleName,
+		 tssTypes.ModuleName,
+		// btcTypes.ModuleName,
+		// evmTypes.ModuleName,
+		// nexusTypes.ModuleName,
+		// voteTypes.ModuleName,
+		// axelarnetTypes.ModuleName,
+		// rewardTypes.ModuleName,
 	)
 
-	app.mm.RegisterInvariants(&crisisK)
-	app.mm.RegisterInvariants(&crisisK)
+	// app.mm.RegisterInvariants(&crisisK)
+	// app.mm.RegisterInvariants(&crisisK)
 
 	// register all module routes and module queriers
 	app.mm.RegisterRoutes(app.Router(), app.QueryRouter(), legacyAmino)
@@ -498,28 +498,28 @@ func NewAxelarApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest
 	app.SetEndBlocker(app.EndBlocker)
 
 	// The baseAnteHandler handles signature verification and transaction pre-processing
-	baseAnteHandler, err := authAnte.NewAnteHandler(
-		authAnte.HandlerOptions{
-			AccountKeeper:   accountK,
-			BankKeeper:      bankK,
-			SignModeHandler: encodingConfig.TxConfig.SignModeHandler(),
-			FeegrantKeeper:  feegrantK,
-			SigGasConsumer:  authAnte.DefaultSigVerificationGasConsumer,
-		},
-	)
+	// baseAnteHandler, err := authAnte.NewAnteHandler(
+	// 	authAnte.HandlerOptions{
+	// 		AccountKeeper:   accountK,
+	// 		BankKeeper:      bankK,
+	// 		SignModeHandler: encodingConfig.TxConfig.SignModeHandler(),
+	// 		FeegrantKeeper:  feegrantK,
+	// 		SigGasConsumer:  authAnte.DefaultSigVerificationGasConsumer,
+	// 	},
+	// )
 
-	if err != nil {
-		panic(err)
-	}
+	// if err != nil {
+	// 	panic(err)
+	// }
 
-	anteHandler := sdk.ChainAnteDecorators(
-		ante.NewAnteHandlerDecorator(baseAnteHandler),
-		ante.NewLogMsgDecorator(appCodec),
-		ante.NewValidateValidatorDeregisteredTssDecorator(tssK, nexusK, snapK),
-		ante.NewCheckRefundFeeDecorator(app.interfaceRegistry, accountK, stakingK, snapK, axelarnetK),
-		ante.NewCheckProxyReadiness(snapK),
-	)
-	app.SetAnteHandler(anteHandler)
+	// anteHandler := sdk.ChainAnteDecorators(
+	// 	ante.NewAnteHandlerDecorator(baseAnteHandler),
+	// 	ante.NewLogMsgDecorator(appCodec),
+	// 	ante.NewValidateValidatorDeregisteredTssDecorator(tssK, nexusK, snapK),
+	// 	ante.NewCheckRefundFeeDecorator(app.interfaceRegistry, accountK, stakingK, snapK, axelarnetK),
+	// 	ante.NewCheckProxyReadiness(snapK),
+	// )
+	//app.SetAnteHandler(anteHandler)
 
 	if loadLatest {
 		if err := app.LoadLatestVersion(); err != nil {
@@ -546,12 +546,12 @@ func initParamsKeeper(appCodec codec.Codec, legacyAmino *codec.LegacyAmino, key,
 	paramsKeeper.Subspace(ibctransfertypes.ModuleName)
 	paramsKeeper.Subspace(ibchost.ModuleName)
 
-	paramsKeeper.Subspace(snapTypes.ModuleName)
+	//paramsKeeper.Subspace(snapTypes.ModuleName)
 	paramsKeeper.Subspace(tssTypes.ModuleName)
-	paramsKeeper.Subspace(btcTypes.ModuleName)
-	paramsKeeper.Subspace(nexusTypes.ModuleName)
+	//paramsKeeper.Subspace(btcTypes.ModuleName)
+	// paramsKeeper.Subspace(nexusTypes.ModuleName)
 	paramsKeeper.Subspace(axelarnetTypes.ModuleName)
-	paramsKeeper.Subspace(rewardTypes.ModuleName)
+	//paramsKeeper.Subspace(rewardTypes.ModuleName)
 
 	return paramsKeeper
 }

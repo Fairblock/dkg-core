@@ -148,17 +148,17 @@ func initRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
 		genutilcli.MigrateGenesisCmd(),
 		genutilcli.GenTxCmd(app.ModuleBasics, encodingConfig.TxConfig, banktypes.GenesisBalancesIterator{}, app.DefaultNodeHome),
 		genutilcli.ValidateGenesisCmd(app.ModuleBasics),
-		AddGenesisAccountCmd(app.DefaultNodeHome),
+		//AddGenesisAccountCmd(app.DefaultNodeHome),
 		tmcli.NewCompletionCmd(rootCmd, true),
 		debug.Cmd(),
-		SetGenesisStakingCmd(app.DefaultNodeHome),
-		SetGenesisVoteCmd(app.DefaultNodeHome),
-		SetGenesisTSSCmd(app.DefaultNodeHome),
-		SetGenesisSnapshotCmd(app.DefaultNodeHome),
-		SetGenesisEVMContractsCmd(app.DefaultNodeHome),
-		SetGenesisChainParamsCmd(app.DefaultNodeHome),
-		SetGenesisGovCmd(app.DefaultNodeHome),
-		AddGenesisEVMChainCmd(app.DefaultNodeHome),
+		//SetGenesisStakingCmd(app.DefaultNodeHome),
+		//SetGenesisVoteCmd(app.DefaultNodeHome),
+		//SetGenesisTSSCmd(app.DefaultNodeHome),
+		//SetGenesisSnapshotCmd(app.DefaultNodeHome),
+		// SetGenesisEVMContractsCmd(app.DefaultNodeHome),
+		// SetGenesisChainParamsCmd(app.DefaultNodeHome),
+		//SetGenesisGovCmd(app.DefaultNodeHome),
+		//AddGenesisEVMChainCmd(app.DefaultNodeHome),
 	)
 
 	server.AddCommands(rootCmd, app.DefaultNodeHome, newApp, export(encodingConfig), crisis.AddModuleInitFlags)
@@ -189,7 +189,7 @@ func initRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
 	rootCmd.AddCommand(vald.GetValdCommand())
 
 	// add health check command
-	rootCmd.AddCommand(vald.GetHealthCheckCommand())
+
 }
 
 func newApp(logger log.Logger, db dbm.DB, traceStore io.Writer, appOpts servertypes.AppOptions) servertypes.Application {

@@ -2,7 +2,7 @@ package vald
 
 import (
 	"context"
-	"encoding/json"
+	
 	"fmt"
 	"io"
 	"os"
@@ -21,14 +21,12 @@ import (
 	"github.com/axelarnetwork/axelar-core/cmd/axelard/cmd/vald/tss"
 	//"github.com/axelarnetwork/tm-events/events"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/axelarnetwork/axelar-core/x/snapshot/keeper"
-	"github.com/axelarnetwork/axelar-core/x/snapshot/types"
-	snapshotTypes "github.com/axelarnetwork/axelar-core/x/snapshot/types"
+
+	
 	"github.com/axelarnetwork/axelar-core/x/tss/tofnd"
 	tssTypes "github.com/axelarnetwork/axelar-core/x/tss/types"
-	bankTypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+	
 )
 
 const (
@@ -160,84 +158,4 @@ func checkTofnd(txf tx.Factory, axelarCfg config.ValdConfig,ctx context.Context,
 	//panic(response)
 
 	return nil
-}
-
-func checkBroadcaster(ctx context.Context, clientCtx client.Context, serverCtx *server.Context) error {
-	str := serverCtx.Viper.GetString(flagOperatorAddr)
-	if str == "" {
-		return fmt.Errorf("no operator address specified")
-	}
-	operator, err := sdk.ValAddressFromBech32(str)
-	if err != nil {
-		return err
-	}
-
-	bz, _, err := clientCtx.Query(fmt.Sprintf("custom/%s/%s/%s", snapshotTypes.QuerierRoute, keeper.QProxy, operator.String()))
-	if err != nil {
-		return err
-	}
-
-	reply := struct {
-		Address string `json:"address"`
-		Status  string `json:"status"`
-	}{}
-	json.Unmarshal(bz, &reply)
-
-	broadcaster, err := sdk.AccAddressFromBech32(reply.Address)
-	if err != nil {
-		return err
-	}
-
-	if reply.Status != "active" {
-		return fmt.Errorf("broadcaster for operator %s not active", operator.String())
-	}
-
-	queryClient := bankTypes.NewQueryClient(clientCtx)
-	params := bankTypes.NewQueryBalanceRequest(broadcaster, tokenDenom)
-
-	grpcCtx, cancel := context.WithTimeout(ctx, timeout)
-	defer cancel()
-
-	res, err := queryClient.Balance(grpcCtx, params)
-	if err != nil {
-		return err
-	}
-
-	if res.Balance.Amount.LTE(sdk.NewInt(minBalance)) {
-		return fmt.Errorf("broadcaster does not have enough funds (minimum balance is %d%s)", minBalance, tokenDenom)
-	}
-
-	return nil
-}
-
-func checkOperator(_ context.Context, clientCtx client.Context, serverCtx *server.Context) error {
-	addr := serverCtx.Viper.GetString(flagOperatorAddr)
-	if addr == "" {
-		return fmt.Errorf("no operator address specified")
-	}
-
-	bz, _, err := clientCtx.Query(fmt.Sprintf("custom/%s/%s", snapshotTypes.QuerierRoute, keeper.QValidators))
-	if err != nil {
-		return err
-	}
-
-	var resValidators types.QueryValidatorsResponse
-	types.ModuleCdc.MustUnmarshalLengthPrefixed(bz, &resValidators)
-
-	for _, v := range resValidators.Validators {
-		if v.OperatorAddress == addr {
-			if v.TssIllegibilityInfo.Jailed ||
-				v.TssIllegibilityInfo.MissedTooManyBlocks ||
-				v.TssIllegibilityInfo.NoProxyRegistered ||
-				v.TssIllegibilityInfo.Tombstoned ||
-				v.TssIllegibilityInfo.TssSuspended ||
-				v.TssIllegibilityInfo.StaleTssHeartbeat {
-				return fmt.Errorf("health check to operator %s failed due to the following issues: %v",
-					addr, string(snapshotTypes.ModuleCdc.MustMarshalJSON(&v.TssIllegibilityInfo)))
-			}
-			return nil
-		}
-	}
-
-	return fmt.Errorf("operator address %s not found amongst current set of validators", addr)
 }

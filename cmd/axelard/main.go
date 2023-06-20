@@ -12,7 +12,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/server"
 	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
 	"github.com/cosmos/cosmos-sdk/telemetry"
-	"github.com/cosmos/cosmos-sdk/x/staking/client/cli"
+	
 	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	"github.com/spf13/cobra/doc"
@@ -21,7 +21,7 @@ import (
 
 	"github.com/axelarnetwork/axelar-core/app"
 	"github.com/axelarnetwork/axelar-core/cmd/axelard/cmd"
-	"github.com/axelarnetwork/axelar-core/cmd/axelard/cmd/utils"
+	//"github.com/axelarnetwork/axelar-core/cmd/axelard/cmd/utils"
 )
 
 //go:generate ./genDocs.sh ../../docs/cli
@@ -41,12 +41,12 @@ func main() {
 		rootCmd = executor.Root()
 
 		// set static values for dynamic (system-dependent) flag defaults
-		values := map[string]string{
-			flags.FlagHome:  home,
-			cli.FlagIP:      "127.0.0.1",
-			cli.FlagMoniker: "node",
-		}
-		utils.OverwriteFlagDefaults(rootCmd, values, true)
+		// values := map[string]string{
+		// 	flags.FlagHome:  home,
+		// 	cli.FlagIP:      "127.0.0.1",
+		// 	cli.FlagMoniker: "node",
+		// }
+	//	utils.OverwriteFlagDefaults(rootCmd, values, true)
 
 		// The AutoGen tag includes a date, so when the time zone of the local machine is different from the time zone
 		// of the github host the date could be different and the PR check fail. Therefore we disable it

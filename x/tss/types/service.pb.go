@@ -6,7 +6,7 @@ package types
 import (
 	context "context"
 	fmt "fmt"
-	_ "github.com/axelarnetwork/axelar-core/x/snapshot/types"
+	//_ "github.com/axelarnetwork/axelar-core/x/snapshot/types"
 	_ "github.com/gogo/protobuf/gogoproto"
 	grpc1 "github.com/gogo/protobuf/grpc"
 	proto "github.com/gogo/protobuf/proto"
@@ -83,7 +83,7 @@ const _ = grpc.SupportPackageIsVersion4
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type MsgServiceClient interface {
 	RegisterExternalKeys(ctx context.Context, in *RegisterExternalKeysRequest, opts ...grpc.CallOption) (*RegisterExternalKeysResponse, error)
-	HeartBeat(ctx context.Context, in *HeartBeatRequest, opts ...grpc.CallOption) (*HeartBeatResponse, error)
+	//HeartBeat(ctx context.Context, in *HeartBeatRequest, opts ...grpc.CallOption) (*HeartBeatResponse, error)
 	StartKeygen(ctx context.Context, in *StartKeygenRequest, opts ...grpc.CallOption) (*StartKeygenResponse, error)
 	ProcessKeygenTraffic(ctx context.Context, in *ProcessKeygenTrafficRequest, opts ...grpc.CallOption) (*ProcessKeygenTrafficResponse, error)
 	RotateKey(ctx context.Context, in *RotateKeyRequest, opts ...grpc.CallOption) (*RotateKeyResponse, error)
@@ -110,14 +110,14 @@ func (c *msgServiceClient) RegisterExternalKeys(ctx context.Context, in *Registe
 	return out, nil
 }
 
-func (c *msgServiceClient) HeartBeat(ctx context.Context, in *HeartBeatRequest, opts ...grpc.CallOption) (*HeartBeatResponse, error) {
-	out := new(HeartBeatResponse)
-	err := c.cc.Invoke(ctx, "/tss.v1beta1.MsgService/HeartBeat", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
+// func (c *msgServiceClient) HeartBeat(ctx context.Context, in *HeartBeatRequest, opts ...grpc.CallOption) (*HeartBeatResponse, error) {
+// 	out := new(HeartBeatResponse)
+// 	err := c.cc.Invoke(ctx, "/tss.v1beta1.MsgService/HeartBeat", in, out, opts...)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	return out, nil
+// }
 
 func (c *msgServiceClient) StartKeygen(ctx context.Context, in *StartKeygenRequest, opts ...grpc.CallOption) (*StartKeygenResponse, error) {
 	out := new(StartKeygenResponse)
@@ -185,7 +185,7 @@ func (c *msgServiceClient) SubmitMultisigPubKeys(ctx context.Context, in *Submit
 // MsgServiceServer is the server API for MsgService service.
 type MsgServiceServer interface {
 	RegisterExternalKeys(context.Context, *RegisterExternalKeysRequest) (*RegisterExternalKeysResponse, error)
-	HeartBeat(context.Context, *HeartBeatRequest) (*HeartBeatResponse, error)
+	//HeartBeat(context.Context, *HeartBeatRequest) (*HeartBeatResponse, error)
 	StartKeygen(context.Context, *StartKeygenRequest) (*StartKeygenResponse, error)
 	ProcessKeygenTraffic(context.Context, *ProcessKeygenTrafficRequest) (*ProcessKeygenTrafficResponse, error)
 	RotateKey(context.Context, *RotateKeyRequest) (*RotateKeyResponse, error)
@@ -202,9 +202,9 @@ type UnimplementedMsgServiceServer struct {
 func (*UnimplementedMsgServiceServer) RegisterExternalKeys(ctx context.Context, req *RegisterExternalKeysRequest) (*RegisterExternalKeysResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RegisterExternalKeys not implemented")
 }
-func (*UnimplementedMsgServiceServer) HeartBeat(ctx context.Context, req *HeartBeatRequest) (*HeartBeatResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method HeartBeat not implemented")
-}
+// func (*UnimplementedMsgServiceServer) HeartBeat(ctx context.Context, req *HeartBeatRequest) (*HeartBeatResponse, error) {
+// 	return nil, status.Errorf(codes.Unimplemented, "method HeartBeat not implemented")
+// }
 func (*UnimplementedMsgServiceServer) StartKeygen(ctx context.Context, req *StartKeygenRequest) (*StartKeygenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method StartKeygen not implemented")
 }
@@ -249,23 +249,23 @@ func _MsgService_RegisterExternalKeys_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MsgService_HeartBeat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(HeartBeatRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MsgServiceServer).HeartBeat(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/tss.v1beta1.MsgService/HeartBeat",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServiceServer).HeartBeat(ctx, req.(*HeartBeatRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
+// func _MsgService_HeartBeat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+// 	in := new(HeartBeatRequest)
+// 	if err := dec(in); err != nil {
+// 		return nil, err
+// 	}
+// 	if interceptor == nil {
+// 		return srv.(MsgServiceServer).HeartBeat(ctx, in)
+// 	}
+// 	info := &grpc.UnaryServerInfo{
+// 		Server:     srv,
+// 		FullMethod: "/tss.v1beta1.MsgService/HeartBeat",
+// 	}
+// 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+// 		return srv.(MsgServiceServer).HeartBeat(ctx, req.(*HeartBeatRequest))
+// 	}
+// 	return interceptor(ctx, in, info, handler)
+// }
 
 func _MsgService_StartKeygen_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(StartKeygenRequest)
@@ -401,10 +401,10 @@ var _MsgService_serviceDesc = grpc.ServiceDesc{
 			MethodName: "RegisterExternalKeys",
 			Handler:    _MsgService_RegisterExternalKeys_Handler,
 		},
-		{
-			MethodName: "HeartBeat",
-			Handler:    _MsgService_HeartBeat_Handler,
-		},
+		// {
+		// 	MethodName: "HeartBeat",
+		// 	Handler:    _MsgService_HeartBeat_Handler,
+		// },
 		{
 			MethodName: "StartKeygen",
 			Handler:    _MsgService_StartKeygen_Handler,

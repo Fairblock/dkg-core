@@ -9,7 +9,7 @@ import (
 	tmbytes "github.com/tendermint/tendermint/libs/bytes"
 	"github.com/tendermint/tendermint/libs/log"
 
-	nexus "github.com/axelarnetwork/axelar-core/x/nexus/exported"
+	//nexus "github.com/axelarnetwork/axelar-core/x/nexus/exported"
 )
 
 //go:generate moq -out ./mock/expected_keepers.go -pkg mock . BaseKeeper  Nexus  BankKeeper IBCTransferKeeper ChannelKeeper AccountKeeper
@@ -17,7 +17,7 @@ import (
 // BaseKeeper is implemented by this module's base keeper
 type BaseKeeper interface {
 	Logger(ctx sdk.Context) log.Logger
-	SetParams(ctx sdk.Context, n Nexus, p Params)
+	// SetParams(ctx sdk.Context, n Nexus, p Params)
 	GetRouteTimeoutWindow(ctx sdk.Context) uint64
 
 	RegisterIBCPath(ctx sdk.Context, asset, path string) error
@@ -35,18 +35,18 @@ type BaseKeeper interface {
 }
 
 // Nexus provides functionality to manage cross-chain transfers
-type Nexus interface {
-	EnqueueForTransfer(ctx sdk.Context, sender nexus.CrossChainAddress, amount sdk.Coin) error
-	GetTransfersForChain(ctx sdk.Context, chain nexus.Chain, state nexus.TransferState) []nexus.CrossChainTransfer
-	ArchivePendingTransfer(ctx sdk.Context, transfer nexus.CrossChainTransfer)
-	GetChain(ctx sdk.Context, chain string) (nexus.Chain, bool)
-	IsAssetRegistered(ctx sdk.Context, chainName, denom string) bool
-	RegisterAsset(ctx sdk.Context, chainName, denom string)
-	LinkAddresses(ctx sdk.Context, sender nexus.CrossChainAddress, recipient nexus.CrossChainAddress)
-	GetRecipient(ctx sdk.Context, sender nexus.CrossChainAddress) (nexus.CrossChainAddress, bool)
-	AddToChainTotal(ctx sdk.Context, chain nexus.Chain, amount sdk.Coin)
-	SetChain(ctx sdk.Context, chain nexus.Chain)
-}
+// type Nexus interface {
+// 	EnqueueForTransfer(ctx sdk.Context, sender nexus.CrossChainAddress, amount sdk.Coin) error
+// 	GetTransfersForChain(ctx sdk.Context, chain nexus.Chain, state nexus.TransferState) []nexus.CrossChainTransfer
+// 	ArchivePendingTransfer(ctx sdk.Context, transfer nexus.CrossChainTransfer)
+// 	GetChain(ctx sdk.Context, chain string) (nexus.Chain, bool)
+// 	IsAssetRegistered(ctx sdk.Context, chainName, denom string) bool
+// 	RegisterAsset(ctx sdk.Context, chainName, denom string)
+// 	LinkAddresses(ctx sdk.Context, sender nexus.CrossChainAddress, recipient nexus.CrossChainAddress)
+// 	GetRecipient(ctx sdk.Context, sender nexus.CrossChainAddress) (nexus.CrossChainAddress, bool)
+// 	AddToChainTotal(ctx sdk.Context, chain nexus.Chain, amount sdk.Coin)
+// 	SetChain(ctx sdk.Context, chain nexus.Chain)
+// }
 
 // BankKeeper defines the expected interface contract the vesting module requires
 // for creating vesting accounts with funds.

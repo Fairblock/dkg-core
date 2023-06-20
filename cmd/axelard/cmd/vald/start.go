@@ -17,7 +17,7 @@ import (
 	"time"
 
 	broadcast "github.com/axelarnetwork/axelar-core/cmd/axelard/cmd/vald/broadcaster"
-	//axelarnet "github.com/axelarnetwork/axelar-core/x/axelarnet/types"
+
 	//"github.com/golang/protobuf/proto"
 	tmclient "github.com/tendermint/tendermint/rpc/client/http"
 	ctypes "github.com/tendermint/tendermint/rpc/core/types"
@@ -29,8 +29,8 @@ import (
 	//"github.com/axelarnetwork/tm-events/events"
 	//	"github.com/axelarnetwork/tm-events/events"
 	//"github.com/axelarnetwork/tm-events/events"
-	tmEvents "github.com/axelarnetwork/tm-events/events"
-	"github.com/axelarnetwork/tm-events/pubsub"
+	//	tmEvents "github.com/axelarnetwork/tm-events/events"
+	//"github.com/axelarnetwork/tm-events/pubsub"
 	"github.com/axelarnetwork/utils/jobs"
 
 	//"github.com/axelarnetwork/utils/jobs"
@@ -40,11 +40,11 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/server"
-	sdk "github.com/cosmos/cosmos-sdk/types"
+	//sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/spf13/cobra"
 	"github.com/tendermint/tendermint/libs/log"
-	rpcclient "github.com/tendermint/tendermint/rpc/client"
+	//rpcclient "github.com/tendermint/tendermint/rpc/client"
 
 	"github.com/axelarnetwork/axelar-core/cmd/axelard/cmd/vald/config"
 
@@ -60,17 +60,10 @@ import (
 
 	//utils2 "github.com/axelarnetwork/axelar-core/utils"
 
-	//btcTypes "github.com/axelarnetwork/axelar-core/x/bitcoin/types"
-	//evmTypes "github.com/axelarnetwork/axelar-core/x/evm/types"
 	"github.com/axelarnetwork/axelar-core/x/tss/tofnd"
 	tssTypes "github.com/axelarnetwork/axelar-core/x/tss/types"
 )
-// const addressForChain = "cosmos150lcfqj44zx8aljqn4za4pp2384k5gw3hpypm2" 
-//go run cmd/axelard/main.go vald-start --validator-addr cosmos1exfcnjtc30msg2py3utlf0mmlq8ex32aadxlf3 --validator-key 85bc470c18f113a15384660980fc8e4000f9d5aacc129b02ef4851c4126d82bb
-// const keyForTest = "00b183d4a1e6ba3fa5a036afabeb4644f1a24ad2b11cf3e6da2de96454c9fb8a" 
-//go run cmd/axelard/main.go vald-start --validator-addr cosmos150lcfqj44zx8aljqn4za4pp2384k5gw3hpypm2 --validator-key 00b183d4a1e6ba3fa5a036afabeb4644f1a24ad2b11cf3e6da2de96454c9fb8a
-// const addressForChain = "cosmos1exfcnjtc30msg2py3utlf0mmlq8ex32aadxlf3"
-// const keyForTest = "85bc470c18f113a15384660980fc8e4000f9d5aacc129b02ef4851c4126d82bb"
+
 // RW grants -rw------- file permissions
 const RW = 0600
 
@@ -125,7 +118,7 @@ func GetValdCommand() *cobra.Command {
 
 			valAddr := serverCtx.Viper.GetString("validator-addr")
 			valKey := serverCtx.Viper.GetString("validator-key")
-			
+
 			// valList := serverCtx.Viper.GetString("validator-key")
 			if valAddr == "" {
 				return fmt.Errorf("validator address not set")
@@ -191,38 +184,10 @@ func setPersistentFlags(cmd *cobra.Command) {
 	cmd.PersistentFlags().String(flags.FlagChainID, app.Name, "The network chain ID")
 }
 
-func listen(ctx sdkClient.Context, txf tx.Factory, axelarCfg config.ValdConfig, valAddr string, valKey string,recoveryJSON []byte, stateSource ReadWriter, logger log.Logger) {
+func listen(ctx sdkClient.Context, txf tx.Factory, axelarCfg config.ValdConfig, valAddr string, valKey string, recoveryJSON []byte, stateSource ReadWriter, logger log.Logger) {
 	encCfg := app.MakeEncodingConfig()
 	cdc := encCfg.Amino
-	// sender, err := ctx.Keyring.Key(ctx.From)
-	// if err != nil {
-	// 	panic(sdkerrors.Wrap(err, "failed to read broadcaster account info from keyring"))
-	// }
-	//fmt.Println(valAddr)
-	//fmt.Println(valKey)
-	ctx = ctx.
-		WithFromAddress(sdk.AccAddress{}).
-		WithFromName("seti")
 
-	//bc := createBroadcaster(txf, axelarCfg, logger)
-
-	//stateStore := NewStateStore(stateSource)
-	//startBlock, err := stateStore.GetState()
-	// if err != nil {
-	// 	logger.Error(err.Error())
-	// 	startBlock = 0
-	// }
-
-	// tmClient, err := ctx.GetNode()
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// // in order to subscribe to events, the client needs to be running
-	// if !tmClient.IsRunning() {
-	// 	if err := tmClient.Start(); err != nil {
-	// 		panic(fmt.Errorf("unable to start client: %v", err))
-	// 	}
-	// }
 	client, err := tmclient.New(
 		fmt.Sprintf(
 			"%s:%s",
@@ -235,10 +200,8 @@ func listen(ctx sdkClient.Context, txf tx.Factory, axelarCfg config.ValdConfig, 
 	if err != nil {
 		logger.Error(err.Error())
 	}
-	
-	eventBus := createEventBus(client, 396620, logger)
-	
-	bc,err := broadcast.NewCosmosClient(
+
+	bc, err := broadcast.NewCosmosClient(
 		fmt.Sprintf(
 			"%s:%s",
 			"127.0.0.1",
@@ -247,7 +210,7 @@ func listen(ctx sdkClient.Context, txf tx.Factory, axelarCfg config.ValdConfig, 
 		valKey,
 		"dkg",
 	)
-	if err != nil{
+	if err != nil {
 		logger.Error(err.Error())
 	}
 	tssMgr := createTSSMgr(bc, ctx, axelarCfg, logger, valAddr, cdc)
@@ -257,20 +220,8 @@ func listen(ctx sdkClient.Context, txf tx.Factory, axelarCfg config.ValdConfig, 
 		}
 	}
 
-	// btcMgr := createBTCMgr(axelarCfg, ctx, bc, logger, cdc)
-	// evmMgr := createEVMMgr(axelarCfg, ctx, bc, logger, cdc)
-
-	// we have two processes listening to block headers
-	blockHeaderForTSS := tmEvents.MustSubscribeBlockHeader(eventBus)
-	// blockHeaderForStateUpdate := tmEvents.MustSubscribeBlockHeader(eventBus)
-
-	// subscribe := func(eventType, module, action string) tmEvents.FilteredSubscriber {
-	// 	return tmEvents.MustSubscribeWithAttributes(eventBus,
-	// 		eventType, module, sdk.Attribute{Key: sdk.AttributeKeyAction, Value: action})
-
-	// }
 	query := "tm.event = 'Tx'"
-	subscriber , err := client.Subscribe(context.Background(), "", query)
+	subscriber, err := client.Subscribe(context.Background(), "", query)
 	if err != nil {
 		panic(err)
 	}
@@ -278,64 +229,11 @@ func listen(ctx sdkClient.Context, txf tx.Factory, axelarCfg config.ValdConfig, 
 	if err != nil {
 		panic(err)
 	}
-	//keygenStart := subscribe(tssTypes.EventTypeKeygen, tssTypes.ModuleName, tssTypes.AttributeValueStart)
-	//queryHeartBeat := createNewBlockEventQuery(tssTypes.EventTypeHeartBeat, tssTypes.ModuleName, tssTypes.AttributeValueSend)
-	// heartbeat, err := tmEvents.Subscribe(eventBus, queryHeartBeat)
-	// if err != nil {
-	// 	panic(fmt.Errorf("unable to subscribe with ack event query: %v", err))
-	// }
 
-	//keygenStart := subscribe(tssTypes.EventTypeKeygen, tssTypes.ModuleName, tssTypes.AttributeValueStart)
-
-	//querySign := createNewBlockEventQuery(tssTypes.EventTypeSign, tssTypes.ModuleName, tssTypes.AttributeValueStart)
-	// signStart, err := tmEvents.Subscribe(eventBus, querySign)
-	// if err != nil {
-	// 	panic(fmt.Errorf("unable to subscribe with sign event query: %v", err))
-	// }
-
-//	keygenMsg := subscribe(tssTypes.EventTypeKeygen, "dkg", tssTypes.AttributeValueMsg)
-	//	signMsg := subscribe(tssTypes.EventTypeSign, tssTypes.ModuleName, tssTypes.AttributeValueMsg)
-
-	// btcConf := subscribe(btcTypes.EventTypeOutpointConfirmation, btcTypes.ModuleName, btcTypes.AttributeValueStart)
-
-	// evmNewChain := subscribe(evmTypes.EventTypeNewChain, evmTypes.ModuleName, evmTypes.AttributeValueUpdate)
-	// evmChainConf := subscribe(evmTypes.EventTypeChainConfirmation, evmTypes.ModuleName, evmTypes.AttributeValueStart)
-	// evmDepConf := subscribe(evmTypes.EventTypeDepositConfirmation, evmTypes.ModuleName, evmTypes.AttributeValueStart)
-	// evmTokConf := subscribe(evmTypes.EventTypeTokenConfirmation, evmTypes.ModuleName, evmTypes.AttributeValueStart)
-	// evmTraConf := subscribe(evmTypes.EventTypeTransferKeyConfirmation, evmTypes.ModuleName, evmTypes.AttributeValueStart)
-
-	eventCtx, cancelEventCtx := context.WithCancel(context.Background())
-	// stop the jobs if process gets interrupted/terminated
-	cleanupCommands = append(cleanupCommands, func() {
-		logger.Info("stopping listening for blocks...")
-		blockHeaderForTSS.Close()
-		logger.Info("block listener stopped")
-		logger.Info("stop listening for events...")
-		cancelEventCtx()
-		<-eventBus.Done()
-		logger.Info("event listener stopped")
-	})
-
-	fetchEvents := func(errChan chan<- error) { errChan <- <-eventBus.FetchEvents(eventCtx) }
 	js := []jobs.Job{
-		fetchEvents,
-		// tmEvents.Consume(blockHeaderForStateUpdate, tmEvents.OnlyBlockHeight(stateStore.SetState)),
-		// tmEvents.Consume(blockHeaderForTSS, tmEvents.OnlyBlockHeight(func(height int64) error {
-		// 	tssMgr.ProcessNewBlockHeader(height)
-		// 	return nil
-		// })),
-		//  tmEvents.Consume(heartbeat, tssMgr.ProcessHeartBeatEvent),
-		// tmEvents.Consume(keygenStart, tssMgr.ProcessKeygenStart),
+
 		Consume(subscriber, tssMgr),
 		ConsumeH(out, tssMgr),
-		// tmEvents.Consume(signStart, tssMgr.ProcessSignStart),
-		// tmEvents.Consume(signMsg, tssMgr.ProcessSignMsg),
-		// tmEvents.Consume(btcConf, btcMgr.ProcessConfirmation),
-		// tmEvents.Consume(evmNewChain, evmMgr.ProcessNewChain),
-		// tmEvents.Consume(evmChainConf, evmMgr.ProcessChainConfirmation),
-		// tmEvents.Consume(evmDepConf, evmMgr.ProcessDepositConfirmation),
-		// tmEvents.Consume(evmTokConf, evmMgr.ProcessTokenConfirmation),
-		// tmEvents.Consume(evmTraConf, evmMgr.ProcessTransferOwnershipConfirmation),
 	}
 
 	// errGroup runs async processes and cancels their context if ANY of them returns an error.
@@ -349,8 +247,7 @@ func listen(ctx sdkClient.Context, txf tx.Factory, axelarCfg config.ValdConfig, 
 	mgr.Wait()
 
 }
-//go run cmd/axelard/main.go vald-start --validator-addr cosmos1u0sv2a225ualg7t35pxux8453t4d3huv8966p9 --validator-key 28c1d3cb9c1ce8fb04f26f55fc859d9ed262feb1b1fc5dc06ad502c947a932e7
-//go run cmd/axelard/main.go vald-start --validator-addr cosmos1gh7gxcfcmvxq6vysh0dtey26erpaawjnfpc289 --validator-key  58ef035d49e62e6a214cc8c1501db1a3218e777fe3b623cbec9c1465ed710b78
+
 // Consume processes all events from the given subscriber with the given function.
 // Do not consume the same subscriber multiple times.
 func Consume(subscriber <-chan ctypes.ResultEvent, tssMgr *tss.Mgr) jobs.Job {
@@ -362,41 +259,40 @@ func Consume(subscriber <-chan ctypes.ResultEvent, tssMgr *tss.Mgr) jobs.Job {
 				go func() {
 					defer recovery(errChan)
 					d := e.Data.(tmtypes.EventDataTx).Result.Log
-					fmt.Println("event : ", d)
+				
 					e2 := e.Data.(tmtypes.EventDataTx).Result.Events
-					
+
 					var events []tss.EventMsg
 					if err := json.Unmarshal([]byte(d), &events); err != nil {
 						errChan <- err
 					}
-					//fmt.Println(e.Data)
-					if events[0].Events[0].Type == "keygen"{
+					
+					if events[0].Events[0].Type == "keygen" {
 
 						key := events[0].Events[0].Attributes[0].Key
-						
-						if key == "start"{
-							
+
+						if key == "start" {
+
 							if err := tssMgr.ProcessKeygenStart(events, e.Data.(tmtypes.EventDataTx).Height); err != nil {
 								errChan <- err
 							}
-							
+
 						}
-						if key == "message"{
-							
+						if key == "message" {
+
 							if err := tssMgr.ProcessKeygenMsg(e2); err != nil {
 								errChan <- err
 							}
 						}
-						if key == "dispute"{
+						if key == "dispute" {
 							if err := tssMgr.ProcessKeygenMsgDispute(events[0].Events); err != nil {
 								errChan <- err
 							}
 						}
 					}
-					
-					
+
 				}()
-			
+
 			}
 		}
 	}
@@ -408,14 +304,14 @@ func ConsumeH(subscriber <-chan ctypes.ResultEvent, tssMgr *tss.Mgr) jobs.Job {
 			select {
 			case e := <-subscriber:
 				go func() {
-					
+
 					newBlockHeader := e.Data.(tmtypes.EventDataNewBlockHeader)
 
 					height := newBlockHeader.Header.Height
 					//fmt.Println(height)
-					tssMgr.CheckTimeout(int(height));
+					tssMgr.CheckTimeout(int(height))
 				}()
-			
+
 			}
 		}
 	}
@@ -425,25 +321,6 @@ func recovery(errChan chan<- error) {
 		errChan <- fmt.Errorf("job panicked:%s", r)
 	}
 }
-
-func createNewBlockEventQuery(eventType, module, action string) tmEvents.Query {
-	return tmEvents.Query{
-		TMQuery: tmEvents.NewBlockHeaderEventQuery(eventType).MatchModule(module).MatchAction(action).Build(),
-		Predicate: func(e tmEvents.Event) bool {
-			return e.Type == eventType && e.Attributes[sdk.AttributeKeyModule] == module && e.Attributes[sdk.AttributeKeyAction] == action
-		},
-	}
-}
-
-func createEventBus(client rpcclient.Client, startBlock int64, logger log.Logger) *tmEvents.Bus {
-	notifier := tmEvents.NewBlockNotifier(tmEvents.NewBlockClient(client), logger).StartingAt(startBlock)
-	return tmEvents.NewEventBus(tmEvents.NewBlockSource(client, notifier), pubsub.NewBus, logger)
-}
-
-// func createBroadcaster(txf tx.Factory, axelarCfg config.ValdConfig, logger log.Logger) broadcast.CosmosClient {
-// 	pipeline := broadcaster.NewPipelineWithRetry(10000, axelarCfg.MaxRetries, utils2.LinearBackOff(axelarCfg.MinTimeout), logger)
-// 	return broadcaster.NewBroadcaster(txf, pipeline, logger)
-// }
 
 func createTSSMgr(broadcaster *broadcast.CosmosClient, cliCtx client.Context, axelarCfg config.ValdConfig, logger log.Logger, valAddr string, cdc *codec.LegacyAmino) *tss.Mgr {
 	create := func() (*tss.Mgr, error) {
@@ -468,51 +345,6 @@ func createTSSMgr(broadcaster *broadcast.CosmosClient, cliCtx client.Context, ax
 
 	return mgr
 }
-
-// func createBTCMgr(axelarCfg config.ValdConfig, cliCtx client.Context, b broadcast.CosmosClient, logger log.Logger, cdc *codec.LegacyAmino) *btc.Mgr {
-// 	rpc, err := btcRPC.NewRPCClient(axelarCfg.BtcConfig, logger)
-// 	if err != nil {
-// 		logger.Error(err.Error())
-// 		panic(err)
-// 	}
-// 	// clean up btcRPC connection on process shutdown
-// 	cleanupCommands = append(cleanupCommands, rpc.Shutdown)
-
-// 	logger.Info("Successfully connected to Bitcoin bridge ")
-
-// 	btcMgr := btc.NewMgr(rpc, cliCtx, b, logger, cdc)
-// 	return btcMgr
-// }
-
-// func createEVMMgr(axelarCfg config.ValdConfig, cliCtx client.Context, b broadcast.CosmosClient, logger log.Logger, cdc *codec.LegacyAmino) *evm.Mgr {
-// 	rpcs := make(map[string]evmRPC.Client)
-
-// 	for _, evmChainConf := range axelarCfg.EVMConfig {
-// 		if !evmChainConf.WithBridge {
-// 			continue
-// 		}
-
-// 		if _, found := rpcs[strings.ToLower(evmChainConf.Name)]; found {
-// 			msg := fmt.Errorf("duplicate bridge configuration found for EVM chain %s", evmChainConf.Name)
-// 			logger.Error(msg.Error())
-// 			panic(msg)
-// 		}
-
-// 		rpc, err := evmRPC.NewClient(evmChainConf.RPCAddr)
-// 		if err != nil {
-// 			logger.Error(err.Error())
-// 			panic(err)
-// 		}
-// 		// clean up evmRPC connection on process shutdown
-// 		cleanupCommands = append(cleanupCommands, rpc.Close)
-
-// 		rpcs[strings.ToLower(evmChainConf.Name)] = rpc
-// 		logger.Info(fmt.Sprintf("Successfully connected to EVM bridge for chain %s", evmChainConf.Name))
-// 	}
-
-// 	evmMgr := evm.NewMgr(rpcs, cliCtx, b, logger, cdc)
-// 	return evmMgr
-// }
 
 // RWFile implements the ReadWriter interface for an underlying file
 type RWFile struct {
