@@ -5,9 +5,9 @@ package types
 
 import (
 	fmt "fmt"
-	exported "github.com/axelarnetwork/axelar-core/x/tss/exported"
-	github_com_axelarnetwork_axelar_core_x_tss_exported "github.com/axelarnetwork/axelar-core/x/tss/exported"
-	tofnd "github.com/axelarnetwork/axelar-core/x/tss/tofnd"
+	exported "github.com/fairblock/dkg-core/x/tss/exported"
+	github_com_fairblock_dkg_core_x_tss_exported "github.com/fairblock/dkg-core/x/tss/exported"
+	tofnd "github.com/fairblock/dkg-core/x/tss/tofnd"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
 	github_com_gogo_protobuf_types "github.com/gogo/protobuf/types"
@@ -293,7 +293,7 @@ func (m *QueryKeyShareResponse) XXX_DiscardUnknown() {
 var xxx_messageInfo_QueryKeyShareResponse proto.InternalMessageInfo
 
 type QueryKeyShareResponse_ShareInfo struct {
-	KeyID               github_com_axelarnetwork_axelar_core_x_tss_exported.KeyID `protobuf:"bytes,1,opt,name=key_id,json=keyId,proto3,casttype=github.com/axelarnetwork/axelar-core/x/tss/exported.KeyID" json:"key_id,omitempty"`
+	KeyID               github_com_fairblock_dkg_core_x_tss_exported.KeyID `protobuf:"bytes,1,opt,name=key_id,json=keyId,proto3,casttype=github.com/fairblock/dkg-core/x/tss/exported.KeyID" json:"key_id,omitempty"`
 	KeyChain            string                                                    `protobuf:"bytes,2,opt,name=key_chain,json=keyChain,proto3" json:"key_chain,omitempty"`
 	KeyRole             string                                                    `protobuf:"bytes,3,opt,name=key_role,json=keyRole,proto3" json:"key_role,omitempty"`
 	SnapshotBlockNumber int64                                                     `protobuf:"varint,4,opt,name=snapshot_block_number,json=snapshotBlockNumber,proto3" json:"snapshot_block_number,omitempty"`
@@ -410,9 +410,9 @@ func (m *QueryActiveOldKeysValidatorResponse) XXX_DiscardUnknown() {
 var xxx_messageInfo_QueryActiveOldKeysValidatorResponse proto.InternalMessageInfo
 
 type QueryActiveOldKeysValidatorResponse_KeyInfo struct {
-	ID    github_com_axelarnetwork_axelar_core_x_tss_exported.KeyID   `protobuf:"bytes,1,opt,name=id,proto3,casttype=github.com/axelarnetwork/axelar-core/x/tss/exported.KeyID" json:"id,omitempty"`
+	ID    github_com_fairblock_dkg_core_x_tss_exported.KeyID   `protobuf:"bytes,1,opt,name=id,proto3,casttype=github.com/fairblock/dkg-core/x/tss/exported.KeyID" json:"id,omitempty"`
 	Chain string                                                      `protobuf:"bytes,2,opt,name=chain,proto3" json:"chain,omitempty"`
-	Role  github_com_axelarnetwork_axelar_core_x_tss_exported.KeyRole `protobuf:"varint,3,opt,name=role,proto3,casttype=github.com/axelarnetwork/axelar-core/x/tss/exported.KeyRole" json:"role,omitempty"`
+	Role  github_com_fairblock_dkg_core_x_tss_exported.KeyRole `protobuf:"varint,3,opt,name=role,proto3,casttype=github.com/fairblock/dkg-core/x/tss/exported.KeyRole" json:"role,omitempty"`
 }
 
 func (m *QueryActiveOldKeysValidatorResponse_KeyInfo) Reset() {
@@ -453,7 +453,7 @@ func (m *QueryActiveOldKeysValidatorResponse_KeyInfo) XXX_DiscardUnknown() {
 var xxx_messageInfo_QueryActiveOldKeysValidatorResponse_KeyInfo proto.InternalMessageInfo
 
 type QueryActiveOldKeysResponse struct {
-	KeyIDs []github_com_axelarnetwork_axelar_core_x_tss_exported.KeyID `protobuf:"bytes,1,rep,name=key_ids,json=keyIds,proto3,casttype=github.com/axelarnetwork/axelar-core/x/tss/exported.KeyID" json:"key_ids,omitempty"`
+	KeyIDs []github_com_fairblock_dkg_core_x_tss_exported.KeyID `protobuf:"bytes,1,rep,name=key_ids,json=keyIds,proto3,casttype=github.com/fairblock/dkg-core/x/tss/exported.KeyID" json:"key_ids,omitempty"`
 }
 
 func (m *QueryActiveOldKeysResponse) Reset()         { *m = QueryActiveOldKeysResponse{} }
@@ -490,7 +490,7 @@ func (m *QueryActiveOldKeysResponse) XXX_DiscardUnknown() {
 var xxx_messageInfo_QueryActiveOldKeysResponse proto.InternalMessageInfo
 
 type QueryExternalKeyIDResponse struct {
-	KeyIDs []github_com_axelarnetwork_axelar_core_x_tss_exported.KeyID `protobuf:"bytes,1,rep,name=key_ids,json=keyIds,proto3,casttype=github.com/axelarnetwork/axelar-core/x/tss/exported.KeyID" json:"key_ids,omitempty"`
+	KeyIDs []github_com_fairblock_dkg_core_x_tss_exported.KeyID `protobuf:"bytes,1,rep,name=key_ids,json=keyIds,proto3,casttype=github.com/fairblock/dkg-core/x/tss/exported.KeyID" json:"key_ids,omitempty"`
 }
 
 func (m *QueryExternalKeyIDResponse) Reset()         { *m = QueryExternalKeyIDResponse{} }
@@ -2226,7 +2226,7 @@ func (m *QueryKeyShareResponse_ShareInfo) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.KeyID = github_com_axelarnetwork_axelar_core_x_tss_exported.KeyID(dAtA[iNdEx:postIndex])
+			m.KeyID = github_com_fairblock_dkg_core_x_tss_exported.KeyID(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -2627,7 +2627,7 @@ func (m *QueryActiveOldKeysValidatorResponse_KeyInfo) Unmarshal(dAtA []byte) err
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.ID = github_com_axelarnetwork_axelar_core_x_tss_exported.KeyID(dAtA[iNdEx:postIndex])
+			m.ID = github_com_fairblock_dkg_core_x_tss_exported.KeyID(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -2675,7 +2675,7 @@ func (m *QueryActiveOldKeysValidatorResponse_KeyInfo) Unmarshal(dAtA []byte) err
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Role |= github_com_axelarnetwork_axelar_core_x_tss_exported.KeyRole(b&0x7F) << shift
+				m.Role |= github_com_fairblock_dkg_core_x_tss_exported.KeyRole(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2760,7 +2760,7 @@ func (m *QueryActiveOldKeysResponse) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.KeyIDs = append(m.KeyIDs, github_com_axelarnetwork_axelar_core_x_tss_exported.KeyID(dAtA[iNdEx:postIndex]))
+			m.KeyIDs = append(m.KeyIDs, github_com_fairblock_dkg_core_x_tss_exported.KeyID(dAtA[iNdEx:postIndex]))
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -2842,7 +2842,7 @@ func (m *QueryExternalKeyIDResponse) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.KeyIDs = append(m.KeyIDs, github_com_axelarnetwork_axelar_core_x_tss_exported.KeyID(dAtA[iNdEx:postIndex]))
+			m.KeyIDs = append(m.KeyIDs, github_com_fairblock_dkg_core_x_tss_exported.KeyID(dAtA[iNdEx:postIndex]))
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex

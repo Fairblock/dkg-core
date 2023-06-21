@@ -3,7 +3,7 @@ package types
 import (
 	"fmt"
 
-	"github.com/axelarnetwork/axelar-core/x/tss/exported"
+	"github.com/fairblock/dkg-core/x/tss/exported"
 )
 
 // Router implements a tss Handler router.

@@ -6,11 +6,11 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/axelarnetwork/axelar-core/testutils"
-	"github.com/axelarnetwork/axelar-core/testutils/rand"
-	"github.com/axelarnetwork/axelar-core/utils"
-	"github.com/axelarnetwork/axelar-core/x/tss/exported"
-	tssTestUtils "github.com/axelarnetwork/axelar-core/x/tss/exported/testutils"
+	"github.com/fairblock/dkg-core/testutils"
+	"github.com/fairblock/dkg-core/testutils/rand"
+	"github.com/fairblock/dkg-core/utils"
+	"github.com/fairblock/dkg-core/x/tss/exported"
+	tssTestUtils "github.com/fairblock/dkg-core/x/tss/exported/testutils"
 )
 
 func TestKeyID_Validate(t *testing.T) {

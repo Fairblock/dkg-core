@@ -4,9 +4,8 @@ import (
 	"fmt"
 
 	params "github.com/cosmos/cosmos-sdk/x/params/types"
-
-	//"github.com/axelarnetwork/axelar-core/utils"
-	//"github.com/axelarnetwork/axelar-core/x/tss/exported"
+	//"github.com/fairblock/dkg-core/utils"
+	//"github.com/fairblock/dkg-core/x/tss/exported"
 )
 
 // DefaultParamspace - default parameter namespace
@@ -108,10 +107,10 @@ func (m *Params) ParamSetPairs() params.ParamSetPairs {
 		set on the correct Params data struct
 	*/
 	return params.ParamSetPairs{
-	//	params.NewParamSetPair(KeyKeyRequirements, &m.KeyRequirements, validateKeyRequirements),
+		//	params.NewParamSetPair(KeyKeyRequirements, &m.KeyRequirements, validateKeyRequirements),
 		params.NewParamSetPair(KeySuspendDurationInBlocks, &m.SuspendDurationInBlocks, validateSuspendDurationInBlocks),
 		params.NewParamSetPair(KeyHeartbeatPeriodInBlocks, &m.HeartbeatPeriodInBlocks, validatePosInt64("HeartbeatPeriodInBlocks")),
-	//	params.NewParamSetPair(KeyMaxMissedBlocksPerWindow, &m.MaxMissedBlocksPerWindow, validateMaxMissedBlocksPerWindow),
+		//	params.NewParamSetPair(KeyMaxMissedBlocksPerWindow, &m.MaxMissedBlocksPerWindow, validateMaxMissedBlocksPerWindow),
 		params.NewParamSetPair(KeyUnbondingLockingKeyRotationCount, &m.UnbondingLockingKeyRotationCount, validatePosInt64("UnbondingLockingKeyRotationCount")),
 		// params.NewParamSetPair(KeyExternalMultisigThreshold, &m.ExternalMultisigThreshold, validateExternalMultisigThreshold),
 		params.NewParamSetPair(KeyMaxSignQueueSize, &m.MaxSignQueueSize, validatePosInt64("MaxSignQueueSize")),

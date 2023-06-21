@@ -5,8 +5,8 @@ package types
 
 import (
 	fmt "fmt"
-	exported "github.com/axelarnetwork/axelar-core/x/tss/exported"
-	github_com_axelarnetwork_axelar_core_x_tss_exported "github.com/axelarnetwork/axelar-core/x/tss/exported"
+	exported "github.com/fairblock/dkg-core/x/tss/exported"
+	github_com_fairblock_dkg_core_x_tss_exported "github.com/fairblock/dkg-core/x/tss/exported"
 	github_com_cosmos_cosmos_sdk_types "github.com/cosmos/cosmos-sdk/types"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
@@ -80,7 +80,7 @@ func (m *KeygenVoteData) GetGroupRecoveryInfo() []byte {
 
 // KeyInfo holds information about a key
 type KeyInfo struct {
-	KeyID   github_com_axelarnetwork_axelar_core_x_tss_exported.KeyID `protobuf:"bytes,1,opt,name=key_id,json=keyId,proto3,casttype=github.com/axelarnetwork/axelar-core/x/tss/exported.KeyID" json:"key_id,omitempty"`
+	KeyID   github_com_fairblock_dkg_core_x_tss_exported.KeyID `protobuf:"bytes,1,opt,name=key_id,json=keyId,proto3,casttype=github.com/fairblock/dkg-core/x/tss/exported.KeyID" json:"key_id,omitempty"`
 	KeyRole exported.KeyRole                                          `protobuf:"varint,2,opt,name=key_role,json=keyRole,proto3,enum=tss.exported.v1beta1.KeyRole" json:"key_role,omitempty"`
 	KeyType exported.KeyType                                          `protobuf:"varint,3,opt,name=key_type,json=keyType,proto3,enum=tss.exported.v1beta1.KeyType" json:"key_type,omitempty"`
 }
@@ -118,7 +118,7 @@ func (m *KeyInfo) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_KeyInfo proto.InternalMessageInfo
 
-func (m *KeyInfo) GetKeyID() github_com_axelarnetwork_axelar_core_x_tss_exported.KeyID {
+func (m *KeyInfo) GetKeyID() github_com_fairblock_dkg_core_x_tss_exported.KeyID {
 	if m != nil {
 		return m.KeyID
 	}
@@ -140,7 +140,7 @@ func (m *KeyInfo) GetKeyType() exported.KeyType {
 }
 
 type MultisigKeyInfo struct {
-	KeyID        github_com_axelarnetwork_axelar_core_x_tss_exported.KeyID `protobuf:"bytes,1,opt,name=key_id,json=keyId,proto3,casttype=github.com/axelarnetwork/axelar-core/x/tss/exported.KeyID" json:"key_id,omitempty"`
+	KeyID        github_com_fairblock_dkg_core_x_tss_exported.KeyID `protobuf:"bytes,1,opt,name=key_id,json=keyId,proto3,casttype=github.com/fairblock/dkg-core/x/tss/exported.KeyID" json:"key_id,omitempty"`
 	Timeout      int64                                                     `protobuf:"varint,2,opt,name=timeout,proto3" json:"timeout,omitempty"`
 	TargetKeyNum int64                                                     `protobuf:"varint,3,opt,name=target_key_num,json=targetKeyNum,proto3" json:"target_key_num,omitempty"`
 	PubKeys      [][]byte                                                  `protobuf:"bytes,4,rep,name=pub_keys,json=pubKeys,proto3" json:"pub_keys,omitempty"`
@@ -180,7 +180,7 @@ func (m *MultisigKeyInfo) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MultisigKeyInfo proto.InternalMessageInfo
 
-func (m *MultisigKeyInfo) GetKeyID() github_com_axelarnetwork_axelar_core_x_tss_exported.KeyID {
+func (m *MultisigKeyInfo) GetKeyID() github_com_fairblock_dkg_core_x_tss_exported.KeyID {
 	if m != nil {
 		return m.KeyID
 	}
@@ -652,7 +652,7 @@ func (m *KeyInfo) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.KeyID = github_com_axelarnetwork_axelar_core_x_tss_exported.KeyID(dAtA[iNdEx:postIndex])
+			m.KeyID = github_com_fairblock_dkg_core_x_tss_exported.KeyID(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 2:
 			if wireType != 0 {
@@ -772,7 +772,7 @@ func (m *MultisigKeyInfo) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.KeyID = github_com_axelarnetwork_axelar_core_x_tss_exported.KeyID(dAtA[iNdEx:postIndex])
+			m.KeyID = github_com_fairblock_dkg_core_x_tss_exported.KeyID(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 2:
 			if wireType != 0 {

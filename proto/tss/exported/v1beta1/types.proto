@@ -1,7 +1,7 @@
 syntax = "proto3";
 package tss.exported.v1beta1;
 
-option go_package = "github.com/axelarnetwork/axelar-core/x/tss/exported";
+option go_package = "github.com/fairblock/dkg-core/x/tss/exported";
 
 import "utils/v1beta1/threshold.proto";
 import "gogoproto/gogo.proto";

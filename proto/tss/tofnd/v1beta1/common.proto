@@ -1,7 +1,7 @@
 // File copied from golang tofnd with minor tweaks
 syntax = "proto3";
 
-option go_package = "github.com/axelarnetwork/axelar-core/x/tss/tofnd";
+option go_package = "github.com/fairblock/dkg-core/x/tss/tofnd";
 
 import "gogoproto/gogo.proto";
 

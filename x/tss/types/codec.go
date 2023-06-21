@@ -6,8 +6,8 @@ import (
 	cryptocodec "github.com/cosmos/cosmos-sdk/crypto/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	axelarnet "github.com/axelarnetwork/axelar-core/x/axelarnet/exported"
-	"github.com/axelarnetwork/axelar-core/x/tss/tofnd"
+	dkgnet "github.com/fairblock/dkg-core/x/dkgnet/exported"
+	"github.com/fairblock/dkg-core/x/tss/tofnd"
 )
 
 // RegisterLegacyAminoCodec registers concrete types on codec
@@ -44,7 +44,7 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&KeygenVoteData{},
 	)
 
-	registry.RegisterImplementations((*axelarnet.Refundable)(nil),
+	registry.RegisterImplementations((*dkgnet.Refundable)(nil),
 		&HeartBeatRequest{},
 		&ProcessKeygenTrafficRequest{},
 		&VotePubKeyRequest{},

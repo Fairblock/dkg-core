@@ -7,14 +7,14 @@ import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/tendermint/tendermint/libs/log"
 
-	//"github.com/axelarnetwork/axelar-core/utils"
-	tofnd2 "github.com/axelarnetwork/axelar-core/x/tss/tofnd"
+	//"github.com/fairblock/dkg-core/utils"
+	tofnd2 "github.com/fairblock/dkg-core/x/tss/tofnd"
 
-	//nexus "github.com/axelarnetwork/axelar-core/x/nexus/exported"
-	//reward "github.com/axelarnetwork/axelar-core/x/reward/exported"
-	//snapshot "github.com/axelarnetwork/axelar-core/x/snapshot/exported"
-	"github.com/axelarnetwork/axelar-core/x/tss/exported"
-	//vote "github.com/axelarnetwork/axelar-core/x/vote/exported"
+	//nexus "github.com/fairblock/dkg-core/x/nexus/exported"
+	//reward "github.com/fairblock/dkg-core/x/reward/exported"
+	//snapshot "github.com/fairblock/dkg-core/x/snapshot/exported"
+	"github.com/fairblock/dkg-core/x/tss/exported"
+	//vote "github.com/fairblock/dkg-core/x/vote/exported"
 )
 
 //go:generate moq -pkg mock -out ./mock/expected_keepers.go . TofndClient TofndKeyGenClient TofndSignClient Voter StakingKeeper TSSKeeper Snapshotter Nexus Rewarder
@@ -102,7 +102,7 @@ type TSSKeeper interface {
 	DeleteSnapshotCounterForKeyID(ctx sdk.Context, keyID exported.KeyID)
 	SetSigStatus(ctx sdk.Context, sigID string, status exported.SigStatus)
 	GetSignParticipants(ctx sdk.Context, sigID string) []string
-//	SelectSignParticipants(ctx sdk.Context, snapshotter Snapshotter, info exported.SignInfo, snap snapshot.Snapshot) ([]snapshot.Validator, []snapshot.Validator, error)
+	//	SelectSignParticipants(ctx sdk.Context, snapshotter Snapshotter, info exported.SignInfo, snap snapshot.Snapshot) ([]snapshot.Validator, []snapshot.Validator, error)
 	GetSignParticipantsAsJSON(ctx sdk.Context, sigID string) []byte
 	GetSignParticipantsSharesAsJSON(ctx sdk.Context, sigID string) []byte
 	SetInfoForSig(ctx sdk.Context, sigID string, info exported.SignInfo)

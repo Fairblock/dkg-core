@@ -1,8 +1,8 @@
 ⚠️⚠️⚠️ **THIS IS A WORK IN PROGRESS** ⚠️⚠️⚠️
 
-# axelar-core
+# dkg-core
 
-The axelar-core app based on the Cosmos SDK is the main application of the axelar network. This repository is used to
+The dkg-core app based on the Cosmos SDK is the main application of the dkg network. This repository is used to
 build the necessary binaries and docker image to run a core node.
 
 ## Prerequisites for building binaries and docker images
@@ -20,7 +20,7 @@ build the necessary binaries and docker image to run a core node.
        UseKeychain yes     
     ```
     * Add `ssh-add ~/.ssh/{private key file name} &>/dev/null` in your shell's .rc file (eg. `~/.bash_profile`).
-4. Run `git config --global url."git@github.com:axelarnetwork".insteadOf https://github.com/axelarnetwork` to
+4. Run `git config --global url."git@github.com:dkgnetwork".insteadOf https://github.com/dkgnetwork` to
    force `go get` to authenticate via ssh
 
 ## Building binaries locally
@@ -29,16 +29,16 @@ Execute `make build` to create local binaries for the validator node. They are c
 
 ## Creating docker images
 
-To create a regular docker image for the node, execute `make docker-image`. This creates the image axelar/core:
+To create a regular docker image for the node, execute `make docker-image`. This creates the image dkg/core:
 latest.
 
 To create a docker image for debugging (with [delve](https://github.com/go-delve/delve)),
-execute `make docker-image-debug`. This creates the image axelar/core-debug:latest.
+execute `make docker-image-debug`. This creates the image dkg/core-debug:latest.
 
 ## Interacting with a local node
 
-With a local (dockerized) node running, the `axelard` binary can be used to interact with the node.
-Run `./bin/axelard --help` after building the binaries to get information about the available commands.
+With a local (dockerized) node running, the `dkgd` binary can be used to interact with the node.
+Run `./bin/dkgd --help` after building the binaries to get information about the available commands.
 
 ## Show API documentation
 
@@ -46,14 +46,14 @@ Execute `GO111MODULE=off go get -u golang.org/x/tools/cmd/godoc` to ensure that 
 
 After the installation, execute `godoc -http ":{port}" -index` to host a local godoc server. For example, with
 port `8080` the documentation is hosted at
-http://localhost:8080/pkg/github.com/axelarnetwork/axelar-core. The index flag makes the documentation searchable.
+http://localhost:8080/pkg/github.com/fairblock/dkg-core. The index flag makes the documentation searchable.
 
 Comments at the beginning of packages, before types and before functions are automatically taken from the source files
 to populate the documentation. See https://blog.golang.org/godoc for more information.
 
 ### CLI command documentation
 
-For the full list of available CLI commands for `axelard` see [here](docs/toc.md)
+For the full list of available CLI commands for `dkgd` see [here](docs/toc.md)
 
 ## Test tools
 

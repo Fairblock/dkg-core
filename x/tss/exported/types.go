@@ -9,8 +9,7 @@ import (
 
 	"github.com/btcsuite/btcd/btcec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-
-	//"github.com/axelarnetwork/axelar-core/utils"
+	//"github.com/fairblock/dkg-core/utils"
 )
 
 // Handler defines a function that handles a signature after it has

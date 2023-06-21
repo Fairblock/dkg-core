@@ -5,11 +5,11 @@ package types
 
 import (
 	fmt "fmt"
-	//github_com_axelarnetwork_axelar_core_x_snapshot_exported "github.com/axelarnetwork/axelar-core/x/snapshot/exported"
-	exported "github.com/axelarnetwork/axelar-core/x/tss/exported"
-	github_com_axelarnetwork_axelar_core_x_tss_exported "github.com/axelarnetwork/axelar-core/x/tss/exported"
-	tofnd "github.com/axelarnetwork/axelar-core/x/tss/tofnd"
-	//exported1 "github.com/axelarnetwork/axelar-core/x/vote/exported"
+	
+	exported "github.com/fairblock/dkg-core/x/tss/exported"
+	github_com_fairblock_dkg_core_x_tss_exported "github.com/fairblock/dkg-core/x/tss/exported"
+	tofnd "github.com/fairblock/dkg-core/x/tss/tofnd"
+	//exported1 "github.com/fairblock/dkg-core/x/vote/exported"
 	github_com_cosmos_cosmos_sdk_types "github.com/cosmos/cosmos-sdk/types"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
@@ -108,7 +108,7 @@ type RotateKeyRequest struct {
 	Sender  github_com_cosmos_cosmos_sdk_types.AccAddress             `protobuf:"bytes,1,opt,name=sender,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"sender,omitempty"`
 	Chain   string                                                    `protobuf:"bytes,2,opt,name=chain,proto3" json:"chain,omitempty"`
 	KeyRole exported.KeyRole                                          `protobuf:"varint,3,opt,name=key_role,json=keyRole,proto3,enum=tss.exported.v1beta1.KeyRole" json:"key_role,omitempty"`
-	KeyID   github_com_axelarnetwork_axelar_core_x_tss_exported.KeyID `protobuf:"bytes,4,opt,name=key_id,json=keyId,proto3,casttype=github.com/axelarnetwork/axelar-core/x/tss/exported.KeyID" json:"key_id,omitempty"`
+	KeyID   github_com_fairblock_dkg_core_x_tss_exported.KeyID `protobuf:"bytes,4,opt,name=key_id,json=keyId,proto3,casttype=github.com/fairblock/dkg-core/x/tss/exported.KeyID" json:"key_id,omitempty"`
 }
 
 func (m *RotateKeyRequest) Reset()         { *m = RotateKeyRequest{} }
@@ -488,7 +488,7 @@ var xxx_messageInfo_VoteSigResponse proto.InternalMessageInfo
 
 type HeartBeatRequest struct {
 	Sender github_com_cosmos_cosmos_sdk_types.AccAddress               `protobuf:"bytes,1,opt,name=sender,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"sender,omitempty"`
-	KeyIDs []github_com_axelarnetwork_axelar_core_x_tss_exported.KeyID `protobuf:"bytes,2,rep,name=key_ids,json=keyIds,proto3,casttype=github.com/axelarnetwork/axelar-core/x/tss/exported.KeyID" json:"key_ids,omitempty"`
+	KeyIDs []github_com_fairblock_dkg_core_x_tss_exported.KeyID `protobuf:"bytes,2,rep,name=key_ids,json=keyIds,proto3,casttype=github.com/fairblock/dkg-core/x/tss/exported.KeyID" json:"key_ids,omitempty"`
 }
 
 func (m *HeartBeatRequest) Reset()         { *m = HeartBeatRequest{} }
@@ -524,41 +524,6 @@ func (m *HeartBeatRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_HeartBeatRequest proto.InternalMessageInfo
 
-// type HeartBeatResponse struct {
-// 	KeygenIllegibility  github_com_axelarnetwork_axelar_core_x_snapshot_exported.ValidatorIllegibility `protobuf:"varint,1,opt,name=keygen_illegibility,json=keygenIllegibility,proto3,casttype=github.com/axelarnetwork/axelar-core/x/snapshot/exported.ValidatorIllegibility" json:"keygen_illegibility,omitempty"`
-// 	SigningIllegibility github_com_axelarnetwork_axelar_core_x_snapshot_exported.ValidatorIllegibility `protobuf:"varint,2,opt,name=signing_illegibility,json=signingIllegibility,proto3,casttype=github.com/axelarnetwork/axelar-core/x/snapshot/exported.ValidatorIllegibility" json:"signing_illegibility,omitempty"`
-// }
-
-// func (m *HeartBeatResponse) Reset()         { *m = HeartBeatResponse{} }
-// func (m *HeartBeatResponse) String() string { return proto.CompactTextString(m) }
-// func (*HeartBeatResponse) ProtoMessage()    {}
-// func (*HeartBeatResponse) Descriptor() ([]byte, []int) {
-// 	return fileDescriptor_58d13e1023e3ffaf, []int{13}
-// }
-// func (m *HeartBeatResponse) XXX_Unmarshal(b []byte) error {
-// 	return m.Unmarshal(b)
-// }
-// func (m *HeartBeatResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-// 	if deterministic {
-// 		return xxx_messageInfo_HeartBeatResponse.Marshal(b, m, deterministic)
-// 	} else {
-// 		b = b[:cap(b)]
-// 		n, err := m.MarshalToSizedBuffer(b)
-// 		if err != nil {
-// 			return nil, err
-// 		}
-// 		return b[:n], nil
-// 	}
-// }
-// func (m *HeartBeatResponse) XXX_Merge(src proto.Message) {
-// 	xxx_messageInfo_HeartBeatResponse.Merge(m, src)
-// }
-// func (m *HeartBeatResponse) XXX_Size() int {
-// 	return m.Size()
-// }
-// func (m *HeartBeatResponse) XXX_DiscardUnknown() {
-// 	xxx_messageInfo_HeartBeatResponse.DiscardUnknown(m)
-// }
 
 var xxx_messageInfo_HeartBeatResponse proto.InternalMessageInfo
 
@@ -602,7 +567,7 @@ func (m *RegisterExternalKeysRequest) XXX_DiscardUnknown() {
 var xxx_messageInfo_RegisterExternalKeysRequest proto.InternalMessageInfo
 
 type RegisterExternalKeysRequest_ExternalKey struct {
-	ID     github_com_axelarnetwork_axelar_core_x_tss_exported.KeyID `protobuf:"bytes,1,opt,name=id,proto3,casttype=github.com/axelarnetwork/axelar-core/x/tss/exported.KeyID" json:"id,omitempty"`
+	ID     github_com_fairblock_dkg_core_x_tss_exported.KeyID `protobuf:"bytes,1,opt,name=id,proto3,casttype=github.com/fairblock/dkg-core/x/tss/exported.KeyID" json:"id,omitempty"`
 	PubKey []byte                                                    `protobuf:"bytes,2,opt,name=pub_key,json=pubKey,proto3" json:"pub_key,omitempty"`
 }
 
@@ -679,7 +644,7 @@ var xxx_messageInfo_RegisterExternalKeysResponse proto.InternalMessageInfo
 
 type SubmitMultisigPubKeysRequest struct {
 	Sender      github_com_cosmos_cosmos_sdk_types.AccAddress             `protobuf:"bytes,1,opt,name=sender,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"sender,omitempty"`
-	KeyID       github_com_axelarnetwork_axelar_core_x_tss_exported.KeyID `protobuf:"bytes,2,opt,name=key_id,json=keyId,proto3,casttype=github.com/axelarnetwork/axelar-core/x/tss/exported.KeyID" json:"key_id,omitempty"`
+	KeyID       github_com_fairblock_dkg_core_x_tss_exported.KeyID `protobuf:"bytes,2,opt,name=key_id,json=keyId,proto3,casttype=github.com/fairblock/dkg-core/x/tss/exported.KeyID" json:"key_id,omitempty"`
 	PubKeyInfos []exported.PubKeyInfo                                     `protobuf:"bytes,3,rep,name=pub_key_infos,json=pubKeyInfos,proto3" json:"pub_key_infos"`
 }
 
@@ -2160,7 +2125,7 @@ func (m *RotateKeyRequest) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.KeyID = github_com_axelarnetwork_axelar_core_x_tss_exported.KeyID(dAtA[iNdEx:postIndex])
+			m.KeyID = github_com_fairblock_dkg_core_x_tss_exported.KeyID(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -3200,7 +3165,7 @@ func (m *HeartBeatRequest) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.KeyIDs = append(m.KeyIDs, github_com_axelarnetwork_axelar_core_x_tss_exported.KeyID(dAtA[iNdEx:postIndex]))
+			m.KeyIDs = append(m.KeyIDs, github_com_fairblock_dkg_core_x_tss_exported.KeyID(dAtA[iNdEx:postIndex]))
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -3223,94 +3188,7 @@ func (m *HeartBeatRequest) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-// func (m *HeartBeatResponse) Unmarshal(dAtA []byte) error {
-// 	l := len(dAtA)
-// 	iNdEx := 0
-// 	for iNdEx < l {
-// 		preIndex := iNdEx
-// 		var wire uint64
-// 		for shift := uint(0); ; shift += 7 {
-// 			if shift >= 64 {
-// 				return ErrIntOverflowTx
-// 			}
-// 			if iNdEx >= l {
-// 				return io.ErrUnexpectedEOF
-// 			}
-// 			b := dAtA[iNdEx]
-// 			iNdEx++
-// 			wire |= uint64(b&0x7F) << shift
-// 			if b < 0x80 {
-// 				break
-// 			}
-// 		}
-// 		fieldNum := int32(wire >> 3)
-// 		wireType := int(wire & 0x7)
-// 		if wireType == 4 {
-// 			return fmt.Errorf("proto: HeartBeatResponse: wiretype end group for non-group")
-// 		}
-// 		if fieldNum <= 0 {
-// 			return fmt.Errorf("proto: HeartBeatResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-// 		}
-// 		switch fieldNum {
-// 		case 1:
-// 			if wireType != 0 {
-// 				return fmt.Errorf("proto: wrong wireType = %d for field KeygenIllegibility", wireType)
-// 			}
-// 			m.KeygenIllegibility = 0
-// 			for shift := uint(0); ; shift += 7 {
-// 				if shift >= 64 {
-// 					return ErrIntOverflowTx
-// 				}
-// 				if iNdEx >= l {
-// 					return io.ErrUnexpectedEOF
-// 				}
-// 				b := dAtA[iNdEx]
-// 				iNdEx++
-// 				m.KeygenIllegibility |= github_com_axelarnetwork_axelar_core_x_snapshot_exported.ValidatorIllegibility(b&0x7F) << shift
-// 				if b < 0x80 {
-// 					break
-// 				}
-// 			}
-// 		case 2:
-// 			if wireType != 0 {
-// 				return fmt.Errorf("proto: wrong wireType = %d for field SigningIllegibility", wireType)
-// 			}
-// 			m.SigningIllegibility = 0
-// 			for shift := uint(0); ; shift += 7 {
-// 				if shift >= 64 {
-// 					return ErrIntOverflowTx
-// 				}
-// 				if iNdEx >= l {
-// 					return io.ErrUnexpectedEOF
-// 				}
-// 				b := dAtA[iNdEx]
-// 				iNdEx++
-// 				m.SigningIllegibility |= github_com_axelarnetwork_axelar_core_x_snapshot_exported.ValidatorIllegibility(b&0x7F) << shift
-// 				if b < 0x80 {
-// 					break
-// 				}
-// 			}
-// 		default:
-// 			iNdEx = preIndex
-// 			skippy, err := skipTx(dAtA[iNdEx:])
-// 			if err != nil {
-// 				return err
-// 			}
-// 			if (skippy < 0) || (iNdEx+skippy) < 0 {
-// 				return ErrInvalidLengthTx
-// 			}
-// 			if (iNdEx + skippy) > l {
-// 				return io.ErrUnexpectedEOF
-// 			}
-// 			iNdEx += skippy
-// 		}
-// 	}
 
-// 	if iNdEx > l {
-// 		return io.ErrUnexpectedEOF
-// 	}
-// 	return nil
-// }
 func (m *RegisterExternalKeysRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -3520,7 +3398,7 @@ func (m *RegisterExternalKeysRequest_ExternalKey) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.ID = github_com_axelarnetwork_axelar_core_x_tss_exported.KeyID(dAtA[iNdEx:postIndex])
+			m.ID = github_com_fairblock_dkg_core_x_tss_exported.KeyID(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -3720,7 +3598,7 @@ func (m *SubmitMultisigPubKeysRequest) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.KeyID = github_com_axelarnetwork_axelar_core_x_tss_exported.KeyID(dAtA[iNdEx:postIndex])
+			m.KeyID = github_com_fairblock_dkg_core_x_tss_exported.KeyID(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {

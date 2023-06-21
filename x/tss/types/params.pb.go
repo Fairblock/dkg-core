@@ -5,8 +5,8 @@ package types
 
 import (
 	fmt "fmt"
-	//utils "github.com/axelarnetwork/axelar-core/utils"
-	//exported "github.com/axelarnetwork/axelar-core/x/tss/exported"
+	//utils "github.com/fairblock/dkg-core/utils"
+	//exported "github.com/fairblock/dkg-core/x/tss/exported"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
 	io "io"

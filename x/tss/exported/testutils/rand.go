@@ -1,8 +1,8 @@
 package testutils
 
 import (
-	"github.com/axelarnetwork/axelar-core/testutils/rand"
-	tss "github.com/axelarnetwork/axelar-core/x/tss/exported"
+	"github.com/fairblock/dkg-core/testutils/rand"
+	tss "github.com/fairblock/dkg-core/x/tss/exported"
 )
 
 // RandKeyID creates a random valid key ID

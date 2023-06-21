@@ -1,0 +1,14 @@
+syntax = "proto3";
+package dkgnet.v1beta1;
+option go_package = "github.com/fairblock/dkg-core/x/dkgnet/types";
+
+import "gogoproto/gogo.proto";
+
+option (gogoproto.goproto_getters_all) = false;
+
+// Params represent the genesis parameters for the module
+message Params {
+  repeated string supported_chains = 1;
+  // IBC packet route timeout window
+  uint64 route_timeout_window = 2;
+}

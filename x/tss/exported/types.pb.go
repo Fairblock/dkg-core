@@ -5,7 +5,7 @@ package exported
 
 import (
 	fmt "fmt"
-	//utils "github.com/axelarnetwork/axelar-core/utils"
+	//utils "github.com/fairblock/dkg-core/utils"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
 	io "io"

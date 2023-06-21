@@ -34,7 +34,7 @@ lint:
 # Build the project with release flags
 .PHONY: build
 build: go.sum
-		go build -o ./bin/axelard -mod=readonly $(BUILD_FLAGS) ./cmd/axelard
+		go build -o ./bin/axelard -mod=readonly $(BUILD_FLAGS) ./cmd/dkgd
 
 .PHONY: build-binaries
 build-binaries: guard-SEMVER
@@ -52,7 +52,7 @@ build-binaries-in-docker: guard-SEMVER
 # Build the project with debug flags
 .PHONY: debug
 debug: go.sum
-		go build -o ./bin/axelard -mod=readonly $(BUILD_FLAGS) -gcflags="all=-N -l" ./cmd/axelard
+		go build -o ./bin/axelard -mod=readonly $(BUILD_FLAGS) -gcflags="all=-N -l" ./cmd/dkgd
 
 # Build a release image
 .PHONY: docker-image

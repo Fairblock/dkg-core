@@ -7,7 +7,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	tss "github.com/axelarnetwork/axelar-core/x/tss/exported"
+	tss "github.com/fairblock/dkg-core/x/tss/exported"
 )
 
 // NewRegisterExternalKeysRequest is the constructor for RegisterExternalKeysRequest

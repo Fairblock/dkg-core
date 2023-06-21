@@ -1,7 +1,7 @@
 syntax = "proto3";
 package tss.v1beta1;
 
-option go_package = "github.com/axelarnetwork/axelar-core/x/tss/types";
+option go_package = "github.com/fairblock/dkg-core/x/tss/types";
 
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
@@ -15,7 +15,7 @@ service MsgService {
   rpc RegisterExternalKeys(tss.v1beta1.RegisterExternalKeysRequest)
       returns (tss.v1beta1.RegisterExternalKeysResponse) {
     option (google.api.http) = {
-      post : "/axelar/tss/register-external-key"
+      post : "/dkg/tss/register-external-key"
       body : "*"
     };
   }
@@ -23,7 +23,7 @@ service MsgService {
   rpc HeartBeat(tss.v1beta1.HeartBeatRequest)
       returns (tss.v1beta1.HeartBeatResponse) {
     option (google.api.http) = {
-      post : "/axelar/tss/heartbeat"
+      post : "/dkg/tss/heartbeat"
       body : "*"
     };
   }
@@ -31,7 +31,7 @@ service MsgService {
   rpc StartKeygen(tss.v1beta1.StartKeygenRequest)
       returns (tss.v1beta1.StartKeygenResponse) {
     option (google.api.http) = {
-      post : "/axelar/tss/startKeygen"
+      post : "/dkg/tss/startKeygen"
       body : "*"
     };
   }
@@ -45,7 +45,7 @@ service MsgService {
   rpc RotateKey(tss.v1beta1.RotateKeyRequest)
       returns (tss.v1beta1.RotateKeyResponse) {
     option (google.api.http) = {
-      post : "/axelar/tss/assign/{chain}"
+      post : "/dkg/tss/assign/{chain}"
       body : "*"
     };
   }

@@ -1,7 +1,7 @@
 syntax = "proto3";
 package tss.v1beta1;
 
-option go_package = "github.com/axelarnetwork/axelar-core/x/tss/types";
+option go_package = "github.com/fairblock/dkg-core/x/tss/types";
 
 import "gogoproto/gogo.proto";
 import "tss/exported/v1beta1/types.proto";
@@ -28,7 +28,7 @@ message RotateKeyRequest {
   string key_id = 4 [
     (gogoproto.customname) = "KeyID",
     (gogoproto.casttype) =
-        "github.com/axelarnetwork/axelar-core/x/tss/exported.KeyID"
+        "github.com/fairblock/dkg-core/x/tss/exported.KeyID"
   ];
 }
 
@@ -80,18 +80,18 @@ message HeartBeatRequest {
   repeated string key_ids = 2 [
     (gogoproto.customname) = "KeyIDs",
     (gogoproto.casttype) =
-        "github.com/axelarnetwork/axelar-core/x/tss/exported.KeyID"
+        "github.com/fairblock/dkg-core/x/tss/exported.KeyID"
   ];
 }
 
 message HeartBeatResponse {
   int32 keygen_illegibility = 1
       [ (gogoproto.casttype) =
-            "github.com/axelarnetwork/axelar-core/x/snapshot/"
+            "github.com/fairblock/dkg-core/x/snapshot/"
             "exported.ValidatorIllegibility" ];
   int32 signing_illegibility = 2
       [ (gogoproto.casttype) =
-            "github.com/axelarnetwork/axelar-core/x/snapshot/"
+            "github.com/fairblock/dkg-core/x/snapshot/"
             "exported.ValidatorIllegibility" ];
 }
 
@@ -100,7 +100,7 @@ message RegisterExternalKeysRequest {
     string id = 1 [
       (gogoproto.customname) = "ID",
       (gogoproto.casttype) =
-          "github.com/axelarnetwork/axelar-core/x/tss/exported.KeyID"
+          "github.com/fairblock/dkg-core/x/tss/exported.KeyID"
     ];
     bytes pub_key = 2;
   }
@@ -119,7 +119,7 @@ message SubmitMultisigPubKeysRequest {
   string key_id = 2 [
     (gogoproto.customname) = "KeyID",
     (gogoproto.casttype) =
-        "github.com/axelarnetwork/axelar-core/x/tss/exported.KeyID"
+        "github.com/fairblock/dkg-core/x/tss/exported.KeyID"
   ];
   repeated exported.v1beta1.PubKeyInfo pub_key_infos = 3
       [ (gogoproto.nullable) = false ];

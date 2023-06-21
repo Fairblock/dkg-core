@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/axelarnetwork/axelar-core/x/tss/types"
+	"github.com/fairblock/dkg-core/x/tss/types"
 )
 
 func TestDefaultParams(t *testing.T) {

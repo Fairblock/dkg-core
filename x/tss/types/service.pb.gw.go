@@ -414,13 +414,13 @@ func RegisterMsgServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux,
 }
 
 var (
-	pattern_MsgService_RegisterExternalKeys_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"axelar", "tss", "register-external-key"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_MsgService_RegisterExternalKeys_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dkg", "tss", "register-external-key"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_MsgService_HeartBeat_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"axelar", "tss", "heartbeat"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_MsgService_HeartBeat_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dkg", "tss", "heartbeat"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_MsgService_StartKeygen_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"axelar", "tss", "startKeygen"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_MsgService_StartKeygen_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dkg", "tss", "startKeygen"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_MsgService_RotateKey_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"axelar", "tss", "assign", "chain"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_MsgService_RotateKey_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"dkg", "tss", "assign", "chain"}, "", runtime.AssumeColonVerbOpt(true)))
 )
 
 var (

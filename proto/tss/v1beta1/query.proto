@@ -1,7 +1,7 @@
 syntax = "proto3";
 package tss.v1beta1;
 
-option go_package = "github.com/axelarnetwork/axelar-core/x/tss/types";
+option go_package = "github.com/fairblock/dkg-core/x/tss/types";
 
 import "gogoproto/gogo.proto";
 import "google/protobuf/timestamp.proto";
@@ -56,7 +56,7 @@ message QueryKeyShareResponse {
     string key_id = 1 [
       (gogoproto.customname) = "KeyID",
       (gogoproto.casttype) =
-          "github.com/axelarnetwork/axelar-core/x/tss/exported.KeyID"
+          "github.com/fairblock/dkg-core/x/tss/exported.KeyID"
     ];
     string key_chain = 2;
     string key_role = 3;
@@ -78,12 +78,12 @@ message QueryActiveOldKeysValidatorResponse {
     string id = 1 [
       (gogoproto.customname) = "ID",
       (gogoproto.casttype) =
-          "github.com/axelarnetwork/axelar-core/x/tss/exported.KeyID"
+          "github.com/fairblock/dkg-core/x/tss/exported.KeyID"
     ];
     string chain = 2;
     int32 role = 3
         [ (gogoproto.casttype) =
-              "github.com/axelarnetwork/axelar-core/x/tss/exported.KeyRole" ];
+              "github.com/fairblock/dkg-core/x/tss/exported.KeyRole" ];
   }
   repeated KeyInfo keys_info = 1 [ (gogoproto.nullable) = false ];
 }
@@ -92,7 +92,7 @@ message QueryActiveOldKeysResponse {
   repeated string key_ids = 1 [
     (gogoproto.customname) = "KeyIDs",
     (gogoproto.casttype) =
-        "github.com/axelarnetwork/axelar-core/x/tss/exported.KeyID"
+        "github.com/fairblock/dkg-core/x/tss/exported.KeyID"
   ];
 }
 
@@ -100,6 +100,6 @@ message QueryExternalKeyIDResponse {
   repeated string key_ids = 1 [
     (gogoproto.customname) = "KeyIDs",
     (gogoproto.casttype) =
-        "github.com/axelarnetwork/axelar-core/x/tss/exported.KeyID"
+        "github.com/fairblock/dkg-core/x/tss/exported.KeyID"
   ];
 }
