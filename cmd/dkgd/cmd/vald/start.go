@@ -321,6 +321,7 @@ func recovery(errChan chan<- error) {
 
 func createTSSMgr(broadcaster *broadcast.CosmosClient, cliCtx client.Context, dkgCfg config.ValdConfig, logger log.Logger, valAddr string, cdc *codec.LegacyAmino) *tss.Mgr {
 	create := func() (*tss.Mgr, error) {
+		
 		conn, err := tss.Connect(dkgCfg.TssConfig.Host, dkgCfg.TssConfig.Port, dkgCfg.TssConfig.DialTimeout, logger)
 		if err != nil {
 			return nil, err
@@ -330,7 +331,7 @@ func createTSSMgr(broadcaster *broadcast.CosmosClient, cliCtx client.Context, dk
 		// creates clients to communicate with the external tofnd process service
 		gg20client := tofnd.NewGG20Client(conn)
 		//multiSigClient := tofnd.NewMultisigClient(conn)
-
+		
 		tssMgr := tss.NewMgr(gg20client, cliCtx, 2*time.Hour, valAddr, broadcaster, logger, cdc)
 
 		return tssMgr, nil

@@ -5,7 +5,7 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"io/ioutil"
-
+	"os"
 	//"math/big"
 	"math/rand"
 	"strconv"
@@ -61,13 +61,20 @@ type ShareInfoDispute struct {
 type P2pSad struct {
 	VssComplaint []ShareInfoDispute `json:"vss_complaint"`
 }
-
+var round = -1
+var blocks = 20
 func (mgr *Mgr) CheckTimeout(height int) error {
+	
 	mgr.currentHeight = height
 	if mgr.startHeight > 0 {
-		if height > mgr.startHeight+30 {
+		
+		if height > mgr.startHeight+blocks {
+			//fmt.Println("height and end of era: ", height,mgr.startHeight+blocks)
 			_, ok := mgr.getKeygenStream(mgr.keyId)
 			if ok {
+				mgr.startHeight = mgr.startHeight + blocks
+				round = round + 1
+				fmt.Println(round)
 				mgr.ProcessTimeout()
 			}
 
@@ -198,7 +205,7 @@ func (mgr *Mgr) ProcessKeygenMsgDispute(e []KeygenEvent) error {
 }
 func (mgr *Mgr) ProcessTimeout() error {
 
-	msgIn := prepareTrafficIn(mgr.principalAddr, mgr.principalAddr, mgr.keyId, &tofnd.TrafficOut{ToPartyUid: "timeout", Payload: []byte("timeout"), IsBroadcast: true}, mgr.Logger)
+	msgIn := prepareTrafficIn(mgr.principalAddr, mgr.principalAddr, mgr.keyId, &tofnd.TrafficOut{ToPartyUid: strconv.Itoa(round), Payload: []byte("timeout"+strconv.Itoa(round)), IsBroadcast: true}, mgr.Logger)
 
 	stream, ok := mgr.getKeygenStream(mgr.keyId)
 	if !ok {
@@ -246,11 +253,12 @@ func (mgr *Mgr) startKeygen(keyID string, threshold uint32, myIndex uint32, part
 		KeygenInit: &tofnd.KeygenInit{
 			NewKeyUid: keyID,
 			Threshold: threshold,
-			PartyUids: participants,
-
 			MyPartyIndex: myIndex,
+			PartyUids: participants,
 		},
 	}
+
+fmt.Println(keygenInit)
 
 	if err := stream.Send(&tofnd.MessageIn{Data: keygenInit}); err != nil {
 		cancel()
@@ -261,19 +269,33 @@ func (mgr *Mgr) startKeygen(keyID string, threshold uint32, myIndex uint32, part
 }
 
 func (mgr *Mgr) handleIntermediateKeygenMsgs(keyID string, intermediate <-chan *tofnd.TrafficOut) error {
-	for {
-		if mgr.currentHeight >= mgr.startHeight+30 {
-			if mgr.currentHeight > mgr.startHeight+60 {
-				panic("timeout")
-			}
-			mgr.startHeight = mgr.startHeight + 30
-			break
-		}
-	}
+	
+	
 	for msg := range intermediate {
+		
+		num, _ := strconv.Atoi(msg.RoundNum)
+		fmt.Println("message round and round: ", num, round)
+		if num != round {
+			//fmt.Println("waiting round:", msg.RoundNum)
+				for {
 
-		mgr.Logger.Info(fmt.Sprintf("outgoing keygen msg: key [%.20s] from me [%.20s] to [%.20s] broadcast [%t]\n",
-			keyID, mgr.principalAddr, msg.ToPartyUid, msg.IsBroadcast))
+					fmt.Println("waiting:", num, round)
+				if num == round {
+					
+		// if mgr.currentHeight >= mgr.startHeight+blocks {
+		// 	if mgr.currentHeight > mgr.startHeight+(2*blocks) {
+		// 		panic("timeout")
+		// 	}
+		// 	fmt.Println("new round:", msg.RoundNum)
+			
+		// 	round = msg.RoundNum
+			break}}
+
+		
+	}
+		
+		// mgr.Logger.Info(fmt.Sprintf("outgoing keygen msg: key [%.20s] from me [%.20s] to [%.20s] broadcast [%t]\n",
+		// 	keyID, mgr.principalAddr, msg.ToPartyUid, msg.IsBroadcast))
 		argAddr := sdk.AccAddress([]byte(mgr.principalAddr))
 		// sender is set by broadcaster
 		if msg.ToPartyUid == "r3" {
@@ -356,7 +378,7 @@ func (mgr *Mgr) handleKeygenResult(keyID string, resultChan <-chan interface{}) 
 		pk := suite.G1().Point()
 		pk.UnmarshalBinary(pkBytes)
 		share := res.Data.GetPrivateRecoverInfo()
-		fmt.Println(share)
+		//fmt.Println(share)
 		shareB := share[4 : len(share)-2]
 		index := share[len(share)-1]
 
@@ -365,7 +387,7 @@ func (mgr *Mgr) handleKeygenResult(keyID string, resultChan <-chan interface{}) 
 		}
 
 		_ = suite
-		shareS := suite.G1().Scalar().SetBytes(shareB)
+		//shareS := suite.G1().Scalar().SetBytes(shareB)
 
 		filenamePk := fmt.Sprintf("pk-%d.txt", index)
 		filenameShare := fmt.Sprintf("share-%d.txt", index)
@@ -380,10 +402,11 @@ func (mgr *Mgr) handleKeygenResult(keyID string, resultChan <-chan interface{}) 
 			fmt.Printf("Failed to write to file: %s\n", err)
 
 		}
-		mgr.Logger.Info(fmt.Sprintf("handler goroutine: received pubkey bytes from server! : ", pkBytes))
-		mgr.Logger.Info(fmt.Sprintf("handler goroutine: received pubkey from server! : ", pk.String()))
-		mgr.Logger.Info(fmt.Sprintf("handler goroutine: received share from server! : ", shareB))
-		mgr.Logger.Info(fmt.Sprintf("handler goroutine: received share from server! : ", shareS.String()))
+		os.Exit(0)
+		// mgr.Logger.Info(fmt.Sprintf("handler goroutine: received pubkey bytes from server! : ", pkBytes))
+		// mgr.Logger.Info(fmt.Sprintf("handler goroutine: received pubkey from server! : ", pk.String()))
+		// mgr.Logger.Info(fmt.Sprintf("handler goroutine: received share from server! : ", shareB))
+		// mgr.Logger.Info(fmt.Sprintf("handler goroutine: received share from server! : ", shareS.String()))
 	default:
 		return fmt.Errorf("invalid data type")
 	}
