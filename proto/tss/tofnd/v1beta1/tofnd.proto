@@ -101,6 +101,7 @@ message TrafficIn {
   string from_party_uid = 1;
   bytes payload = 2;
   bool is_broadcast = 3;
+  string round_num = 4;
 }
 
 message TrafficOut {

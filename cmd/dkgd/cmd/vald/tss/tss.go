@@ -461,6 +461,7 @@ func prepareTrafficIn(principalAddr string, from string, sessionID string, paylo
 				Payload:      payload.Payload,
 				IsBroadcast:  payload.IsBroadcast,
 				FromPartyUid: from,
+				RoundNum: payload.RoundNum,
 			},
 		},
 	}

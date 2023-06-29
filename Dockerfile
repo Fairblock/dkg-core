@@ -15,11 +15,12 @@ RUN mkdir -p -m 0600 ~/.ssh && ssh-keyscan github.com >> ~/.ssh/known_hosts
 
 COPY ./go.mod .
 COPY ./go.sum .
-RUN --mount=type=ssh go mod download
+RUN export DOCKER_BUILDKIT=1 
+RUN go mod tidy
 
 COPY . .
 ENV CGO_ENABLED=0
-RUN make build
+RUN 
 
 FROM alpine:3.12
 

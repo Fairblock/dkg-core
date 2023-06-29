@@ -731,6 +731,7 @@ type TrafficIn struct {
 	FromPartyUid string `protobuf:"bytes,1,opt,name=from_party_uid,json=fromPartyUid,proto3" json:"from_party_uid,omitempty"`
 	Payload      []byte `protobuf:"bytes,2,opt,name=payload,proto3" json:"payload,omitempty"`
 	IsBroadcast  bool   `protobuf:"varint,3,opt,name=is_broadcast,json=isBroadcast,proto3" json:"is_broadcast,omitempty"`
+	RoundNum    string `protobuf:"bytes,4,opt,name=round_num,json=roundNum,proto3" json:"round_num,omitempty"`
 }
 
 func (m *TrafficIn) Reset()         { *m = TrafficIn{} }
@@ -785,6 +786,13 @@ func (m *TrafficIn) GetIsBroadcast() bool {
 		return m.IsBroadcast
 	}
 	return false
+}
+
+func (m *TrafficIn) GetRoundNum() string {
+	if m != nil {
+		return m.RoundNum
+	}
+	return ""
 }
 
 type TrafficOut struct {
@@ -1665,6 +1673,13 @@ func (m *TrafficIn) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if len(m.RoundNum) > 0 {
+		i -= len(m.RoundNum)
+		copy(dAtA[i:], m.RoundNum)
+		i = encodeVarintTofnd(dAtA, i, uint64(len(m.RoundNum)))
+		i--
+		dAtA[i] = 0x22
+	}
 	if m.IsBroadcast {
 		i--
 		if m.IsBroadcast {
@@ -2165,6 +2180,10 @@ func (m *TrafficIn) Size() (n int) {
 	}
 	if m.IsBroadcast {
 		n += 2
+	}
+	l = len(m.RoundNum)
+	if l > 0 {
+		n += 1 + l + sovTofnd(uint64(l))
 	}
 	return n
 }
@@ -3492,6 +3511,38 @@ func (m *TrafficIn) Unmarshal(dAtA []byte) error {
 				}
 			}
 			m.IsBroadcast = bool(v != 0)
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RoundNum", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTofnd
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTofnd
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTofnd
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.RoundNum = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipTofnd(dAtA[iNdEx:])
