@@ -176,6 +176,7 @@ type Mgr struct {
 	cdc           *codec.LegacyAmino
 	startHeight   int
 	currentHeight int
+	me int
 }
 
 // Connect connects to tofnd gRPC Server

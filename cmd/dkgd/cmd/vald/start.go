@@ -276,8 +276,8 @@ func Consume(subscriber <-chan ctypes.ResultEvent, tssMgr *tss.Mgr) jobs.Job {
 
 						}
 						if key == "message" {
-
-							if err := tssMgr.ProcessKeygenMsg(e2); err != nil {
+							
+							if err := tssMgr.ProcessKeygenMsg(e2,e.Data.(tmtypes.EventDataTx).Height); err != nil {
 								errChan <- err
 							}
 						}
@@ -289,8 +289,10 @@ func Consume(subscriber <-chan ctypes.ResultEvent, tssMgr *tss.Mgr) jobs.Job {
 					}
 
 				}()
-
-			}
+			// default:
+			// 	// Sleep for a short duration to yield CPU time
+			// 	time.Sleep(10 * time.Millisecond)
+			 }
 		}
 	}
 }
@@ -308,7 +310,9 @@ func ConsumeH(subscriber <-chan ctypes.ResultEvent, tssMgr *tss.Mgr) jobs.Job {
 					//fmt.Println(height)
 					tssMgr.CheckTimeout(int(height))
 				}()
-
+			default:
+				// Sleep for a short duration to yield CPU time
+				time.Sleep(10 * time.Millisecond)
 			}
 		}
 	}

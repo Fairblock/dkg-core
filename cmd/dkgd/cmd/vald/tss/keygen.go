@@ -62,8 +62,9 @@ type P2pSad struct {
 	VssComplaint []ShareInfoDispute `json:"vss_complaint"`
 }
 
-var round = -1
+var round = 0
 var blocks = 150
+var received = 0
 func (mgr *Mgr) CheckTimeout(height int) error {
 	
 	mgr.currentHeight = height
@@ -103,7 +104,7 @@ func (mgr *Mgr) ProcessKeygenStart(e []EventMsg, height int64) error {
 			index = i
 		}
 	}
-
+	mgr.me = index
 	return mgr.thresholdKeygenStart(height, keyID, timeout, threshold, index, list)
 
 }
@@ -170,12 +171,14 @@ func (mgr *Mgr) thresholdKeygenStart(height int64, keyID string, timeout int64, 
 }
 
 // ProcessKeygenMsg forwards blockchain messages to the keygen protocol
-func (mgr *Mgr) ProcessKeygenMsg(e []types.Event) error {
-
+func (mgr *Mgr) ProcessKeygenMsg(e []types.Event, h int64) error {
+	received = received+1
+	fmt.Println("received message: me:%s num received:%s ",mgr.me, received)
 	keyID, from, payload := parseMsgParams(e)
-	
+	fmt.Println("received:%s id:%s",received,keyID)
 	msgIn := prepareTrafficIn(mgr.principalAddr, from, keyID, payload, mgr.Logger)
-	//fmt.Println(msgIn.Data)
+	
+	fmt.Println("received:%s round:%s", received,msgIn.Data)
 	stream, ok := mgr.getKeygenStream(keyID)
 	if !ok {
 		mgr.Logger.Info(fmt.Sprintf("no keygen session with id %s. This process does not participate", keyID))
@@ -280,7 +283,7 @@ func (mgr *Mgr) handleIntermediateKeygenMsgs(keyID string, intermediate <-chan *
 		if num != round {
 			//fmt.Println("waiting round:", msg.RoundNum)
 				for {
-					time.Sleep(100 * time.Millisecond)
+					time.Sleep(150 * time.Millisecond)
 					fmt.Println("waiting:", num, round)
 				if num == round {
 					
@@ -302,9 +305,9 @@ func (mgr *Mgr) handleIntermediateKeygenMsgs(keyID string, intermediate <-chan *
 
 	//fmt.Printf("Waiting for %d milliseconds...\n", delay)
 	minDelay := 1 // Minimum delay in seconds
-	maxDelay := 9 // Maximum delay in seconds
+	maxDelay := 50 // Maximum delay in seconds
 	delay := rand.Intn(maxDelay-minDelay+1) + minDelay
-	time.Sleep(time.Duration(delay)* 300 * time.Millisecond)
+	time.Sleep(time.Duration(delay)* 200 * time.Millisecond)
 fmt.Println(delay)
 		// mgr.Logger.Info(fmt.Sprintf("outgoing keygen msg: key [%.20s] from me [%.20s] to [%.20s] broadcast [%t]\n",
 		// 	keyID, mgr.principalAddr, msg.ToPartyUid, msg.IsBroadcast))
