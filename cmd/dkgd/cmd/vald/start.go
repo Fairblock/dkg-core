@@ -210,7 +210,7 @@ func listen(ctx sdkClient.Context, txf tx.Factory, dkgCfg config.ValdConfig, val
 	if err != nil {
 		logger.Error(err.Error())
 	}
-	tssMgr := createTSSMgr(bc, ctx, dkgCfg, logger, valAddr, cdc)
+	tssMgr := createTSSMgr(client, bc, ctx, dkgCfg, logger, valAddr, cdc)
 	if recoveryJSON != nil && len(recoveryJSON) > 0 {
 		if err = tssMgr.Recover(recoveryJSON); err != nil {
 			panic(fmt.Errorf("unable to perform tss recovery: %v", err))
@@ -218,7 +218,7 @@ func listen(ctx sdkClient.Context, txf tx.Factory, dkgCfg config.ValdConfig, val
 	}
 
 	query := "tm.event = 'Tx'"
-	subscriber, err := client.Subscribe(context.Background(), "", query)
+	subscriber, err := client.Subscribe(context.Background(), "", query,1)
 	if err != nil {
 		panic(err)
 	}
@@ -258,7 +258,7 @@ func Consume(subscriber <-chan ctypes.ResultEvent, tssMgr *tss.Mgr) jobs.Job {
 					d := e.Data.(tmtypes.EventDataTx).Result.Log
 
 					e2 := e.Data.(tmtypes.EventDataTx).Result.Events
-
+					//fmt.Println("---------> ", e2)
 					var events []tss.EventMsg
 					if err := json.Unmarshal([]byte(d), &events); err != nil {
 						errChan <- err
@@ -323,7 +323,7 @@ func recovery(errChan chan<- error) {
 	}
 }
 
-func createTSSMgr(broadcaster *broadcast.CosmosClient, cliCtx client.Context, dkgCfg config.ValdConfig, logger log.Logger, valAddr string, cdc *codec.LegacyAmino) *tss.Mgr {
+func createTSSMgr(client *tmclient.HTTP, broadcaster *broadcast.CosmosClient, cliCtx client.Context, dkgCfg config.ValdConfig, logger log.Logger, valAddr string, cdc *codec.LegacyAmino) *tss.Mgr {
 	create := func() (*tss.Mgr, error) {
 		
 		conn, err := tss.Connect(dkgCfg.TssConfig.Host, dkgCfg.TssConfig.Port, dkgCfg.TssConfig.DialTimeout, logger)
@@ -336,7 +336,7 @@ func createTSSMgr(broadcaster *broadcast.CosmosClient, cliCtx client.Context, dk
 		gg20client := tofnd.NewGG20Client(conn)
 		//multiSigClient := tofnd.NewMultisigClient(conn)
 		
-		tssMgr := tss.NewMgr(gg20client, cliCtx, 2*time.Hour, valAddr, broadcaster, logger, cdc)
+		tssMgr := tss.NewMgr(client, gg20client, cliCtx, 2*time.Hour, valAddr, broadcaster, logger, cdc)
 
 		return tssMgr, nil
 	}

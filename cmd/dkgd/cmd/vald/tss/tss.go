@@ -5,9 +5,10 @@ import (
 	"encoding/hex"
 	"fmt"
 	"io"
+	"strconv"
 	"sync"
 	"time"
-
+	tmclient "github.com/tendermint/tendermint/rpc/client/http"
 	sdkClient "github.com/cosmos/cosmos-sdk/client"
 	broadcast "github.com/fairblock/dkg-core/cmd/dkgd/cmd/vald/broadcaster"
 	"github.com/tendermint/tendermint/abci/types"
@@ -160,6 +161,7 @@ func (l *LockableStream) CloseSend() error {
 
 // Mgr represents an object that manages all communication with the external tss process
 type Mgr struct {
+	tmClient *tmclient.HTTP
 	client rpc.Client
 	//multiSigClient rpc.MultiSigClient
 	cliCtx sdkClient.Context
@@ -190,8 +192,9 @@ func Connect(host string, port string, timeout time.Duration, logger log.Logger)
 }
 
 // NewMgr returns a new tss manager instance
-func NewMgr(client rpc.Client, cliCtx sdkClient.Context, timeout time.Duration, principalAddr string, broadcaster *broadcast.CosmosClient, logger log.Logger, cdc *codec.LegacyAmino) *Mgr {
+func NewMgr(c *tmclient.HTTP, client rpc.Client, cliCtx sdkClient.Context, timeout time.Duration, principalAddr string, broadcaster *broadcast.CosmosClient, logger log.Logger, cdc *codec.LegacyAmino) *Mgr {
 	return &Mgr{
+		tmClient: c,
 		client: client,
 		//	multiSigClient: multiSigClient,
 		cliCtx: cliCtx,
@@ -365,10 +368,12 @@ func parseHeartBeatParams(cdc *codec.LegacyAmino, attributes map[string]string) 
 	return results[0].([]tss.KeyInfo)
 }
 
-func parseMsgParams(e []types.Event) (sessionID string, from string, payload *tofnd.TrafficOut) {
+func parseMsgParams(e []types.Event) (sessionID string, from string, payload *tofnd.TrafficOut, index uint64) {
 	//fmt.Println("here")
 
 	innerMsg := e[4].Attributes[0].Value
+	indexS := e[4].Attributes[2].Value
+	index, _ = strconv.ParseUint(string(indexS), 10, 64)
 	//fmt.Println([]byte(innerMsg))
 	// tx := e.(tmtypes.EventDataTx).Tx
 
@@ -405,7 +410,7 @@ func parseMsgParams(e []types.Event) (sessionID string, from string, payload *to
 	// 	panic(err)
 	// }
 
-	return msgVal.SessionID, msgVal.Sender.String(), msgVal.Payload
+	return msgVal.SessionID, msgVal.Sender.String(), msgVal.Payload, index
 	// return "","",nil
 }
 func parseMsgParamsDispute(e []KeygenEvent) (sessionID string, from string, payload *tofnd.TrafficOut) {
@@ -414,6 +419,7 @@ func parseMsgParamsDispute(e []KeygenEvent) (sessionID string, from string, payl
 	innerMsg := e[0].Attributes[0].Value
 	id := e[0].Attributes[1].Value
 	from = e[0].Attributes[2].Value
+
 
 	//	fmt.Println(innerMsg)
 	//	fmt.Println([]byte(innerMsg))

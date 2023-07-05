@@ -11,9 +11,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
-	"github.com/cosmos/cosmos-sdk/codec"
+	//"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/server"
-	broadcast "github.com/fairblock/dkg-core/cmd/dkgd/cmd/vald/broadcaster"
+	//broadcast "github.com/fairblock/dkg-core/cmd/dkgd/cmd/vald/broadcaster"
 	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	"github.com/tendermint/tendermint/libs/log"
@@ -23,7 +23,7 @@ import (
 
 	
 
-	"github.com/fairblock/dkg-core/x/tss/tofnd"
+	//"github.com/fairblock/dkg-core/x/tss/tofnd"
 	tssTypes "github.com/fairblock/dkg-core/x/tss/types"
 )
 
@@ -110,7 +110,7 @@ func checkTofnd(txf tx.Factory, dkgCfg config.ValdConfig, ctx context.Context, c
 
 	nopLogger := server.ZeroLogWrapper{Logger: zerolog.New(io.Discard)}
 
-	conn, err := tss.Connect(valdCfg.TssConfig.Host, valdCfg.TssConfig.Port, valdCfg.TssConfig.DialTimeout, nopLogger)
+	_, err := tss.Connect(valdCfg.TssConfig.Host, valdCfg.TssConfig.Port, valdCfg.TssConfig.DialTimeout, nopLogger)
 	if err != nil {
 		return fmt.Errorf("failed to reach tofnd: %s", err.Error())
 	}
@@ -118,19 +118,19 @@ func checkTofnd(txf tx.Factory, dkgCfg config.ValdConfig, ctx context.Context, c
 
 	//keygenStart := subscribe(tssTypes.EventTypeKeygen, tssTypes.ModuleName, tssTypes.AttributeValueStart)
 	// creates client to communicate with the external tofnd process gg20 service
-	gg20client := tofnd.NewGG20Client(conn)
+	// gg20client := tofnd.NewGG20Client(conn)
 
-	// bc := createBroadcaster(txf, dkgCfg, logger)
-	bc, err := broadcast.NewCosmosClient(
-		fmt.Sprintf(
-			"%s:%s",
-			"127.0.0.1",
-			"9090",
-		),
-		"86bc175431f38c7c1b021a0c1aedbd1696773501844607cb672f4d434467e669",
-		"fairyring",
-	)
-	tssMgr := tss.NewMgr(gg20client, clientCtx, 2*time.Hour, "valAddr", bc, logger, codec.NewLegacyAmino())
+	// // bc := createBroadcaster(txf, dkgCfg, logger)
+	// bc, err := broadcast.NewCosmosClient(
+	// 	fmt.Sprintf(
+	// 		"%s:%s",
+	// 		"127.0.0.1",
+	// 		"9090",
+	// 	),
+	// 	"86bc175431f38c7c1b021a0c1aedbd1696773501844607cb672f4d434467e669",
+	// 	"fairyring",
+	// )
+	//tssMgr := tss.NewMgr(gg20client, clientCtx, 2*time.Hour, "valAddr", bc, logger, codec.NewLegacyAmino())
 
 	// grpcCtx, cancel := context.WithTimeout(ctx, timeout)
 	// defer cancel()
@@ -145,7 +145,7 @@ func checkTofnd(txf tx.Factory, dkgCfg config.ValdConfig, ctx context.Context, c
 	// 	Threshold: 2,
 	// }
 
-	err = tssMgr.ProcessKeygenStart([]tss.EventMsg{}, 0)
+	//err = tssMgr.ProcessKeygenStart([]tss.EventMsg{}, 0)
 
 	if err != nil {
 		return fmt.Errorf("failed to invoke tofnd grpc: %s", err.Error())
