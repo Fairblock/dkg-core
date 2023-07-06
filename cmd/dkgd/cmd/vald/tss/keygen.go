@@ -64,7 +64,7 @@ type P2pSad struct {
 }
 
 var round = 0
-var blocks = 10
+var blocks = 60
 var received = 0
 var indices = []int{}
 var numOfP = 0
@@ -107,6 +107,14 @@ func (mgr *Mgr) CheckTimeout(height int) error {
 						for i := 0; i < len(missing); i++ {
 							mgr.findMissing(uint64(missing[i]))
 						}
+						if len(indices) < numOfP {
+							msg := dkgnet.MsgTimeout{Creator: mgr.principalAddr,Round: strconv.FormatUint(uint64(round)+1, 10) }
+							_, err := mgr.broadcaster.BroadcastTx(&msg, false)
+
+				if err != nil {
+					return sdkerrors.Wrap(err, "handler goroutine: failure to broadcast outgoing keygen msg")
+				}
+						}
 					}
 					
 				}
@@ -118,6 +126,14 @@ func (mgr *Mgr) CheckTimeout(height int) error {
 						missing := findMissingNumbers(indices, numOfP*(numOfP + 1))
 						for i := 0; i < len(missing); i++ {
 							mgr.findMissing(uint64(missing[i]))
+						}
+						if len(indices) < numOfP*(numOfP + 1) {
+							msg := dkgnet.MsgTimeout{Creator: mgr.principalAddr,Round: strconv.FormatUint(uint64(round)+1, 10) }
+							_, err := mgr.broadcaster.BroadcastTx(&msg, false)
+
+				if err != nil {
+					return sdkerrors.Wrap(err, "handler goroutine: failure to broadcast outgoing keygen msg")
+				}
 						}
 					}
 				}
@@ -286,7 +302,7 @@ func (mgr *Mgr) findMissing(index uint64) {
 			mgr.Logger.Info(fmt.Sprintf("no keygen session with id %s. This process does not participate", keyID))
 			
 		}
-	
+	indices = append(indices, int(index))
 		if err := stream.Send(msgIn); err != nil {
 			mgr.Logger.Info("failure to send incoming msg to gRPC server")
 		}
@@ -408,10 +424,10 @@ func (mgr *Mgr) handleIntermediateKeygenMsgs(keyID string, intermediate <-chan *
 		//delay := rand.Intn(11)
 
 		//fmt.Printf("Waiting for %d milliseconds...\n", delay)
-		// minDelay := 1  // Minimum delay in seconds
-		// maxDelay := 10 // Maximum delay in seconds
-		// delay := rand.Intn(maxDelay-minDelay+1) + minDelay
-		// time.Sleep(time.Duration(delay) * 200 * time.Millisecond)
+		minDelay := 1  // Minimum delay in seconds
+		maxDelay := 10 // Maximum delay in seconds
+		delay := rand.Intn(maxDelay-minDelay+1) + minDelay
+		time.Sleep(time.Duration(delay) * 200 * time.Millisecond)
 	//	fmt.Println(delay)
 		// mgr.Logger.Info(fmt.Sprintf("outgoing keygen msg: key [%.20s] from me [%.20s] to [%.20s] broadcast [%t]\n",
 		// 	keyID, mgr.principalAddr, msg.ToPartyUid, msg.IsBroadcast))
