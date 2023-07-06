@@ -134,3 +134,23 @@ func (msg *MsgFileDispute) ValidateBasic() error {
 func (m MsgFileDispute) Type() string {
 	return "MsgFileDispute"
 }
+
+func (m MsgKeygenResult) GetSigners() []sdk.AccAddress {
+	return []sdk.AccAddress{sdk.AccAddress(m.Creator)}
+}
+
+func (msg *MsgKeygenResult) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgKeygenResult) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	return nil
+}
+func (m MsgKeygenResult) Type() string {
+	return "MsgKeygenResult"
+}

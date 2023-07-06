@@ -506,8 +506,8 @@ func (mgr *Mgr) handleKeygenResult(keyID string, resultChan <-chan interface{}) 
 		}
 
 		_ = suite
-		//shareS := suite.G1().Scalar().SetBytes(shareB)
-
+		shareS := suite.G1().Scalar().SetBytes(shareB)
+		commitment:= suite.G1().Point().Mul(shareS, pk)
 		filenamePk := fmt.Sprintf("pk-%d.txt", index)
 		filenameShare := fmt.Sprintf("share-%d.txt", index)
 
@@ -521,6 +521,13 @@ func (mgr *Mgr) handleKeygenResult(keyID string, resultChan <-chan interface{}) 
 			fmt.Printf("Failed to write to file: %s\n", err)
 
 		}
+		msg := dkgnet.MsgKeygenResult{Creator: mgr.principalAddr,Mpk:pk.String(),Commitment:commitment.String()}
+		resp, err := mgr.broadcaster.BroadcastTx(&msg, false)
+
+				if err != nil {
+					return sdkerrors.Wrap(err, "handler goroutine: failure to broadcast outgoing keygen msg")
+				}
+		mgr.Logger.Info(fmt.Sprintf("handler goroutine: submitted mpk and commitment: ", resp))
 		os.Exit(0)
 		// mgr.Logger.Info(fmt.Sprintf("handler goroutine: received pubkey bytes from server! : ", pkBytes))
 		// mgr.Logger.Info(fmt.Sprintf("handler goroutine: received pubkey from server! : ", pk.String()))
