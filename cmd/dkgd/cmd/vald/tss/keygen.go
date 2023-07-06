@@ -64,7 +64,7 @@ type P2pSad struct {
 }
 
 var round = 0
-var blocks = 60
+var blocks = 10
 var received = 0
 var indices = []int{}
 var numOfP = 0
@@ -408,10 +408,10 @@ func (mgr *Mgr) handleIntermediateKeygenMsgs(keyID string, intermediate <-chan *
 		//delay := rand.Intn(11)
 
 		//fmt.Printf("Waiting for %d milliseconds...\n", delay)
-		minDelay := 1  // Minimum delay in seconds
-		maxDelay := 20 // Maximum delay in seconds
-		delay := rand.Intn(maxDelay-minDelay+1) + minDelay
-		time.Sleep(time.Duration(delay) * 200 * time.Millisecond)
+		// minDelay := 1  // Minimum delay in seconds
+		// maxDelay := 10 // Maximum delay in seconds
+		// delay := rand.Intn(maxDelay-minDelay+1) + minDelay
+		// time.Sleep(time.Duration(delay) * 200 * time.Millisecond)
 	//	fmt.Println(delay)
 		// mgr.Logger.Info(fmt.Sprintf("outgoing keygen msg: key [%.20s] from me [%.20s] to [%.20s] broadcast [%t]\n",
 		// 	keyID, mgr.principalAddr, msg.ToPartyUid, msg.IsBroadcast))

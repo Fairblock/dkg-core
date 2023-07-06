@@ -218,7 +218,7 @@ func listen(ctx sdkClient.Context, txf tx.Factory, dkgCfg config.ValdConfig, val
 	}
 
 	query := "tm.event = 'Tx'"
-	subscriber, err := client.Subscribe(context.Background(), "", query,10)
+	subscriber, err := client.Subscribe(context.Background(), "", query,100)
 	if err != nil {
 		panic(err)
 	}
