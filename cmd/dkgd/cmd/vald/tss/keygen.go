@@ -7,34 +7,21 @@ import (
 	"io/ioutil"
 	"os"
 
-	//"math/big"
 	"math/rand"
 	"strconv"
 	"time"
 
-	//	"github.com/drand/kyber"
-	//bls "github.com/drand/kyber-bls12381"
-	//"encoding/json"
-	// "crypto/sha256"
+
 	"fmt"
 	"sort"
 
-	//"strconv"
 
-	//"github.com/btcsuite/btcd/btcec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	bls "github.com/drand/kyber-bls12381"
 	"github.com/tendermint/tendermint/abci/types"
 
-	//tmtypes "github.com/tendermint/tendermint/types"
-
-	//sdkFlags "github.com/cosmos/cosmos-sdk/client/flags"
-	//"github.com/cosmos/cosmos-sdk/codec"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	//	"github.com/fairblock/dkg-core/cmd/dkgd/cmd/vald/broadcaster/types"
-	//"github.com/fairblock/dkg-core/cmd/dkgd/cmd/vald/parse"
-	//	"github.com/fairblock/dkg-core/utils"
 	dkgnet "github.com/fairblock/dkg-core/x/dkgnet/types"
 
 	"github.com/fairblock/dkg-core/x/tss/tofnd"
@@ -64,27 +51,28 @@ type P2pSad struct {
 }
 
 var round = 0
-var blocks = 60
+var blocks = 20
 var received = 0
 var indices = []int{}
 var numOfP = 0
+
 func findMissingNumbers(numbers []int, n int) []int {
-    present := make(map[int]bool)
+	present := make(map[int]bool)
 
-    // Mark the numbers present in the list
-    for _, num := range numbers {
-        present[num] = true
-    }
+	// Mark the numbers present in the list
+	for _, num := range numbers {
+		present[num] = true
+	}
 
-    // Find the missing numbers from 1 to n
-    missing := make([]int, 0)
-    for i := 1; i <= n; i++ {
-        if !present[i] {
-            missing = append(missing, i)
-        }
-    }
+	// Find the missing numbers from 1 to n
+	missing := make([]int, 0)
+	for i := 1; i <= n; i++ {
+		if !present[i] {
+			missing = append(missing, i)
+		}
+	}
 
-    return missing
+	return missing
 }
 func (mgr *Mgr) CheckTimeout(height int) error {
 
@@ -96,50 +84,49 @@ func (mgr *Mgr) CheckTimeout(height int) error {
 			_, ok := mgr.getKeygenStream(mgr.keyId)
 			if ok {
 				mgr.startHeight = mgr.startHeight + blocks
-				if round == 0{
-					
-					
+				if round == 0 {
+
 					if len(indices) < numOfP {
-						fmt.Println("round 0 missing")
+						fmt.Println("round 1 missing")
 						fmt.Println(indices)
 						missing := findMissingNumbers(indices, numOfP)
-						
+
 						for i := 0; i < len(missing); i++ {
 							mgr.findMissing(uint64(missing[i]))
 						}
 						if len(indices) < numOfP {
-							msg := dkgnet.MsgTimeout{Creator: mgr.principalAddr,Round: strconv.FormatUint(uint64(round)+1, 10) }
+							msg := dkgnet.MsgTimeout{Creator: mgr.principalAddr, Round: strconv.FormatUint(uint64(round)+1, 10)}
 							_, err := mgr.broadcaster.BroadcastTx(&msg, false)
 
-				if err != nil {
-					return sdkerrors.Wrap(err, "handler goroutine: failure to broadcast outgoing keygen msg")
-				}
+							if err != nil {
+								return sdkerrors.Wrap(err, "handler goroutine: failure to broadcast outgoing keygen msg")
+							}
 						}
 					}
-					
+
 				}
-				if round == 1{
-					
-					if len(indices) < numOfP*(numOfP + 1)  {
-						fmt.Println("round 1 missing")
+				if round == 1 {
+
+					if len(indices) < numOfP*(numOfP+1) {
+						fmt.Println("round 2 missing")
 						fmt.Println(indices)
-						missing := findMissingNumbers(indices, numOfP*(numOfP + 1))
+						missing := findMissingNumbers(indices, numOfP*(numOfP+1))
 						for i := 0; i < len(missing); i++ {
 							mgr.findMissing(uint64(missing[i]))
 						}
-						if len(indices) < numOfP*(numOfP + 1) {
-							msg := dkgnet.MsgTimeout{Creator: mgr.principalAddr,Round: strconv.FormatUint(uint64(round)+1, 10) }
+						if len(indices) < numOfP*(numOfP+1) {
+							msg := dkgnet.MsgTimeout{Creator: mgr.principalAddr, Round: strconv.FormatUint(uint64(round)+1, 10)}
 							_, err := mgr.broadcaster.BroadcastTx(&msg, false)
 
-				if err != nil {
-					return sdkerrors.Wrap(err, "handler goroutine: failure to broadcast outgoing keygen msg")
-				}
+							if err != nil {
+								return sdkerrors.Wrap(err, "handler goroutine: failure to broadcast outgoing keygen msg")
+							}
 						}
 					}
 				}
 				round = round + 1
 				//fmt.Println(round)
-				
+
 				mgr.ProcessTimeout()
 			}
 
@@ -157,7 +144,7 @@ func (mgr *Mgr) ProcessKeygenStart(e []EventMsg, height int64) error {
 	if err != nil {
 		return err
 	}
-	
+
 	index := -1
 	var list []string
 	for i := 0; i < len(participants); i++ {
@@ -238,24 +225,13 @@ func (mgr *Mgr) thresholdKeygenStart(height int64, keyID string, timeout int64, 
 func (mgr *Mgr) ProcessKeygenMsg(e []types.Event, h int64) error {
 
 	received = received + 1
-	
-	//fmt.Println("received message: me:%s num received:%s ",mgr.me, received)
+
 	keyID, from, payload, index := parseMsgParams(e)
-	fmt.Println("height:%s id:%s received:%s ", h, mgr.me, index)
+
 	indices = append(indices, int(index))
-	// diff := index - uint64(received)
-	// fmt.Println("received:", received, " index:", index, " me:", mgr.me)
-	// if index > uint64(received) {
-		
-	// 	 for i := received; uint64(i) < index; i++ {
-	// 		mgr.findMissing(uint64(i))
-	// 	}
-		
-	// }
-	// received = received + int(diff)
+
 	msgIn := prepareTrafficIn(mgr.principalAddr, from, keyID, payload, mgr.Logger)
 
-	//fmt.Println("received:%s round:%s ", received,msgIn.Data)
 	stream, ok := mgr.getKeygenStream(keyID)
 	if !ok {
 		mgr.Logger.Info(fmt.Sprintf("no keygen session with id %s. This process does not participate", keyID))
@@ -268,46 +244,37 @@ func (mgr *Mgr) ProcessKeygenMsg(e []types.Event, h int64) error {
 	return nil
 }
 func (mgr *Mgr) findMissing(index uint64) {
-	//panic("not needed")
-	// fmt.Println("------------------------------------------------------------------------------------")
-	// fmt.Println(index, received)
+
 	received = int(index)
 	query := "keygen.index = " + strconv.FormatUint(index, 10)
-	fmt.Println(query, mgr.me)
+	//fmt.Println(query, mgr.me)
 	page := 1
 	limit := 1
 	orderBy := "desc"
 	result, err := mgr.tmClient.TxSearch(context.Background(), query, false, &page, &limit, orderBy)
 	if err != nil {
-		// Handle the error
-		//fmt.Println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+
 		mgr.Logger.Error(err.Error())
 	}
-	
-	//fmt.Println(result)
-	for _, tx := range result.Txs {
-		//fmt.Println("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-		//mgr.ProcessKeygenMsg(tx.TxResult.Events,1)
-		e:= tx.TxResult.Events
-		keyID, from, payload, index := parseMsgParams(e)
-		// if keyID == keyId{
 
-		
-	fmt.Println("fetched index: ",index, mgr.me)
+	for _, tx := range result.Txs {
+
+		e := tx.TxResult.Events
+		keyID, from, payload, index := parseMsgParams(e)
+
+		fmt.Println("fetched index: ", index, mgr.me)
 		msgIn := prepareTrafficIn(mgr.principalAddr, from, keyID, payload, mgr.Logger)
-	
-		//fmt.Println("received:%s round:%s ", received,msgIn.Data)
+
 		stream, ok := mgr.getKeygenStream(keyID)
 		if !ok {
 			mgr.Logger.Info(fmt.Sprintf("no keygen session with id %s. This process does not participate", keyID))
-			
+
 		}
-	indices = append(indices, int(index))
+		indices = append(indices, int(index))
 		if err := stream.Send(msgIn); err != nil {
 			mgr.Logger.Info("failure to send incoming msg to gRPC server")
 		}
-	
-		
+
 	}
 }
 
@@ -383,8 +350,6 @@ func (mgr *Mgr) startKeygen(keyID string, threshold uint32, myIndex uint32, part
 		},
 	}
 
-	//fmt.Println(keygenInit)
-
 	if err := stream.Send(&tofnd.MessageIn{Data: keygenInit}); err != nil {
 		cancel()
 		return nil, nil, err
@@ -398,21 +363,14 @@ func (mgr *Mgr) handleIntermediateKeygenMsgs(keyID string, intermediate <-chan *
 	for msg := range intermediate {
 
 		num, _ := strconv.Atoi(msg.RoundNum)
-		fmt.Println("message round and round: ", num, round)
+		//fmt.Println("message round and round: ", num, round)
 		if num != round {
-			//fmt.Println("waiting round:", msg.RoundNum)
+
 			for {
 				time.Sleep(150 * time.Millisecond)
-				//fmt.Println("waiting:", num, round)
+
 				if num == round {
 
-					// if mgr.currentHeight >= mgr.startHeight+blocks {
-					// 	if mgr.currentHeight > mgr.startHeight+(2*blocks) {
-					// 		panic("timeout")
-					// 	}
-					// 	fmt.Println("new round:", msg.RoundNum)
-
-					// 	round = msg.RoundNum
 					break
 				}
 			}
@@ -420,17 +378,11 @@ func (mgr *Mgr) handleIntermediateKeygenMsgs(keyID string, intermediate <-chan *
 		}
 		rand.Seed(time.Now().UnixNano())
 
-		// Generate a random delay between 0 and 1000 milliseconds
-		//delay := rand.Intn(11)
+		// minDelay := 1  // Minimum delay in seconds
+		// maxDelay := 10 // Maximum delay in seconds
+		// delay := rand.Intn(maxDelay-minDelay+1) + minDelay
+		time.Sleep(200 * time.Millisecond)
 
-		//fmt.Printf("Waiting for %d milliseconds...\n", delay)
-		minDelay := 1  // Minimum delay in seconds
-		maxDelay := 10 // Maximum delay in seconds
-		delay := rand.Intn(maxDelay-minDelay+1) + minDelay
-		time.Sleep(time.Duration(delay) * 200 * time.Millisecond)
-	//	fmt.Println(delay)
-		// mgr.Logger.Info(fmt.Sprintf("outgoing keygen msg: key [%.20s] from me [%.20s] to [%.20s] broadcast [%t]\n",
-		// 	keyID, mgr.principalAddr, msg.ToPartyUid, msg.IsBroadcast))
 		argAddr := sdk.AccAddress([]byte(mgr.principalAddr))
 		// sender is set by broadcaster
 		if msg.ToPartyUid == "r3" {
@@ -445,7 +397,7 @@ func (mgr *Mgr) handleIntermediateKeygenMsgs(keyID string, intermediate <-chan *
 
 			for i := 0; i < len(p2pSad.VssComplaint); i++ {
 				complaint := p2pSad.VssComplaint[i]
-				byteSlice := make([]byte, 32) // Assuming you want to convert to a 4-byte slice
+				byteSlice := make([]byte, 32)
 
 				binary.BigEndian.PutUint32(byteSlice, uint32(complaint.Share.Index))
 				fmt.Println("accuser: ", complaint.AccuserId)
@@ -513,7 +465,7 @@ func (mgr *Mgr) handleKeygenResult(keyID string, resultChan <-chan interface{}) 
 		pk := suite.G1().Point()
 		pk.UnmarshalBinary(pkBytes)
 		share := res.Data.GetPrivateRecoverInfo()
-		//fmt.Println(share)
+
 		shareB := share[4 : len(share)-2]
 		index := share[len(share)-1]
 
@@ -523,7 +475,7 @@ func (mgr *Mgr) handleKeygenResult(keyID string, resultChan <-chan interface{}) 
 
 		_ = suite
 		shareS := suite.G1().Scalar().SetBytes(shareB)
-		commitment:= suite.G1().Point().Mul(shareS, pk)
+		commitment := suite.G1().Point().Mul(shareS, pk)
 		filenamePk := fmt.Sprintf("pk-%d.txt", index)
 		filenameShare := fmt.Sprintf("share-%d.txt", index)
 
@@ -537,18 +489,15 @@ func (mgr *Mgr) handleKeygenResult(keyID string, resultChan <-chan interface{}) 
 			fmt.Printf("Failed to write to file: %s\n", err)
 
 		}
-		msg := dkgnet.MsgKeygenResult{Creator: mgr.principalAddr,Mpk:pk.String(),Commitment:commitment.String()}
+		msg := dkgnet.MsgKeygenResult{Creator: mgr.principalAddr, Mpk: pk.String(), Commitment: commitment.String()}
 		resp, err := mgr.broadcaster.BroadcastTx(&msg, false)
 
-				if err != nil {
-					return sdkerrors.Wrap(err, "handler goroutine: failure to broadcast outgoing keygen msg")
-				}
+		if err != nil {
+			return sdkerrors.Wrap(err, "handler goroutine: failure to broadcast outgoing keygen msg")
+		}
 		mgr.Logger.Info(fmt.Sprintf("handler goroutine: submitted mpk and commitment: ", resp))
 		os.Exit(0)
-		// mgr.Logger.Info(fmt.Sprintf("handler goroutine: received pubkey bytes from server! : ", pkBytes))
-		// mgr.Logger.Info(fmt.Sprintf("handler goroutine: received pubkey from server! : ", pk.String()))
-		// mgr.Logger.Info(fmt.Sprintf("handler goroutine: received share from server! : ", shareB))
-		// mgr.Logger.Info(fmt.Sprintf("handler goroutine: received share from server! : ", shareS.String()))
+
 	default:
 		return fmt.Errorf("invalid data type")
 	}

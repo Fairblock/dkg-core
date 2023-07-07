@@ -1,7 +1,6 @@
 package vald
 
 import (
-	//"context"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -10,25 +9,20 @@ import (
 	"os/signal"
 	"path/filepath"
 
-	//	"github.com/cosmos/cosmos-sdk/types/tx"
-	//"strings"
 	"sync"
 	"syscall"
 	"time"
 
 	broadcast "github.com/fairblock/dkg-core/cmd/dkgd/cmd/vald/broadcaster"
 
-	//"github.com/golang/protobuf/proto"
 	tmclient "github.com/tendermint/tendermint/rpc/client/http"
 	ctypes "github.com/tendermint/tendermint/rpc/core/types"
 	tmtypes "github.com/tendermint/tendermint/types"
 
-	//	"go.starlark.net/lib/proto"
 	_ "google.golang.org/protobuf/proto"
-	
+
 	"github.com/axelarnetwork/utils/jobs"
 
-	
 	"github.com/cosmos/cosmos-sdk/client"
 	sdkClient "github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -36,26 +30,16 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/server"
 
-	//sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/spf13/cobra"
 	"github.com/tendermint/tendermint/libs/log"
-
-	//rpcclient "github.com/tendermint/tendermint/rpc/client"
 
 	"github.com/fairblock/dkg-core/cmd/dkgd/cmd/vald/config"
 
 	"github.com/fairblock/dkg-core/app"
 	"github.com/fairblock/dkg-core/cmd/dkgd/cmd/utils"
 
-	//"github.com/fairblock/dkg-core/cmd/dkgd/cmd/vald/broadcaster"
-	//"github.com/fairblock/dkg-core/cmd/dkgd/cmd/vald/btc"
-	//btcRPC "github.com/fairblock/dkg-core/cmd/dkgd/cmd/vald/btc/rpc"
-	//"github.com/fairblock/dkg-core/cmd/dkgd/cmd/vald/evm"
-	//evmRPC "github.com/fairblock/dkg-core/cmd/dkgd/cmd/vald/evm/rpc"
 	"github.com/fairblock/dkg-core/cmd/dkgd/cmd/vald/tss"
-
-	//utils2 "github.com/fairblock/dkg-core/utils"
 
 	"github.com/fairblock/dkg-core/x/tss/tofnd"
 	tssTypes "github.com/fairblock/dkg-core/x/tss/types"
@@ -218,7 +202,7 @@ func listen(ctx sdkClient.Context, txf tx.Factory, dkgCfg config.ValdConfig, val
 	}
 
 	query := "tm.event = 'Tx'"
-	subscriber, err := client.Subscribe(context.Background(), "", query,100)
+	subscriber, err := client.Subscribe(context.Background(), "", query, 100)
 	if err != nil {
 		panic(err)
 	}
@@ -276,8 +260,8 @@ func Consume(subscriber <-chan ctypes.ResultEvent, tssMgr *tss.Mgr) jobs.Job {
 
 						}
 						if key == "message" {
-							
-							if err := tssMgr.ProcessKeygenMsg(e2,e.Data.(tmtypes.EventDataTx).Height); err != nil {
+
+							if err := tssMgr.ProcessKeygenMsg(e2, e.Data.(tmtypes.EventDataTx).Height); err != nil {
 								errChan <- err
 							}
 						}
@@ -289,10 +273,8 @@ func Consume(subscriber <-chan ctypes.ResultEvent, tssMgr *tss.Mgr) jobs.Job {
 					}
 
 				}()
-			// default:
-			// 	// Sleep for a short duration to yield CPU time
-			// 	time.Sleep(10 * time.Millisecond)
-			 }
+
+			}
 		}
 	}
 }
@@ -307,7 +289,7 @@ func ConsumeH(subscriber <-chan ctypes.ResultEvent, tssMgr *tss.Mgr) jobs.Job {
 					newBlockHeader := e.Data.(tmtypes.EventDataNewBlockHeader)
 
 					height := newBlockHeader.Header.Height
-					//fmt.Println(height)
+
 					tssMgr.CheckTimeout(int(height))
 				}()
 			default:
@@ -325,7 +307,7 @@ func recovery(errChan chan<- error) {
 
 func createTSSMgr(client *tmclient.HTTP, broadcaster *broadcast.CosmosClient, cliCtx client.Context, dkgCfg config.ValdConfig, logger log.Logger, valAddr string, cdc *codec.LegacyAmino) *tss.Mgr {
 	create := func() (*tss.Mgr, error) {
-		
+
 		conn, err := tss.Connect(dkgCfg.TssConfig.Host, dkgCfg.TssConfig.Port, dkgCfg.TssConfig.DialTimeout, logger)
 		if err != nil {
 			return nil, err
@@ -334,8 +316,7 @@ func createTSSMgr(client *tmclient.HTTP, broadcaster *broadcast.CosmosClient, cl
 
 		// creates clients to communicate with the external tofnd process service
 		gg20client := tofnd.NewGG20Client(conn)
-		//multiSigClient := tofnd.NewMultisigClient(conn)
-		
+
 		tssMgr := tss.NewMgr(client, gg20client, cliCtx, 2*time.Hour, valAddr, broadcaster, logger, cdc)
 
 		return tssMgr, nil
