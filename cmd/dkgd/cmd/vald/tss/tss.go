@@ -183,6 +183,7 @@ type Mgr struct {
 
 // Connect connects to tofnd gRPC Server
 func Connect(host string, port string, timeout time.Duration, logger log.Logger) (*grpc.ClientConn, error) {
+
 	tofndServerAddress := host + ":" + port
 	logger.Info(fmt.Sprintf("initiate connection to tofnd gRPC server: %s", tofndServerAddress))
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)

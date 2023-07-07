@@ -80,6 +80,7 @@ func (mgr *Mgr) CheckTimeout(height int) error {
 	if mgr.startHeight > 0 {
 
 		if height > mgr.startHeight+blocks {
+			
 			//fmt.Println("height and end of era: ", height,mgr.startHeight+blocks)
 			_, ok := mgr.getKeygenStream(mgr.keyId)
 			if ok {
@@ -140,6 +141,7 @@ func (mgr *Mgr) CheckTimeout(height int) error {
 func (mgr *Mgr) ProcessKeygenStart(e []EventMsg, height int64) error {
 	mgr.startHeight = int(height)
 	keyID, threshold, participants, timeout, err := parseKeygenStartParams(e)
+	blocks = int(timeout)
 	mgr.keyId = keyID
 	if err != nil {
 		return err

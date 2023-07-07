@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
+	"strconv"
 
 	"sync"
 	"syscall"
@@ -99,8 +100,13 @@ func GetValdCommand() *cobra.Command {
 
 			valAddr := serverCtx.Viper.GetString("validator-addr")
 			valKey := serverCtx.Viper.GetString("validator-key")
-
+			capacity := serverCtx.Viper.GetString("channel-capacity")
+			
 			// valList := serverCtx.Viper.GetString("validator-key")
+			if capacity == "" {
+				return fmt.Errorf("capacity not set")
+			}
+		
 			if valAddr == "" {
 				return fmt.Errorf("validator address not set")
 			}
@@ -132,7 +138,7 @@ func GetValdCommand() *cobra.Command {
 			stateSource := NewRWFile(fPath)
 
 			logger.Info("start listening to events")
-			listen(cliCtx, txf, valdConf, valAddr, valKey, recoveryJSON, stateSource, logger)
+			listen(cliCtx, txf, valdConf, valAddr, valKey, recoveryJSON, stateSource, logger,capacity)
 			logger.Info("shutting down")
 			return nil
 		},
@@ -162,10 +168,11 @@ func setPersistentFlags(cmd *cobra.Command) {
 	cmd.PersistentFlags().String("tofnd-recovery", "", "json file with recovery request")
 	cmd.PersistentFlags().String("validator-addr", "", "the address of the validator operator")
 	cmd.PersistentFlags().String("validator-key", "", "the key of the validator operator")
+	cmd.PersistentFlags().String("channel-capacity", "", "the capacity of channel")
 	cmd.PersistentFlags().String(flags.FlagChainID, app.Name, "The network chain ID")
 }
 
-func listen(ctx sdkClient.Context, txf tx.Factory, dkgCfg config.ValdConfig, valAddr string, valKey string, recoveryJSON []byte, stateSource ReadWriter, logger log.Logger) {
+func listen(ctx sdkClient.Context, txf tx.Factory, dkgCfg config.ValdConfig, valAddr string, valKey string, recoveryJSON []byte, stateSource ReadWriter, logger log.Logger,  capacity string) {
 	encCfg := app.MakeEncodingConfig()
 	cdc := encCfg.Amino
 
@@ -200,9 +207,12 @@ func listen(ctx sdkClient.Context, txf tx.Factory, dkgCfg config.ValdConfig, val
 			panic(fmt.Errorf("unable to perform tss recovery: %v", err))
 		}
 	}
-
+	channelCap, err := strconv.ParseUint(capacity, 10, 64)
+	if err != nil{
+		panic(err)
+	}
 	query := "tm.event = 'Tx'"
-	subscriber, err := client.Subscribe(context.Background(), "", query, 100)
+	subscriber, err := client.Subscribe(context.Background(), "", query, int(channelCap))
 	if err != nil {
 		panic(err)
 	}
