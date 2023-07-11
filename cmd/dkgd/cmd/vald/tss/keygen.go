@@ -15,7 +15,7 @@ import (
 	"fmt"
 	"sort"
 
-
+	//tss2 "github.com/fairblock/dkg-core/cmd/dkgd/cmd/vald/tss"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	bls "github.com/drand/kyber-bls12381"
 	"github.com/tendermint/tendermint/abci/types"
@@ -74,18 +74,18 @@ func findMissingNumbers(numbers []int, n int) []int {
 
 	return missing
 }
-func (mgr *Mgr) CheckTimeout(height int) error {
+func (mgr *Mgr) CheckTimeout(e KeygenEvent) error {
 
-	mgr.currentHeight = height
-	if mgr.startHeight > 0 {
+	//mgr.currentHeight = height
+	// if mgr.startHeight > 0 {
 
-		if height > mgr.startHeight+blocks {
-			
+		// if height > mgr.startHeight+blocks {
+			if mgr.keyId == e.Attributes[1].Value {
 			//fmt.Println("height and end of era: ", height,mgr.startHeight+blocks)
 			_, ok := mgr.getKeygenStream(mgr.keyId)
 			if ok {
-				mgr.startHeight = mgr.startHeight + blocks
-				if round == 0 {
+				// mgr.startHeight = mgr.startHeight + blocks
+				if e.Attributes[0].Value == "0" {
 
 					if len(indices) < numOfP {
 						fmt.Println("round 1 missing")
@@ -95,18 +95,18 @@ func (mgr *Mgr) CheckTimeout(height int) error {
 						for i := 0; i < len(missing); i++ {
 							mgr.findMissing(uint64(missing[i]))
 						}
-						if len(indices) < numOfP {
-							msg := dkgnet.MsgTimeout{Creator: mgr.principalAddr, Round: strconv.FormatUint(uint64(round)+1, 10)}
-							_, err := mgr.broadcaster.BroadcastTx(&msg, false)
+						// if len(indices) < numOfP {
+						// 	msg := dkgnet.MsgTimeout{Creator: mgr.principalAddr, Round: strconv.FormatUint(uint64(round)+1, 10)}
+						// 	_, err := mgr.broadcaster.BroadcastTx(&msg, false)
 
-							if err != nil {
-								return sdkerrors.Wrap(err, "handler goroutine: failure to broadcast outgoing keygen msg")
-							}
-						}
+						// 	if err != nil {
+						// 		return sdkerrors.Wrap(err, "handler goroutine: failure to broadcast outgoing keygen msg")
+						// 	}
+						// }
 					}
 
 				}
-				if round == 1 {
+				if e.Attributes[0].Value == "1" {
 
 					if len(indices) < numOfP*(numOfP+1) {
 						fmt.Println("round 2 missing")
@@ -115,25 +115,26 @@ func (mgr *Mgr) CheckTimeout(height int) error {
 						for i := 0; i < len(missing); i++ {
 							mgr.findMissing(uint64(missing[i]))
 						}
-						if len(indices) < numOfP*(numOfP+1) {
-							msg := dkgnet.MsgTimeout{Creator: mgr.principalAddr, Round: strconv.FormatUint(uint64(round)+1, 10)}
-							_, err := mgr.broadcaster.BroadcastTx(&msg, false)
+						// if len(indices) < numOfP*(numOfP+1) {
+						// 	msg := dkgnet.MsgTimeout{Creator: mgr.principalAddr, Round: strconv.FormatUint(uint64(round)+1, 10)}
+						// 	_, err := mgr.broadcaster.BroadcastTx(&msg, false)
 
-							if err != nil {
-								return sdkerrors.Wrap(err, "handler goroutine: failure to broadcast outgoing keygen msg")
-							}
-						}
+						// 	if err != nil {
+						// 		return sdkerrors.Wrap(err, "handler goroutine: failure to broadcast outgoing keygen msg")
+						// 	}
+						// }
 					}
 				}
-				round = round + 1
+				r, _ := strconv.Atoi(e.Attributes[0].Value)
+				round = r + 1
 				//fmt.Println(round)
 
 				mgr.ProcessTimeout()
 			}
-
 		}
+		//}
 
-	}
+//	}
 	return nil
 }
 

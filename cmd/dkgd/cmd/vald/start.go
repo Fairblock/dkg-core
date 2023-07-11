@@ -216,7 +216,7 @@ func listen(ctx sdkClient.Context, txf tx.Factory, dkgCfg config.ValdConfig, val
 	if err != nil {
 		panic(err)
 	}
-	out, err := client.Subscribe(context.Background(), "", "tm.event = 'NewBlockHeader'")
+	out, err := client.Subscribe(context.Background(), "", "tm.event='NewBlock'")
 	if err != nil {
 		panic(err)
 	}
@@ -257,7 +257,7 @@ func Consume(subscriber <-chan ctypes.ResultEvent, tssMgr *tss.Mgr) jobs.Job {
 					if err := json.Unmarshal([]byte(d), &events); err != nil {
 						errChan <- err
 					}
-
+					//fmt.Println(events)
 					if events[0].Events[0].Type == "keygen" {
 
 						key := events[0].Events[0].Attributes[0].Key
@@ -281,6 +281,13 @@ func Consume(subscriber <-chan ctypes.ResultEvent, tssMgr *tss.Mgr) jobs.Job {
 							}
 						}
 					}
+					// if events[0].Events[0].Type == "dkg-timeout"{
+					
+					// 	//TODO: fix
+					// fmt.Println("timeout...")
+
+					// tssMgr.CheckTimeout(events[0].Events[0])
+					// }
 
 				}()
 
@@ -296,11 +303,11 @@ func ConsumeH(subscriber <-chan ctypes.ResultEvent, tssMgr *tss.Mgr) jobs.Job {
 			case e := <-subscriber:
 				go func() {
 
-					newBlockHeader := e.Data.(tmtypes.EventDataNewBlockHeader)
-
-					height := newBlockHeader.Header.Height
-
-					tssMgr.CheckTimeout(int(height))
+					newBlock := e.Data.(tmtypes.EventDataNewBlock).ResultEndBlock.Events
+					// just for testing to see if it works
+					fmt.Println(newBlock)
+					
+				
 				}()
 			default:
 				// Sleep for a short duration to yield CPU time
