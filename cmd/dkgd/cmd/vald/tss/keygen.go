@@ -5,7 +5,7 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"io/ioutil"
-	"os"
+	//"os"
 
 	"math/rand"
 	"strconv"
@@ -74,18 +74,18 @@ func findMissingNumbers(numbers []int, n int) []int {
 
 	return missing
 }
-func (mgr *Mgr) CheckTimeout(e KeygenEvent) error {
+func (mgr *Mgr) CheckTimeout(e types.Event) error {
 
 	//mgr.currentHeight = height
 	// if mgr.startHeight > 0 {
 
 		// if height > mgr.startHeight+blocks {
-			if mgr.keyId == e.Attributes[1].Value {
+			if mgr.keyId == string(e.Attributes[1].Value) {
 			//fmt.Println("height and end of era: ", height,mgr.startHeight+blocks)
 			_, ok := mgr.getKeygenStream(mgr.keyId)
 			if ok {
 				// mgr.startHeight = mgr.startHeight + blocks
-				if e.Attributes[0].Value == "0" {
+				if string(e.Attributes[0].Value) == "0" {
 
 					if len(indices) < numOfP {
 						fmt.Println("round 1 missing")
@@ -106,7 +106,7 @@ func (mgr *Mgr) CheckTimeout(e KeygenEvent) error {
 					}
 
 				}
-				if e.Attributes[0].Value == "1" {
+				if string(e.Attributes[0].Value) == "1" {
 
 					if len(indices) < numOfP*(numOfP+1) {
 						fmt.Println("round 2 missing")
@@ -125,7 +125,7 @@ func (mgr *Mgr) CheckTimeout(e KeygenEvent) error {
 						// }
 					}
 				}
-				r, _ := strconv.Atoi(e.Attributes[0].Value)
+				r, _ := strconv.Atoi(string(e.Attributes[0].Value))
 				round = r + 1
 				//fmt.Println(round)
 
@@ -498,8 +498,9 @@ func (mgr *Mgr) handleKeygenResult(keyID string, resultChan <-chan interface{}) 
 		if err != nil {
 			return sdkerrors.Wrap(err, "handler goroutine: failure to broadcast outgoing keygen msg")
 		}
+		mgr.Logger.Info(fmt.Sprintf("mpk bytes: ", pkBytes))
 		mgr.Logger.Info(fmt.Sprintf("handler goroutine: submitted mpk and commitment: ", resp))
-		os.Exit(0)
+		// os.Exit(0)
 
 	default:
 		return fmt.Errorf("invalid data type")

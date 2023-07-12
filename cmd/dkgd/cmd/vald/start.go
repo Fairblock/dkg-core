@@ -216,7 +216,7 @@ func listen(ctx sdkClient.Context, txf tx.Factory, dkgCfg config.ValdConfig, val
 	if err != nil {
 		panic(err)
 	}
-	out, err := client.Subscribe(context.Background(), "", "tm.event='NewBlock'")
+	out, err := client.Subscribe(context.Background(), "", "tm.event='NewBlock'",100)
 	if err != nil {
 		panic(err)
 	}
@@ -302,10 +302,18 @@ func ConsumeH(subscriber <-chan ctypes.ResultEvent, tssMgr *tss.Mgr) jobs.Job {
 			select {
 			case e := <-subscriber:
 				go func() {
-
+					
 					newBlock := e.Data.(tmtypes.EventDataNewBlock).ResultEndBlock.Events
 					// just for testing to see if it works
-					fmt.Println(newBlock)
+					//fmt.Println(newBlock)
+					if len(newBlock)>0{
+					if newBlock[0].Type == "dkg-timeout"{
+						fmt.Println("timeout-----------------------------------------------")
+					tssMgr.CheckTimeout(newBlock[0])}
+					if newBlock[0].Type == "dkg-mpk"{
+						fmt.Println("mpk from chain: ",newBlock[0].Attributes[0].Value)
+						os.Exit(0)
+					}}
 					
 				
 				}()

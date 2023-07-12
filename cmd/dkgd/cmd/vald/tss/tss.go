@@ -1,6 +1,7 @@
 package tss
 
 import (
+	//"bytes"
 	"context"
 	"encoding/hex"
 	"fmt"
@@ -8,10 +9,11 @@ import (
 	"strconv"
 	"sync"
 	"time"
-	tmclient "github.com/tendermint/tendermint/rpc/client/http"
+
 	sdkClient "github.com/cosmos/cosmos-sdk/client"
 	broadcast "github.com/fairblock/dkg-core/cmd/dkgd/cmd/vald/broadcaster"
 	"github.com/tendermint/tendermint/abci/types"
+	tmclient "github.com/tendermint/tendermint/rpc/client/http"
 
 	//sdkFlags "github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -373,6 +375,8 @@ func parseMsgParams(e []types.Event) (sessionID string, from string, payload *to
 	//fmt.Println("here")
 
 	innerMsg := e[4].Attributes[0].Value
+	
+	//fmt.Println(innerMsg)
 	indexS := e[4].Attributes[2].Value
 	index, _ = strconv.ParseUint(string(indexS), 10, 64)
 	//fmt.Println([]byte(innerMsg))
@@ -383,7 +387,7 @@ func parseMsgParams(e []types.Event) (sessionID string, from string, payload *to
 	msg := new(dkgnet.MsgRefundMsgRequest)
 
 	msg.Unmarshal(innerMsg)
-
+	
 	msgVal := new(tss.ProcessKeygenTrafficRequest)
 	// for i := 0; i < len([]byte(innerMsg)); i++ {
 	// 	fmt.Println(i)
