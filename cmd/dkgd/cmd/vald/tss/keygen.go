@@ -7,10 +7,11 @@ import (
 	"io/ioutil"
 	//"os"
 
+	//"os"
+
 	"math/rand"
 	"strconv"
 	"time"
-
 
 	"fmt"
 	"sort"
@@ -27,7 +28,14 @@ import (
 	"github.com/fairblock/dkg-core/x/tss/tofnd"
 	tss "github.com/fairblock/dkg-core/x/tss/types"
 )
-
+type MPK struct{
+	Mpk []byte
+	Id string
+}
+func SetMpk(mpk []byte, id string){
+	mpkFinal.Mpk = mpk
+	mpkFinal.Id = id
+}
 type Share struct {
 	Scalar []byte `json:"scalar"`
 	Index  int    `json:"index"`
@@ -49,7 +57,7 @@ type ShareInfoDispute struct {
 type P2pSad struct {
 	VssComplaint []ShareInfoDispute `json:"vss_complaint"`
 }
-
+var mpkFinal = MPK{}
 var round = 0
 var blocks = 20
 var received = 0
@@ -384,7 +392,7 @@ func (mgr *Mgr) handleIntermediateKeygenMsgs(keyID string, intermediate <-chan *
 		// minDelay := 1  // Minimum delay in seconds
 		// maxDelay := 10 // Maximum delay in seconds
 		// delay := rand.Intn(maxDelay-minDelay+1) + minDelay
-		time.Sleep(200 * time.Millisecond)
+	//	time.Sleep(200 * time.Millisecond)
 
 		argAddr := sdk.AccAddress([]byte(mgr.principalAddr))
 		// sender is set by broadcaster
@@ -469,7 +477,7 @@ func (mgr *Mgr) handleKeygenResult(keyID string, resultChan <-chan interface{}) 
 		pk.UnmarshalBinary(pkBytes)
 		share := res.Data.GetPrivateRecoverInfo()
 
-		shareB := share[4 : len(share)-2]
+		shareB := share[4 : len(share)-1]
 		index := share[len(share)-1]
 
 		for i, j := 0, len(shareB)-1; i < j; i, j = i+1, j-1 {
@@ -478,6 +486,7 @@ func (mgr *Mgr) handleKeygenResult(keyID string, resultChan <-chan interface{}) 
 
 		_ = suite
 		shareS := suite.G1().Scalar().SetBytes(shareB)
+		mgr.Logger.Info(fmt.Sprintf("share bytes: ", shareB))
 		commitment := suite.G1().Point().Mul(shareS, pk)
 		filenamePk := fmt.Sprintf("pk-%d.txt", index)
 		filenameShare := fmt.Sprintf("share-%d.txt", index)
@@ -500,7 +509,11 @@ func (mgr *Mgr) handleKeygenResult(keyID string, resultChan <-chan interface{}) 
 		}
 		mgr.Logger.Info(fmt.Sprintf("mpk bytes: ", pkBytes))
 		mgr.Logger.Info(fmt.Sprintf("handler goroutine: submitted mpk and commitment: ", resp))
-		// os.Exit(0)
+		// for{
+		// 	if mpkFinal.Id != "" {
+		// 		os.Exit(0)
+		// 	}
+		// }
 
 	default:
 		return fmt.Errorf("invalid data type")

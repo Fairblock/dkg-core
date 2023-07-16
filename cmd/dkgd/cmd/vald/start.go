@@ -216,7 +216,7 @@ func listen(ctx sdkClient.Context, txf tx.Factory, dkgCfg config.ValdConfig, val
 	if err != nil {
 		panic(err)
 	}
-	out, err := client.Subscribe(context.Background(), "", "tm.event='NewBlock'",100)
+	out, err := client.Subscribe(context.Background(), "", "tm.event='NewBlock'",int(channelCap))
 	if err != nil {
 		panic(err)
 	}
@@ -312,14 +312,15 @@ func ConsumeH(subscriber <-chan ctypes.ResultEvent, tssMgr *tss.Mgr) jobs.Job {
 					tssMgr.CheckTimeout(newBlock[0])}
 					if newBlock[0].Type == "dkg-mpk"{
 						fmt.Println("mpk from chain: ",newBlock[0].Attributes[0].Value)
-						os.Exit(0)
+						tss.SetMpk(newBlock[0].Attributes[0].Value,string(newBlock[0].Attributes[1].Value))
+						//os.Exit(0)
 					}}
 					
 				
 				}()
-			default:
+			
 				// Sleep for a short duration to yield CPU time
-				time.Sleep(10 * time.Millisecond)
+			
 			}
 		}
 	}
