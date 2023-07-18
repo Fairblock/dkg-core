@@ -63,7 +63,7 @@ var blocks = 20
 var received = 0
 var indices = []int{}
 var numOfP = 0
-
+var messageBuff = []sdk.Msg{}
 func findMissingNumbers(numbers []int, n int) []int {
 	present := make(map[int]bool)
 
@@ -428,16 +428,51 @@ func (mgr *Mgr) handleIntermediateKeygenMsgs(keyID string, intermediate <-chan *
 		tssMsg := &tss.ProcessKeygenTrafficRequest{Sender: argAddr, SessionID: keyID, Payload: msg}
 
 		refundableMsg := dkgnet.NewMsgRefundMsgRequest(mgr.principalAddr, argAddr, tssMsg)
-
+		if msg.RoundNum == "2"{
+		messageBuff = append(messageBuff, refundableMsg)
+		for {
+			if len(messageBuff) == numOfP  {
+				break
+			}
+		}
+		div := numOfP/10
+		for i := 0; i < (div+1); i++ {
+			if i == (div){
+				// batch := []sdk.Msg{}
+				// batch = append(batch, messageBuff[i*10:])
+				_, err := mgr.broadcaster.BroadcastTxs(messageBuff[i*10:], false)
+		
+			if err != nil {
+				//fmt.Println("this", tssMsg)
+				return sdkerrors.Wrap(err, "handler goroutine: failure to broadcast outgoing keygen msg")
+			}
+				break
+			}
+			// batch := []sdk.Msg{}
+			// batch = append(batch, messageBuff[i*10:i*10+10])
+			fmt.Println("batch sending ========================================================================")
+			_, err := mgr.broadcaster.BroadcastTxs(messageBuff[i*10:i*10+10], false)
+		
+			if err != nil {
+				//fmt.Println("this", tssMsg)
+				return sdkerrors.Wrap(err, "handler goroutine: failure to broadcast outgoing keygen msg")
+			}
+		}
+		
+	
+	}
+	if msg.RoundNum != "2"{
 		_, err := mgr.broadcaster.BroadcastTx(refundableMsg, false)
 
 		if err != nil {
+			//fmt.Println("this", tssMsg)
 			return sdkerrors.Wrap(err, "handler goroutine: failure to broadcast outgoing keygen msg")
-		}
 
-	}
-	return nil
+	}}
+	
 }
+
+return nil}
 
 func (mgr *Mgr) handleKeygenResult(keyID string, resultChan <-chan interface{}) error {
 	// Delete the reference to the keygen stream with keyID because entering this function means the tss protocol has completed

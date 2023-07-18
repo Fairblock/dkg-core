@@ -135,7 +135,33 @@ func (c *CosmosClient) handleBroadcastResult(resp *cosmostypes.TxResponse, err e
 
 func (c *CosmosClient) BroadcastTx(msg cosmostypes.Msg, adjustGas bool) (*cosmostypes.TxResponse, error) {
 	// fmt.Println()
+
 	txBytes, err := c.signTxMsg(msg, adjustGas)
+	if err != nil {
+
+		return nil, err
+	}
+
+	c.account.Sequence++
+
+	resp, err := c.txClient.BroadcastTx(
+		context.Background(),
+		&tx.BroadcastTxRequest{
+			TxBytes: txBytes,
+			Mode:    tx.BroadcastMode_BROADCAST_MODE_SYNC,
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return resp.TxResponse, c.handleBroadcastResult(resp.TxResponse, err)
+}
+
+func (c *CosmosClient) BroadcastTxs(msg []cosmostypes.Msg, adjustGas bool) (*cosmostypes.TxResponse, error) {
+	// fmt.Println()
+
+	txBytes, err := c.signTxMsgs(msg, adjustGas)
 	if err != nil {
 
 		return nil, err
@@ -207,6 +233,78 @@ func (c *CosmosClient) signTxMsg(msg cosmostypes.Msg, adjustGas bool) ([]byte, e
 		Sequence:      c.account.Sequence,
 		// PubKey:        c.publicKey,
 		//Address:       c.account.Address,
+	}
+
+	sigData := signing.SingleSignatureData{
+		SignMode:  signMode,
+		Signature: nil,
+	}
+	sig := signing.SignatureV2{
+		PubKey:   c.publicKey,
+		Data:     &sigData,
+		Sequence: c.account.Sequence,
+	}
+
+	if err := txBuilder.SetSignatures(sig); err != nil {
+		return nil, err
+	}
+
+	sigV2, err := clienttx.SignWithPrivKey(
+		signMode, signerData, txBuilder, &c.privateKey,
+		encodingCfg.TxConfig, c.account.Sequence,
+	)
+
+	err = txBuilder.SetSignatures(sigV2)
+	if err != nil {
+		return nil, err
+	}
+
+	txBytes, err := encodingCfg.TxConfig.TxEncoder()(txBuilder.GetTx())
+	if err != nil {
+		return nil, err
+	}
+
+	return txBytes, nil
+}
+func (c *CosmosClient) signTxMsgs(msgs []cosmostypes.Msg, adjustGas bool) ([]byte, error) {
+	encodingCfg := app.MakeEncodingConfig()
+	txBuilder := encodingCfg.TxConfig.NewTxBuilder()
+	signMode := encodingCfg.TxConfig.SignModeHandler().DefaultMode()
+
+	err := txBuilder.SetMsgs(msgs...)  // here msgs is a slice of messages
+	if err != nil {
+		return nil, err
+	}
+
+	var newGasLimit uint64 = defaultGasLimit
+	if adjustGas {
+		txf := clienttx.Factory{}.
+			WithGas(defaultGasLimit).
+			WithSignMode(signMode).
+			WithTxConfig(encodingCfg.TxConfig).
+			WithChainID(c.chainID).
+			WithAccountNumber(c.account.AccountNumber).
+			WithSequence(c.account.Sequence).
+			WithGasAdjustment(defaultGasAdjustment)
+
+		// Since CalculateGas expects a single message, you might want to iterate 
+		// through your messages and calculate gas for each, or create a new function
+		// to calculate gas for all messages together.
+		// Here's an example of how you could do it with a loop:
+		for _, msg := range msgs {
+			_, newGasLimit, err = clienttx.CalculateGas(&c.grpcConn, txf, msg)
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	txBuilder.SetGasLimit(newGasLimit)
+
+	signerData := authsigning.SignerData{
+		ChainID:       c.chainID,
+		AccountNumber: c.account.AccountNumber,
+		Sequence:      c.account.Sequence,
 	}
 
 	sigData := signing.SingleSignatureData{
