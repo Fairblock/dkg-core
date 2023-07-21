@@ -196,7 +196,7 @@ func (mgr *Mgr) thresholdKeygenStart(height int64, keyID string, timeout int64, 
 	mgr.setKeygenStream(keyID, stream)
 
 	// use error channel to coordinate errors during communication with sign protocol
-	errChan := make(chan error, 100)
+	errChan := make(chan error, 120)
 	intermediateMsgs, result, streamErrChan := handleStream(stream, cancel, mgr.Logger)
 	go func() {
 		err, ok := <-streamErrChan
