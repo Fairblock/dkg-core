@@ -3,6 +3,7 @@ package broadcaster
 import (
 	"context"
 	"encoding/hex"
+	"fmt"
 
 	//"fmt"
 	"log"
@@ -40,7 +41,7 @@ type CosmosClient struct {
 	accAddress cosmostypes.AccAddress
 	chainID    string
 }
-
+var messageBuff = []cosmostypes.Msg{}
 func PrivateKeyToAccAddress(privateKeyHex string) (cosmostypes.AccAddress, error) {
 	keyBytes, err := hex.DecodeString(privateKeyHex)
 	if err != nil {
@@ -158,18 +159,54 @@ func (c *CosmosClient) BroadcastTx(msg cosmostypes.Msg, adjustGas bool) (*cosmos
 	return resp.TxResponse, c.handleBroadcastResult(resp.TxResponse, err)
 }
 
-func (c *CosmosClient) BroadcastTxs(msg []cosmostypes.Msg, adjustGas bool) (*cosmostypes.TxResponse, error) {
+func (c *CosmosClient) BroadcastTxs(msg cosmostypes.Msg, adjustGas bool, numOfP int) (*cosmostypes.TxResponse, error) {
 	// fmt.Println()
-
-	txBytes, err := c.signTxMsgs(msg, adjustGas)
-	if err != nil {
-
-		return nil, err
+	messageBuff = append(messageBuff, msg)
+	//fmt.Println(len(messageBuff))
+	if len(messageBuff) != numOfP {
+		return nil,nil
 	}
+	fmt.Println("=========================================================")
+	n := 5
+	div := numOfP/n
+	add := numOfP % n
+	if add != 0 {
+		add = 1
+	}
+	//fmt.Println(div)
+	
+		for i := 0; i < (div+add); i++ {
+			
+			if i == (div){
+			
+				txBytes, err := c.signTxMsgs(messageBuff[i*n:], adjustGas)
+				if err != nil {
+			
+					return nil, err
+				}
+				c.account.Sequence++
 
-	c.account.Sequence++
+				resp, err := c.txClient.BroadcastTx(
+					context.Background(),
+					&tx.BroadcastTxRequest{
+						TxBytes: txBytes,
+						Mode:    tx.BroadcastMode_BROADCAST_MODE_SYNC,
+					},
+				)
+				if err != nil {
+					return nil, err
+				}
+				return resp.TxResponse, c.handleBroadcastResult(resp.TxResponse, err)
+			}
+		
+			txBytes, err := c.signTxMsgs(messageBuff[i*n:i*n+n], adjustGas)
+				if err != nil {
+			
+					return nil, err
+				}
+				c.account.Sequence++
 
-	resp, err := c.txClient.BroadcastTx(
+	_, err = c.txClient.BroadcastTx(
 		context.Background(),
 		&tx.BroadcastTxRequest{
 			TxBytes: txBytes,
@@ -179,8 +216,15 @@ func (c *CosmosClient) BroadcastTxs(msg []cosmostypes.Msg, adjustGas bool) (*cos
 	if err != nil {
 		return nil, err
 	}
+			// batch := []sdk.Msg{}
+			time.Sleep(150 * time.Millisecond)
+				// batch = append(batch, messageBuff[i*10:i*10+10]) messageBuff[i*10:i*10+10]
+		}		
+	
+return nil,nil
 
-	return resp.TxResponse, c.handleBroadcastResult(resp.TxResponse, err)
+
+	
 }
 
 func (c *CosmosClient) WaitForTx(hash string, rate time.Duration) (*tx.GetTxResponse, error) {

@@ -63,7 +63,7 @@ var blocks = 20
 var received = 0
 var indices = []int{}
 var numOfP = 0
-var messageBuff = []sdk.Msg{}
+var messageBuff = map[int]types.Event{}
 func findMissingNumbers(numbers []int, n int) []int {
 	present := make(map[int]bool)
 
@@ -132,6 +132,7 @@ func (mgr *Mgr) CheckTimeout(e types.Event) error {
 						// 	}
 						// }
 					}
+					fmt.Println("after: ",len(indices))
 				}
 				r, _ := strconv.Atoi(string(e.Attributes[0].Value))
 				round = r + 1
@@ -195,7 +196,7 @@ func (mgr *Mgr) thresholdKeygenStart(height int64, keyID string, timeout int64, 
 	mgr.setKeygenStream(keyID, stream)
 
 	// use error channel to coordinate errors during communication with sign protocol
-	errChan := make(chan error, 4)
+	errChan := make(chan error, 100)
 	intermediateMsgs, result, streamErrChan := handleStream(stream, cancel, mgr.Logger)
 	go func() {
 		err, ok := <-streamErrChan
@@ -236,9 +237,10 @@ func (mgr *Mgr) thresholdKeygenStart(height int64, keyID string, timeout int64, 
 func (mgr *Mgr) ProcessKeygenMsg(e []types.Event, h int64) error {
 
 	received = received + 1
-
-	keyID, from, payload, index := parseMsgParams(e)
-
+	for i := 4; i < len(e); i++ {
+	keyID, from, payload, index := parseMsgParamsOne(e[i])
+	if keyID != ""{
+		//fmt.Println(i, index, " ----> loop")
 	indices = append(indices, int(index))
 
 	msgIn := prepareTrafficIn(mgr.principalAddr, from, keyID, payload, mgr.Logger)
@@ -251,11 +253,39 @@ func (mgr *Mgr) ProcessKeygenMsg(e []types.Event, h int64) error {
 
 	if err := stream.Send(msgIn); err != nil {
 		return sdkerrors.Wrap(err, "failure to send incoming msg to gRPC server")
+	}}
 	}
+	
 	return nil
 }
 func (mgr *Mgr) findMissing(index uint64) {
+	event, exist := messageBuff[int(index)]
+	if  exist {
+		
+		received = int(index)
+		keyID, from, payload, i := parseMsgParamsOne(event)
+		
+		// fmt.Println("---------------------------------------------------------------")
+		// fmt.Println(e)
+		// fmt.Println("---------------------------------------------------------------")
+		//keyID, from, payload, i := parseMsgParams(e)
 
+		//fmt.Println("fetched idex: ", i, mgr.me)
+		msgIn := prepareTrafficIn(mgr.principalAddr, from, keyID, payload, mgr.Logger)
+
+		stream, ok := mgr.getKeygenStream(keyID)
+		if !ok {
+			mgr.Logger.Info(fmt.Sprintf("no keygen session with id %s. This process does not participate", keyID))
+
+		}
+	
+		if err := stream.Send(msgIn); err != nil {
+			mgr.Logger.Info("failure to send incoming msg to gRPC server")
+		}
+		indices = append(indices, int(i))
+		fmt.Println("msg and len: ", payload, len(indices))
+		return
+	}
 	received = int(index)
 	query := "keygen.index = " + strconv.FormatUint(index, 10)
 	//fmt.Println(query, mgr.me)
@@ -271,23 +301,37 @@ func (mgr *Mgr) findMissing(index uint64) {
 	for _, tx := range result.Txs {
 
 		e := tx.TxResult.Events
-		keyID, from, payload, index := parseMsgParams(e)
+		for j := 4; j < len(e); j++ {
+			keyID, from, payload, i := parseMsgParamsOne(e[j])
+			if i == index {
+		// fmt.Println("---------------------------------------------------------------")
+		// fmt.Println(e)
+		// fmt.Println("---------------------------------------------------------------")
+		//keyID, from, payload, i := parseMsgParams(e)
 
-		fmt.Println("fetched index: ", index, mgr.me)
+	//	fmt.Println("fetched idex: ", i, mgr.me)
 		msgIn := prepareTrafficIn(mgr.principalAddr, from, keyID, payload, mgr.Logger)
+		
 
 		stream, ok := mgr.getKeygenStream(keyID)
 		if !ok {
 			mgr.Logger.Info(fmt.Sprintf("no keygen session with id %s. This process does not participate", keyID))
 
 		}
-		indices = append(indices, int(index))
+		
 		if err := stream.Send(msgIn); err != nil {
 			mgr.Logger.Info("failure to send incoming msg to gRPC server")
 		}
+		indices = append(indices, int(i))
+		fmt.Println("msg and len: ", payload, len(indices))
 
 	}
-}
+	if index != i {
+		if i != 1000000000000 {
+		messageBuff[int(i)] = e[j]
+	}}
+	
+}}}
 
 func (mgr *Mgr) ProcessKeygenMsgDispute(e []KeygenEvent) error {
 
@@ -392,7 +436,7 @@ func (mgr *Mgr) handleIntermediateKeygenMsgs(keyID string, intermediate <-chan *
 		// minDelay := 1  // Minimum delay in seconds
 		// maxDelay := 10 // Maximum delay in seconds
 		// delay := rand.Intn(maxDelay-minDelay+1) + minDelay
-	//	time.Sleep(200 * time.Millisecond)
+		//time.Sleep(150 * time.Millisecond)
 
 		argAddr := sdk.AccAddress([]byte(mgr.principalAddr))
 		// sender is set by broadcaster
@@ -428,30 +472,32 @@ func (mgr *Mgr) handleIntermediateKeygenMsgs(keyID string, intermediate <-chan *
 		tssMsg := &tss.ProcessKeygenTrafficRequest{Sender: argAddr, SessionID: keyID, Payload: msg}
 
 		refundableMsg := dkgnet.NewMsgRefundMsgRequest(mgr.principalAddr, argAddr, tssMsg)
-		if msg.RoundNum == "2"{
-		messageBuff = append(messageBuff, refundableMsg)
-		for {
-			if len(messageBuff) == numOfP  {
-				break
-			}
-		}
-		div := numOfP/10
-		for i := 0; i < (div+1); i++ {
-			if i == (div){
+		if msg.RoundNum == "1"{
+		// messageBuff = append(messageBuff, refundableMsg)
+		// for {
+		// 	fmt.Println(len(messageBuff))
+		// 	if len(messageBuff) == numOfP  {
+		// 		break
+		// 	}
+		// }
+		//fmt.Println("batch sending ========================================================================")
+		// div := numOfP/10
+		// for i := 0; i < (div+1); i++ {
+		// 	if i == (div){
 				// batch := []sdk.Msg{}
 				// batch = append(batch, messageBuff[i*10:])
-				_, err := mgr.broadcaster.BroadcastTxs(messageBuff[i*10:], false)
+			// 	_, err := mgr.broadcaster.BroadcastTxs(messageBuff[i*10:], false)
 		
-			if err != nil {
-				//fmt.Println("this", tssMsg)
-				return sdkerrors.Wrap(err, "handler goroutine: failure to broadcast outgoing keygen msg")
-			}
-				break
-			}
-			// batch := []sdk.Msg{}
-			// batch = append(batch, messageBuff[i*10:i*10+10])
-			fmt.Println("batch sending ========================================================================")
-			_, err := mgr.broadcaster.BroadcastTxs(messageBuff[i*10:i*10+10], false)
+			// if err != nil {
+			// 	//fmt.Println("this", tssMsg)
+			// 	return sdkerrors.Wrap(err, "handler goroutine: failure to broadcast outgoing keygen msg")
+			// }
+			// 	break
+			// }
+			// // batch := []sdk.Msg{}
+			// // batch = append(batch, messageBuff[i*10:i*10+10]) messageBuff[i*10:i*10+10]
+			
+			_, err := mgr.broadcaster.BroadcastTxs(refundableMsg, false, numOfP)
 		
 			if err != nil {
 				//fmt.Println("this", tssMsg)
@@ -460,8 +506,9 @@ func (mgr *Mgr) handleIntermediateKeygenMsgs(keyID string, intermediate <-chan *
 		}
 		
 	
-	}
-	if msg.RoundNum != "2"{
+	
+	if msg.RoundNum != "1"{
+		//fmt.Println("single sending ========================================================================")
 		_, err := mgr.broadcaster.BroadcastTx(refundableMsg, false)
 
 		if err != nil {

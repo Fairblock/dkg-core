@@ -370,9 +370,67 @@ func parseHeartBeatParams(cdc *codec.LegacyAmino, attributes map[string]string) 
 
 	return results[0].([]tss.KeyInfo)
 }
+func parseMsgParamsOne(e types.Event) (sessionID string, from string, payload *tofnd.TrafficOut, index uint64) {
+	//fmt.Println("here")
+//fmt.Println(e[4])
+if len(e.Attributes) == 0 {
+	return "","",nil,1000000000000
+}
+	innerMsg := e.Attributes[0].Value
+	
+	//fmt.Println(innerMsg)
+	if len(e.Attributes) < 3 {
+		return "","",nil,1000000000000
+	}
+	indexS := e.Attributes[2].Value
+	index, _ = strconv.ParseUint(string(indexS), 10, 64)
+	//fmt.Println([]byte(innerMsg))
+	// tx := e.(tmtypes.EventDataTx).Tx
 
+	// tx_slice := (tx[39:246])
+
+	msg := new(dkgnet.MsgRefundMsgRequest)
+
+	err := msg.Unmarshal(innerMsg)
+	if err != nil {
+		return "","", nil , 1000000000000
+	}
+	msgVal := new(tss.ProcessKeygenTrafficRequest)
+	// for i := 0; i < len([]byte(innerMsg)); i++ {
+	// 	fmt.Println(i)
+	// 	msgVal.Unmarshal([]byte(innerMsg)[i:])
+	// 	fmt.Println(msgVal)
+	// }
+
+	err = msgVal.Unmarshal(msg.InnerMessage.Value)
+	if err != nil {
+		return "","", nil , 1000000000000
+	}
+	//msgVal.Payload.IsBroadcast = true
+	//fmt.Println((innerMsg))
+	//  msgVal2 := new(tss.ProcessKeygenTrafficRequest)
+
+	// msgVal2.Unmarshal([]byte(msgVal.SessionID))
+	// parsers := []*parse.AttributeParser{
+	// 	{Key: tss.AttributeKeySessionID, Map: parse.IdentityMap},
+	// 	{Key: sdk.AttributeKeySender, Map: parse.IdentityMap},
+	// 	{Key: tss.AttributeKeyPayload, Map: func(s string) (interface{}, error) {
+	// 		cdc.MustUnmarshalJSON([]byte(s), &payload)
+	// 		return payload, nil
+	// 	}},
+	// }
+
+	// results, err := parse.Parse(attributes, parsers)
+	// if err != nil {
+	// 	panic(err)
+	// }
+
+	return msgVal.SessionID, msgVal.Sender.String(), msgVal.Payload, index
+	// return "","",nil
+}
 func parseMsgParams(e []types.Event) (sessionID string, from string, payload *tofnd.TrafficOut, index uint64) {
 	//fmt.Println("here")
+//fmt.Println(e[4])
 
 	innerMsg := e[4].Attributes[0].Value
 	
