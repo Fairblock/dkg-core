@@ -257,6 +257,8 @@ func Consume(subscriber <-chan ctypes.ResultEvent, tssMgr *tss.Mgr) jobs.Job {
 					if err := json.Unmarshal([]byte(d), &events); err != nil {
 						errChan <- err
 					}
+					if len(events)> 0{
+						if len(events[0].Events)>0{
 					//fmt.Println(events)
 					if events[0].Events[0].Type == "keygen" {
 
@@ -280,7 +282,7 @@ func Consume(subscriber <-chan ctypes.ResultEvent, tssMgr *tss.Mgr) jobs.Job {
 								errChan <- err
 							}
 						}
-					}
+					}}}
 					// if events[0].Events[0].Type == "dkg-timeout"{
 					
 					// 	//TODO: fix

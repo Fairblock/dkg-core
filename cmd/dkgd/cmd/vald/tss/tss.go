@@ -219,7 +219,7 @@ func (mgr *Mgr) Recover(recoverJSON []byte) error {
 	var requests []tofnd.RecoverRequest
 	err := mgr.cdc.UnmarshalJSON(recoverJSON, &requests)
 	if err != nil {
-		return sdkerrors.Wrapf(err, "failed to unmarshal recovery requests")
+		panic(sdkerrors.Wrapf(err, "failed to unmarshal recovery requests"))
 	}
 
 	for _, request := range requests {
@@ -234,8 +234,8 @@ func (mgr *Mgr) Recover(recoverJSON []byte) error {
 
 		response, err := mgr.client.Recover(grpcCtx, &request)
 		if err != nil {
-			return sdkerrors.Wrap(err,
-				fmt.Sprintf("failed tofnd gRPC call Recover for key ID %s", request.KeygenInit.NewKeyUid))
+			panic(sdkerrors.Wrap(err,
+				fmt.Sprintf("failed tofnd gRPC call Recover for key ID %s", request.KeygenInit.NewKeyUid)))
 		}
 
 		if response.GetResponse() == tofnd.RecoverResponse_RESPONSE_FAIL {
@@ -300,7 +300,7 @@ func abort(stream Stream) error {
 	}
 
 	if err := stream.Send(msg); err != nil {
-		return sdkerrors.Wrap(err, "failure to send abort msg to gRPC server")
+		panic(sdkerrors.Wrap(err, "failure to send abort msg to gRPC server"))
 	}
 
 	return nil
@@ -321,7 +321,7 @@ func handleStream(stream Stream, cancel context.CancelFunc, logger log.Logger) (
 		defer func() {
 			// close the stream on error or protocol completion
 			if err := stream.CloseSend(); err != nil {
-				errChan <- sdkerrors.Wrap(err, "handler goroutine: failure to CloseSend stream")
+				panic("handler goroutine: failure to CloseSend stream")
 			}
 		}()
 
@@ -332,7 +332,7 @@ func handleStream(stream Stream, cancel context.CancelFunc, logger log.Logger) (
 				return
 			}
 			if err != nil {
-				errChan <- sdkerrors.Wrap(err, "handler goroutine: failure to receive msg from gRPC server stream")
+				panic("handler goroutine: failure to receive msg from gRPC server stream")
 				return
 			}
 
@@ -371,7 +371,7 @@ func parseHeartBeatParams(cdc *codec.LegacyAmino, attributes map[string]string) 
 	return results[0].([]tss.KeyInfo)
 }
 func parseMsgParamsOne(e types.Event) (sessionID string, from string, payload *tofnd.TrafficOut, index uint64) {
-	//fmt.Println("here")
+fmt.Println("processig")
 //fmt.Println(e[4])
 if len(e.Attributes) == 0 {
 	return "","",nil,1000000000000
@@ -383,16 +383,20 @@ if len(e.Attributes) == 0 {
 		return "","",nil,1000000000000
 	}
 	indexS := e.Attributes[2].Value
-	index, _ = strconv.ParseUint(string(indexS), 10, 64)
+	index, err := strconv.ParseUint(string(indexS), 10, 64)
 	//fmt.Println([]byte(innerMsg))
 	// tx := e.(tmtypes.EventDataTx).Tx
-
+	if err != nil {
+		fmt.Println("processig error")
+		return "","", nil , 1000000000000
+	}
 	// tx_slice := (tx[39:246])
 
 	msg := new(dkgnet.MsgRefundMsgRequest)
 
-	err := msg.Unmarshal(innerMsg)
+	err = msg.Unmarshal(innerMsg)
 	if err != nil {
+		fmt.Println("processig error")
 		return "","", nil , 1000000000000
 	}
 	msgVal := new(tss.ProcessKeygenTrafficRequest)
@@ -404,6 +408,7 @@ if len(e.Attributes) == 0 {
 
 	err = msgVal.Unmarshal(msg.InnerMessage.Value)
 	if err != nil {
+		fmt.Println("processig error")
 		return "","", nil , 1000000000000
 	}
 	//msgVal.Payload.IsBroadcast = true

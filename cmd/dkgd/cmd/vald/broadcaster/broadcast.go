@@ -9,7 +9,7 @@ import (
 	"log"
 	"strings"
 	"time"
-
+	dkgnet "github.com/fairblock/dkg-core/x/dkgnet/types"
 	//"cosmossdk.io/math"
 	clienttx "github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
@@ -159,27 +159,30 @@ func (c *CosmosClient) BroadcastTx(msg cosmostypes.Msg, adjustGas bool) (*cosmos
 	return resp.TxResponse, c.handleBroadcastResult(resp.TxResponse, err)
 }
 
-func (c *CosmosClient) BroadcastTxs(msg cosmostypes.Msg, adjustGas bool, numOfP int) (*cosmostypes.TxResponse, error) {
-	// fmt.Println()
+func (c *CosmosClient) BroadcastTxs(msg *dkgnet.MsgRefundMsgRequest, adjustGas bool, numOfP int, id int) (*cosmostypes.TxResponse, error) {
+	// fmt.Println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&: ",msg.Creator)
+
 	messageBuff = append(messageBuff, msg)
-	//fmt.Println(len(messageBuff))
-	if len(messageBuff) != numOfP {
+	
+	if len(messageBuff) != (numOfP - 1) {
 		return nil,nil
 	}
-	fmt.Println("=========================================================")
+	//fmt.Println("=========================================================", (messageBuff))
 	n := 5
-	div := numOfP/n
-	add := numOfP % n
+	div := (numOfP-1)/n
+	add := (numOfP-1) % n
 	if add != 0 {
 		add = 1
 	}
 	//fmt.Println(div)
-	
+	delay := id * 400
+	time.Sleep(time.Duration(delay) * time.Millisecond)
 		for i := 0; i < (div+add); i++ {
 			
 			if i == (div){
-			
+				
 				txBytes, err := c.signTxMsgs(messageBuff[i*n:], adjustGas)
+				//fmt.Println("txBytes last: ", txBytes, id)
 				if err != nil {
 			
 					return nil, err
@@ -198,27 +201,30 @@ func (c *CosmosClient) BroadcastTxs(msg cosmostypes.Msg, adjustGas bool, numOfP 
 				}
 				return resp.TxResponse, c.handleBroadcastResult(resp.TxResponse, err)
 			}
-		
-			txBytes, err := c.signTxMsgs(messageBuff[i*n:i*n+n], adjustGas)
+		//messages := messageBuff[i*n:((i*n)+n)]
+			txBytes, err := c.signTxMsgs(messageBuff[i*n:((i*n)+n)], adjustGas)
+			fmt.Println("&&&&&&&&&&&&&&&&&&&: ",len(txBytes))
 				if err != nil {
 			
 					return nil, err
 				}
 				c.account.Sequence++
 
-	_, err = c.txClient.BroadcastTx(
+	_ , err = c.txClient.BroadcastTx(
 		context.Background(),
 		&tx.BroadcastTxRequest{
 			TxBytes: txBytes,
 			Mode:    tx.BroadcastMode_BROADCAST_MODE_SYNC,
 		},
 	)
+	
+	
 	if err != nil {
-		return nil, err
+		panic("error------------------------------------------------------------")
 	}
 			// batch := []sdk.Msg{}
-			time.Sleep(150 * time.Millisecond)
-				// batch = append(batch, messageBuff[i*10:i*10+10]) messageBuff[i*10:i*10+10]
+			
+			//fmt.Println(i*n, (i*n)+n)	// batch = append(batch, messageBuff[i*10:i*10+10]) messageBuff[i*10:i*10+10]
 		}		
 	
 return nil,nil
