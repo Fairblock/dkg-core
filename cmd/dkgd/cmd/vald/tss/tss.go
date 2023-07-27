@@ -429,7 +429,7 @@ if len(e.Attributes) == 0 {
 	// if err != nil {
 	// 	panic(err)
 	// }
-
+		fmt.Println(msgVal.Payload.IsBroadcast, round, " ******************************************")
 	return msgVal.SessionID, msgVal.Sender.String(), msgVal.Payload, index
 	// return "","",nil
 }

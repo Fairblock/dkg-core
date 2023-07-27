@@ -251,12 +251,12 @@ func (mgr *Mgr) ProcessKeygenMsg(e []types.Event, h int64) error {
 	//fmt.Println(keyID,from,payload,index)
 	if payload != nil {
 	if round == 1 {
-		if index < uint64(numOfP){
+		if index <= uint64(numOfP){
 			return nil
 		}
 	}
 	if round == 0 {
-		if index >= uint64(numOfP){
+		if index > uint64(numOfP){
 			return nil
 		}
 	}
@@ -502,6 +502,9 @@ func (mgr *Mgr) handleIntermediateKeygenMsgs(keyID string, intermediate <-chan *
 		refundableMsg := dkgnet.NewMsgRefundMsgRequest(mgr.principalAddr, argAddr, tssMsg)
 		if msg.RoundNum == "1"{
 			if msg.IsBroadcast {
+				fmt.Println("bcast 1")
+				delay := mgr.me * 100
+				time.Sleep(time.Duration(delay) * time.Millisecond)
 				_, err := mgr.broadcaster.BroadcastTx(refundableMsg, false)
 
 				if err != nil {
@@ -509,6 +512,7 @@ func (mgr *Mgr) handleIntermediateKeygenMsgs(keyID string, intermediate <-chan *
 					panic(sdkerrors.Wrap(err, "handler goroutine: failure to broadcast outgoing keygen msg"))
 		
 			}
+			//fmt.Println(resp, mgr.me, "+_+_+_+_+_+_+--------------------------------------------------")
 			}
 		// messageBuff = append(messageBuff, refundableMsg)
 		// for {
@@ -533,7 +537,7 @@ func (mgr *Mgr) handleIntermediateKeygenMsgs(keyID string, intermediate <-chan *
 			// }
 			// // batch := []sdk.Msg{}
 			// // batch = append(batch, messageBuff[i*10:i*10+10]) messageBuff[i*10:i*10+10]
-			if !msg.IsBroadcast{
+			if !msg.IsBroadcast {
 			_, err := mgr.broadcaster.BroadcastTxs(refundableMsg, false, numOfP, mgr.me)
 		
 			if err != nil {

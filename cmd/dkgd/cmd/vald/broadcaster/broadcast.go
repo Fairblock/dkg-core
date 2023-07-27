@@ -168,7 +168,7 @@ func (c *CosmosClient) BroadcastTxs(msg *dkgnet.MsgRefundMsgRequest, adjustGas b
 		return nil,nil
 	}
 	//fmt.Println("=========================================================", (messageBuff))
-	n := 5
+	n := 12
 	div := (numOfP-1)/n
 	add := (numOfP-1) % n
 	if add != 0 {
