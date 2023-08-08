@@ -132,16 +132,16 @@ func (mgr *Mgr) CheckTimeout(e types.Event) error {
 						// 	}
 						// }
 					}
-					fmt.Println("before new: ",len(indices))
-					if len(indices) != numOfP*(numOfP+1) {
-						fmt.Println("still---------------------------------------------------------")
-						missing := findMissingNumbers(indices, numOfP*(numOfP+1))
-						fmt.Println("new missing: ", missing)
-						for i := 0; i < len(missing); i++ {
-							mgr.findMissing(uint64(missing[i]))
-						}
-					}
-					fmt.Println("after new: ",len(indices))
+					 fmt.Println(" new: ",len(indices))
+					// if len(indices) != numOfP*(numOfP+1) {
+					// 	fmt.Println("still---------------------------------------------------------")
+					// 	missing := findMissingNumbers(indices, numOfP*(numOfP+1))
+					// 	fmt.Println("new missing: ", missing)
+					// 	for i := 0; i < len(missing); i++ {
+					// 		mgr.findMissing(uint64(missing[i]))
+					// 	}
+					// }
+					// fmt.Println("after new: ",len(indices))
 				}
 				r, _ := strconv.Atoi(string(e.Attributes[0].Value))
 				round = r + 1
