@@ -3,7 +3,7 @@ package broadcaster
 import (
 	"context"
 	"encoding/hex"
-	"fmt"
+	//"fmt"
 
 	//"fmt"
 	"log"
@@ -133,6 +133,80 @@ func (c *CosmosClient) handleBroadcastResult(resp *cosmostypes.TxResponse, err e
 	}
 	return nil
 }
+func (c *CosmosClient) BroadcastTxDispute(msgs []dkgnet.MsgFileDispute, adjustGas bool, id int) (*cosmostypes.TxResponse, error) {
+	// fmt.Println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&: ",msg.Creator)
+	msgsList := []cosmostypes.Msg{}
+	numOfP := len(msgs)
+	for i := 0; i < numOfP; i++ {
+		msgsList = append(msgsList, &msgs[i])
+	}
+	//fmt.Println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@: ", msgsList)
+	//fmt.Println("=========================================================", (messageBuff))
+	n := 1
+	div := (numOfP)/n
+	add := (numOfP) % n
+	if add != 0 {
+		add = 1
+	}
+	//fmt.Println(div)
+	delay := id * 300
+	time.Sleep(time.Duration(delay) * time.Millisecond)
+		for i := 0; i < (div+add); i++ {
+			
+			if i == (div){
+				
+				txBytes, err := c.signTxMsgs(msgsList[i*n:], false)
+				//fmt.Println("txBytes last: ", txBytes, id)
+				if err != nil {
+			
+					return nil, err
+				}
+				c.account.Sequence++
+
+				resp, err := c.txClient.BroadcastTx(
+					context.Background(),
+					&tx.BroadcastTxRequest{
+						TxBytes: txBytes,
+						Mode:    tx.BroadcastMode_BROADCAST_MODE_SYNC,
+					},
+				)
+				if err != nil {
+					return nil, err
+				}
+				return resp.TxResponse, c.handleBroadcastResult(resp.TxResponse, err)
+			}
+		//messages := msgsList[i*n:((i*n)+n)]
+			txBytes, err := c.signTxMsgs(msgsList[i*n:((i*n)+n)], false)
+			//fmt.Println("&&&&&&&&&&&&&&&&&&& dispute: ",len(txBytes))
+				if err != nil {
+			
+					return nil, err
+				}
+				c.account.Sequence++
+
+	_ , err = c.txClient.BroadcastTx(
+		context.Background(),
+		&tx.BroadcastTxRequest{
+			TxBytes: txBytes,
+			Mode:    tx.BroadcastMode_BROADCAST_MODE_SYNC,
+		},
+	)
+	
+	
+	if err != nil {
+		panic("error------------------------------------------------------------")
+	}
+			// batch := []sdk.Msg{}
+			delay := id * 200
+	time.Sleep(time.Duration(delay) * time.Millisecond)
+			//fmt.Println(i*n, (i*n)+n)	// batch = append(batch, messageBuff[i*10:i*10+10]) messageBuff[i*10:i*10+10]
+		}		
+	
+return nil,nil
+
+
+	
+}
 
 func (c *CosmosClient) BroadcastTx(msg cosmostypes.Msg, adjustGas bool) (*cosmostypes.TxResponse, error) {
 	// fmt.Println()
@@ -203,7 +277,7 @@ func (c *CosmosClient) BroadcastTxs(msg *dkgnet.MsgRefundMsgRequest, adjustGas b
 			}
 		//messages := messageBuff[i*n:((i*n)+n)]
 			txBytes, err := c.signTxMsgs(messageBuff[i*n:((i*n)+n)], adjustGas)
-			fmt.Println("&&&&&&&&&&&&&&&&&&&: ",len(txBytes))
+			//fmt.Println("&&&&&&&&&&&&&&&&&&&: ",len(txBytes))
 				if err != nil {
 			
 					return nil, err

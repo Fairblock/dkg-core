@@ -28,14 +28,17 @@ import (
 	"github.com/fairblock/dkg-core/x/tss/tofnd"
 	tss "github.com/fairblock/dkg-core/x/tss/types"
 )
-type MPK struct{
+
+type MPK struct {
 	Mpk []byte
-	Id string
+	Id  string
 }
-func SetMpk(mpk []byte, id string){
+
+func SetMpk(mpk []byte, id string) {
 	mpkFinal.Mpk = mpk
 	mpkFinal.Id = id
 }
+
 type Share struct {
 	Scalar []byte `json:"scalar"`
 	Index  int    `json:"index"`
@@ -57,6 +60,7 @@ type ShareInfoDispute struct {
 type P2pSad struct {
 	VssComplaint []ShareInfoDispute `json:"vss_complaint"`
 }
+
 var mpkFinal = MPK{}
 var round = 0
 var blocks = 20
@@ -64,6 +68,7 @@ var received = 0
 var indices = []int{}
 var numOfP = 0
 var messageBuff = map[int]types.Event{}
+
 func findMissingNumbers(numbers []int, n int) []int {
 	present := make(map[int]bool)
 
@@ -86,74 +91,177 @@ func (mgr *Mgr) CheckTimeout(e types.Event) error {
 
 	//mgr.currentHeight = height
 	// if mgr.startHeight > 0 {
-		
-		// if height > mgr.startHeight+blocks {
-			if mgr.keyId == string(e.Attributes[1].Value) {
-			//fmt.Println("height and end of era: ", height,mgr.startHeight+blocks)
-			_, ok := mgr.getKeygenStream(mgr.keyId)
-			if ok {
-				// mgr.startHeight = mgr.startHeight + blocks
-				if string(e.Attributes[0].Value) == "0" {
 
-					if len(indices) < numOfP {
-						fmt.Println("round 1 missing")
-						fmt.Println(indices)
-						missing := findMissingNumbers(indices, numOfP)
+	// if height > mgr.startHeight+blocks {
+	if mgr.keyId == string(e.Attributes[1].Value) {
+		//fmt.Println("height and end of era: ", height,mgr.startHeight+blocks)
+		_, ok := mgr.getKeygenStream(mgr.keyId)
+		if ok {
+			// mgr.startHeight = mgr.startHeight + blocks
+			if string(e.Attributes[0].Value) == "0" {
 
-						for i := 0; i < len(missing); i++ {
-							mgr.findMissing(uint64(missing[i]))
-						}
-						// if len(indices) < numOfP {
-						// 	msg := dkgnet.MsgTimeout{Creator: mgr.principalAddr, Round: strconv.FormatUint(uint64(round)+1, 10)}
-						// 	_, err := mgr.broadcaster.BroadcastTx(&msg, false)
+				if len(indices) < numOfP {
+					fmt.Println("round 1 missing")
+					fmt.Println(indices)
+					missing := findMissingNumbers(indices, numOfP)
 
-						// 	if err != nil {
-						// 		panic(sdkerrors.Wrap(err, "handler goroutine: failure to broadcast outgoing keygen msg")
-						// 	}
-						// }
+					for i := 0; i < len(missing); i++ {
+						mgr.findMissing(uint64(missing[i]))
 					}
+					// if len(indices) < numOfP {
+					// 	msg := dkgnet.MsgTimeout{Creator: mgr.principalAddr, Round: strconv.FormatUint(uint64(round)+1, 10)}
+					// 	_, err := mgr.broadcaster.BroadcastTx(&msg, false)
 
-				}
-				if string(e.Attributes[0].Value) == "1" {
-
-					if len(indices) < numOfP*(numOfP+1) {
-						fmt.Println("round 2 missing")
-						fmt.Println(indices)
-						missing := findMissingNumbers(indices, numOfP*(numOfP+1))
-						for i := 0; i < len(missing); i++ {
-							mgr.findMissing(uint64(missing[i]))
-						}
-						// if len(indices) < numOfP*(numOfP+1) {
-						// 	msg := dkgnet.MsgTimeout{Creator: mgr.principalAddr, Round: strconv.FormatUint(uint64(round)+1, 10)}
-						// 	_, err := mgr.broadcaster.BroadcastTx(&msg, false)
-
-						// 	if err != nil {
-						// 		panic(sdkerrors.Wrap(err, "handler goroutine: failure to broadcast outgoing keygen msg")
-						// 	}
-						// }
-					}
-					 fmt.Println(" new: ",len(indices))
-					// if len(indices) != numOfP*(numOfP+1) {
-					// 	fmt.Println("still---------------------------------------------------------")
-					// 	missing := findMissingNumbers(indices, numOfP*(numOfP+1))
-					// 	fmt.Println("new missing: ", missing)
-					// 	for i := 0; i < len(missing); i++ {
-					// 		mgr.findMissing(uint64(missing[i]))
+					// 	if err != nil {
+					// 		panic(sdkerrors.Wrap(err, "handler goroutine: failure to broadcast outgoing keygen msg")
 					// 	}
 					// }
-					// fmt.Println("after new: ",len(indices))
 				}
-				r, _ := strconv.Atoi(string(e.Attributes[0].Value))
-				round = r + 1
-				//fmt.Println(round)
-				//time.Sleep(time.Duration(200) * time.Millisecond)
-				mgr.ProcessTimeout()
-			}
-		}
-		//}
 
-//	}
+			}
+			if string(e.Attributes[0].Value) == "1" {
+
+				if len(indices) < numOfP*(numOfP+1) {
+					fmt.Println("round 2 missing")
+					fmt.Println(indices)
+					missing := findMissingNumbers(indices, numOfP*(numOfP+1))
+					for i := 0; i < len(missing); i++ {
+						mgr.findMissing(uint64(missing[i]))
+					}
+					// if len(indices) < numOfP*(numOfP+1) {
+					// 	msg := dkgnet.MsgTimeout{Creator: mgr.principalAddr, Round: strconv.FormatUint(uint64(round)+1, 10)}
+					// 	_, err := mgr.broadcaster.BroadcastTx(&msg, false)
+
+					// 	if err != nil {
+					// 		panic(sdkerrors.Wrap(err, "handler goroutine: failure to broadcast outgoing keygen msg")
+					// 	}
+					// }
+				}
+				fmt.Println(" new: ", len(indices))
+				// if len(indices) != numOfP*(numOfP+1) {
+				// 	fmt.Println("still---------------------------------------------------------")
+				// 	missing := findMissingNumbers(indices, numOfP*(numOfP+1))
+				// 	fmt.Println("new missing: ", missing)
+				// 	for i := 0; i < len(missing); i++ {
+				// 		mgr.findMissing(uint64(missing[i]))
+				// 	}
+				// }
+				// fmt.Println("after new: ",len(indices))
+			}
+			if string(e.Attributes[0].Value) == "2" {
+				
+				for i := numOfP*(numOfP+1) + 1; i < (numOfP*numOfP*2)+1; i++ {
+					skip := false
+					for k := 0; k < len(indices); k++ {
+						if indices[k] == i {
+							skip = true
+							break
+						}
+					}
+					if !skip {
+					found := mgr.findMissingDispute(uint64(i))
+					if !found {
+						break
+					}
+				}
+				}
+			}
+			r, _ := strconv.Atoi(string(e.Attributes[0].Value))
+			round = r + 1
+			//fmt.Println(round)
+			//time.Sleep(time.Duration(200) * time.Millisecond)
+			mgr.ProcessTimeout()
+		}
+	}
+	//}
+
+	//	}
 	return nil
+}
+
+func (mgr *Mgr) findMissingDispute(index uint64) bool {
+
+	event, exist := messageBuff[int(index)]
+	if exist {
+
+		fmt.Println(exist)
+		received = int(index)
+		keyID, from, payload, i := parseMsgParamsDisputeOne([]types.Event{event})
+		if payload == nil {
+			panic("wrong-------------------------------------------------------------------------------------------")
+		}
+		// fmt.Println("---------------------------------------------------------------")
+		// fmt.Println(e)
+		// fmt.Println("---------------------------------------------------------------")
+		//keyID, from, payload, i := parseMsgParams(e)
+
+		fmt.Println("fetched idex: ", i, mgr.me)
+		msgIn := prepareTrafficIn(mgr.principalAddr, from, keyID, payload, mgr.Logger)
+		time.Sleep(time.Duration(50) * time.Millisecond)
+		stream, ok := mgr.getKeygenStream(keyID)
+		if !ok {
+			mgr.Logger.Info(fmt.Sprintf("no keygen session with id %s. This process does not participate", keyID))
+
+		}
+
+		if err := stream.Send(msgIn); err != nil {
+			mgr.Logger.Info("failure to send incoming msg to gRPC server")
+		}
+
+		//fmt.Println("msg and len: ", payload, len(indices))
+		return true
+	}
+	received = int(index)
+	query := "keygen.index = " + strconv.FormatUint(index, 10)
+	//fmt.Println(query, mgr.me)
+	page := 1
+	limit := 1
+	orderBy := "desc"
+	result, err := mgr.tmClient.TxSearch(context.Background(), query, false, &page, &limit, orderBy)
+	if err != nil {
+
+		panic(err.Error())
+	}
+	//fmt.Println(result.Txs)
+	found := false
+
+	for _, tx := range result.Txs {
+
+		e := tx.TxResult.Events
+		for j := 4; j < len(e); j++ {
+			keyID, from, payload, i := parseMsgParamsDisputeOne(e)
+			if i == index {
+				found = true
+				// fmt.Println("---------------------------------------------------------------")
+				// fmt.Println(e)
+				// fmt.Println("---------------------------------------------------------------")
+				//keyID, from, payload, i := parseMsgParams(e)
+				time.Sleep(time.Duration(10) * time.Millisecond)
+				fmt.Println("fetched idex: ", i, mgr.me)
+				msgIn := prepareTrafficIn(mgr.principalAddr, from, keyID, payload, mgr.Logger)
+
+				stream, ok := mgr.getKeygenStream(keyID)
+				if !ok {
+					mgr.Logger.Info(fmt.Sprintf("no keygen session with id %s. This process does not participate", keyID))
+
+				}
+
+				if err := stream.Send(msgIn); err != nil {
+					mgr.Logger.Info("failure to send incoming msg to gRPC server")
+				}
+
+				//fmt.Println("msg and len: ", payload, len(indices))
+
+			}
+			if index != i {
+				if i != 1000000000000 {
+					messageBuff[int(i)] = e[j]
+				}
+			}
+
+		}
+	}
+	return found
 }
 
 // ProcessKeygenStart starts the communication with the keygen protocol
@@ -247,46 +355,47 @@ func (mgr *Mgr) ProcessKeygenMsg(e []types.Event, h int64) error {
 
 	received = received + 1
 	for i := 4; i < len(e); i++ {
-	keyID, from, payload, index := parseMsgParamsOne(e[i])
-	//fmt.Println(keyID,from,payload,index)
-	if payload != nil {
-	if round == 1 {
-		if index <= uint64(numOfP){
-			return nil
-		}
-	}
-	if round == 0 {
-		if index > uint64(numOfP){
-			return nil
-		}
-	}
-	for k := 0; k < len(indices); k++ {
-		if indices[k] == int(index) {
-			return nil
-		}
-	}
-	fmt.Println(i, index, " ----> loop")
-	indices = append(indices, int(index))
+		keyID, from, payload, index := parseMsgParamsOne(e[i])
+		//fmt.Println(keyID,from,payload,index)
+		if payload != nil {
+			if round == 1 {
+				if index <= uint64(numOfP) {
+					return nil
+				}
+			}
+			if round == 0 {
+				if index > uint64(numOfP) {
+					return nil
+				}
+			}
+			for k := 0; k < len(indices); k++ {
+				if indices[k] == int(index) {
+					return nil
+				}
+			}
+			fmt.Println(i, index, " ----> loop")
+			indices = append(indices, int(index))
 
-	msgIn := prepareTrafficIn(mgr.principalAddr, from, keyID, payload, mgr.Logger)
-	//fmt.Println(i, index, " ----> loop")
-	stream, ok := mgr.getKeygenStream(keyID)
-	if !ok {
-		mgr.Logger.Info(fmt.Sprintf("no keygen session with id %s. This process does not participate", keyID))
-		return nil
+			msgIn := prepareTrafficIn(mgr.principalAddr, from, keyID, payload, mgr.Logger)
+			//fmt.Println(i, index, " ----> loop")
+			stream, ok := mgr.getKeygenStream(keyID)
+			if !ok {
+				mgr.Logger.Info(fmt.Sprintf("no keygen session with id %s. This process does not participate", keyID))
+				return nil
+			}
+
+			if err := stream.Send(msgIn); err != nil {
+				panic(sdkerrors.Wrap(err, "failure to send incoming msg to gRPC server"))
+			}
+		}
 	}
 
-	if err := stream.Send(msgIn); err != nil {
-		panic(sdkerrors.Wrap(err, "failure to send incoming msg to gRPC server"))
-	}}
-	}
-	
 	return nil
 }
 func (mgr *Mgr) findMissing(index uint64) {
 	fmt.Println("start looking^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
 	event, exist := messageBuff[int(index)]
-	if  exist {
+	if exist {
 		fmt.Println(exist)
 		received = int(index)
 		keyID, from, payload, i := parseMsgParamsOne(event)
@@ -306,7 +415,7 @@ func (mgr *Mgr) findMissing(index uint64) {
 			mgr.Logger.Info(fmt.Sprintf("no keygen session with id %s. This process does not participate", keyID))
 
 		}
-	
+
 		if err := stream.Send(msgIn); err != nil {
 			mgr.Logger.Info("failure to send incoming msg to gRPC server")
 		}
@@ -325,46 +434,51 @@ func (mgr *Mgr) findMissing(index uint64) {
 
 		panic(err.Error())
 	}
-//fmt.Println(result.Txs)
+	//fmt.Println(result.Txs)
 	for _, tx := range result.Txs {
 
 		e := tx.TxResult.Events
 		for j := 4; j < len(e); j++ {
 			keyID, from, payload, i := parseMsgParamsOne(e[j])
 			if i == index {
-		// fmt.Println("---------------------------------------------------------------")
-		// fmt.Println(e)
-		// fmt.Println("---------------------------------------------------------------")
-		//keyID, from, payload, i := parseMsgParams(e)
-		time.Sleep(time.Duration(10) * time.Millisecond)
-		fmt.Println("fetched idex: ", i, mgr.me)
-		msgIn := prepareTrafficIn(mgr.principalAddr, from, keyID, payload, mgr.Logger)
-		
+				// fmt.Println("---------------------------------------------------------------")
+				// fmt.Println(e)
+				// fmt.Println("---------------------------------------------------------------")
+				//keyID, from, payload, i := parseMsgParams(e)
+				time.Sleep(time.Duration(10) * time.Millisecond)
+				fmt.Println("fetched idex: ", i, mgr.me)
+				msgIn := prepareTrafficIn(mgr.principalAddr, from, keyID, payload, mgr.Logger)
 
-		stream, ok := mgr.getKeygenStream(keyID)
-		if !ok {
-			mgr.Logger.Info(fmt.Sprintf("no keygen session with id %s. This process does not participate", keyID))
+				stream, ok := mgr.getKeygenStream(keyID)
+				if !ok {
+					mgr.Logger.Info(fmt.Sprintf("no keygen session with id %s. This process does not participate", keyID))
+
+				}
+
+				if err := stream.Send(msgIn); err != nil {
+					mgr.Logger.Info("failure to send incoming msg to gRPC server")
+				}
+				indices = append(indices, int(i))
+				//fmt.Println("msg and len: ", payload, len(indices))
+
+			}
+			if index != i {
+				if i != 1000000000000 {
+					messageBuff[int(i)] = e[j]
+				}
+			}
 
 		}
-		
-		if err := stream.Send(msgIn); err != nil {
-			mgr.Logger.Info("failure to send incoming msg to gRPC server")
-		}
-		indices = append(indices, int(i))
-		//fmt.Println("msg and len: ", payload, len(indices))
-
 	}
-	if index != i {
-		if i != 1000000000000 {
-		messageBuff[int(i)] = e[j]
-	}}
-	
-}}}
+}
 
 func (mgr *Mgr) ProcessKeygenMsgDispute(e []KeygenEvent) error {
+	for i := 0; i < len(e); i++ {
+	keyID, from, payload, index := parseMsgParamsDispute(e[i])
+if index > uint64(numOfP * (numOfP + 1)){	
+	if keyID == mgr.keyId {
 
-	keyID, from, payload := parseMsgParamsDispute(e)
-
+		indices = append(indices, int(index))
 	msgIn := prepareTrafficIn(mgr.principalAddr, from, keyID, payload, mgr.Logger)
 
 	stream, ok := mgr.getKeygenStream(keyID)
@@ -375,7 +489,7 @@ func (mgr *Mgr) ProcessKeygenMsgDispute(e []KeygenEvent) error {
 
 	if err := stream.Send(msgIn); err != nil {
 		panic(sdkerrors.Wrap(err, "failure to send incoming msg to gRPC server"))
-	}
+	}}}}
 	return nil
 }
 func (mgr *Mgr) ProcessTimeout() error {
@@ -468,16 +582,18 @@ func (mgr *Mgr) handleIntermediateKeygenMsgs(keyID string, intermediate <-chan *
 
 		argAddr := sdk.AccAddress([]byte(mgr.principalAddr))
 		// sender is set by broadcaster
-		if msg.ToPartyUid == "r3" {
+		
+		if msg.RoundNum == "2" {
 			var p2pSad P2pSad
-
+			
 			err := json.Unmarshal((msg.Payload[9 : len(msg.Payload)-1]), &p2pSad)
 
 			if err != nil {
 				fmt.Println("Error:", err)
 
 			}
-
+			
+			r3MsgList := []dkgnet.MsgFileDispute{}
 			for i := 0; i < len(p2pSad.VssComplaint); i++ {
 				complaint := p2pSad.VssComplaint[i]
 				byteSlice := make([]byte, 32)
@@ -486,21 +602,22 @@ func (mgr *Mgr) handleIntermediateKeygenMsgs(keyID string, intermediate <-chan *
 				fmt.Println("accuser: ", complaint.AccuserId)
 				fmt.Println("accusee: ", complaint.FaulterId)
 				msgR3 := dkgnet.MsgFileDispute{Creator: mgr.principalAddr, Dispute: &dkgnet.Dispute{AddressOfAccuser: complaint.Accuser, AddressOfAccusee: complaint.Faulter, Share: &dkgnet.Share{Value: complaint.Share.Scalar, Index: byteSlice, Id: uint64(complaint.Share.Index)}, Commit: &dkgnet.Commit{Commitments: complaint.Commit}, Kij: complaint.Kij, CZkProof: complaint.Proof[0][:], RZkProof: complaint.Proof[1][:], Id: 1, AccuserId: uint64(complaint.AccuserId), FaulterId: uint64(complaint.FaulterId), CReal: complaint.Proof[2][:]}, IdOfAccuser: uint64(complaint.Share.Index), KeyId: keyID}
+				r3MsgList = append(r3MsgList, msgR3)
 
-				_, err := mgr.broadcaster.BroadcastTx(&msgR3, false)
-
-				if err != nil {
-					panic(sdkerrors.Wrap(err, "handler goroutine: failure to broadcast outgoing keygen msg"))
-				}
 			}
+			
+			_, err = mgr.broadcaster.BroadcastTxDispute(r3MsgList, false, mgr.me)
 
+			if err != nil {
+				panic(sdkerrors.Wrap(err, "handler goroutine: failure to broadcast outgoing keygen msg"))
+			}
 			return nil
 		}
 
 		tssMsg := &tss.ProcessKeygenTrafficRequest{Sender: argAddr, SessionID: keyID, Payload: msg}
 
 		refundableMsg := dkgnet.NewMsgRefundMsgRequest(mgr.principalAddr, argAddr, tssMsg)
-		if msg.RoundNum == "1"{
+		if msg.RoundNum == "1" {
 			if msg.IsBroadcast {
 				fmt.Println("bcast 1")
 				delay := mgr.me * 100
@@ -510,25 +627,25 @@ func (mgr *Mgr) handleIntermediateKeygenMsgs(keyID string, intermediate <-chan *
 				if err != nil {
 					//fmt.Println("this", tssMsg)
 					panic(sdkerrors.Wrap(err, "handler goroutine: failure to broadcast outgoing keygen msg"))
-		
+
+				}
+				//fmt.Println(resp, mgr.me, "+_+_+_+_+_+_+--------------------------------------------------")
 			}
-			//fmt.Println(resp, mgr.me, "+_+_+_+_+_+_+--------------------------------------------------")
-			}
-		// messageBuff = append(messageBuff, refundableMsg)
-		// for {
-		// 	fmt.Println(len(messageBuff))
-		// 	if len(messageBuff) == numOfP  {
-		// 		break
-		// 	}
-		// }
-		//fmt.Println("batch sending ========================================================================")
-		// div := numOfP/10
-		// for i := 0; i < (div+1); i++ {
-		// 	if i == (div){
-				// batch := []sdk.Msg{}
-				// batch = append(batch, messageBuff[i*10:])
+			// messageBuff = append(messageBuff, refundableMsg)
+			// for {
+			// 	fmt.Println(len(messageBuff))
+			// 	if len(messageBuff) == numOfP  {
+			// 		break
+			// 	}
+			// }
+			//fmt.Println("batch sending ========================================================================")
+			// div := numOfP/10
+			// for i := 0; i < (div+1); i++ {
+			// 	if i == (div){
+			// batch := []sdk.Msg{}
+			// batch = append(batch, messageBuff[i*10:])
 			// 	_, err := mgr.broadcaster.BroadcastTxs(messageBuff[i*10:], false)
-		
+
 			// if err != nil {
 			// 	//fmt.Println("this", tssMsg)
 			// 	panic(sdkerrors.Wrap(err, "handler goroutine: failure to broadcast outgoing keygen msg")
@@ -538,29 +655,30 @@ func (mgr *Mgr) handleIntermediateKeygenMsgs(keyID string, intermediate <-chan *
 			// // batch := []sdk.Msg{}
 			// // batch = append(batch, messageBuff[i*10:i*10+10]) messageBuff[i*10:i*10+10]
 			if !msg.IsBroadcast {
-			_, err := mgr.broadcaster.BroadcastTxs(refundableMsg, false, numOfP, mgr.me)
-		
+				_, err := mgr.broadcaster.BroadcastTxs(refundableMsg, false, numOfP, mgr.me)
+
+				if err != nil {
+					//fmt.Println("this", tssMsg)
+					panic(sdkerrors.Wrap(err, "handler goroutine: failure to broadcast outgoing keygen msg"))
+				}
+			}
+		}
+
+		if msg.RoundNum == "0" {
+			//fmt.Println("single sending ========================================================================")
+			_, err := mgr.broadcaster.BroadcastTx(refundableMsg, false)
+
 			if err != nil {
 				//fmt.Println("this", tssMsg)
 				panic(sdkerrors.Wrap(err, "handler goroutine: failure to broadcast outgoing keygen msg"))
-			}}
+
+			}
 		}
-		
-	
-	
-	if msg.RoundNum != "1"{
-		//fmt.Println("single sending ========================================================================")
-		_, err := mgr.broadcaster.BroadcastTx(refundableMsg, false)
 
-		if err != nil {
-			//fmt.Println("this", tssMsg)
-			panic(sdkerrors.Wrap(err, "handler goroutine: failure to broadcast outgoing keygen msg"))
+	}
 
-	}}
-	
+	return nil
 }
-
-return nil}
 
 func (mgr *Mgr) handleKeygenResult(keyID string, resultChan <-chan interface{}) error {
 	// Delete the reference to the keygen stream with keyID because entering this function means the tss protocol has completed

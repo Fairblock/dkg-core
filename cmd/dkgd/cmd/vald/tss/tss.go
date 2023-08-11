@@ -51,7 +51,7 @@ type Session struct {
 	TimeoutAt int64
 	timeout   chan struct{}
 }
-
+var faultersMap = make(map[string]bool)
 // Timeout signals a session has timed out
 func (s *Session) Timeout() {
 	close(s.timeout)
@@ -481,52 +481,61 @@ func parseMsgParams(e []types.Event) (sessionID string, from string, payload *to
 	return msgVal.SessionID, msgVal.Sender.String(), msgVal.Payload, index
 	// return "","",nil
 }
-func parseMsgParamsDispute(e []KeygenEvent) (sessionID string, from string, payload *tofnd.TrafficOut) {
+func parseMsgParamsDispute(e KeygenEvent) (sessionID string, from string, payload *tofnd.TrafficOut, id uint64) {
 
 	//panic(e)
+	fmt.Println(e)
+	if len(e.Attributes) < 4 {
+		//fmt.Println("attributes less than 4", e)
+		return 
+	}
+	innerMsg := (e.Attributes[0].Value)
+	keyId := e.Attributes[1].Value
+	from = e.Attributes[2].Value
+	idString := string(e.Attributes[3].Value)
+
+	i, err := strconv.Atoi(idString)
+	if err != nil {
+		fmt.Println("Oops, an error occurred:", err)
+		return
+	}
+	value, err := strconv.Atoi(innerMsg) // Convert string to int
+	if err != nil {
+		fmt.Println("Conversion failed:", err)
+		return
+	}
+	b := []byte{byte(value)} 
+	id = uint64(i)
+	
+	fmt.Println("innermsg : ",b, innerMsg)
+	if faultersMap[innerMsg]{
+		return
+	}
+	faultersMap[innerMsg] = true
+	tofndT := tofnd.TrafficOut{ToPartyUid: "", Payload: b , IsBroadcast: true}
+	return keyId, sdk.AccAddress([]byte(from)).String(), &tofndT, id
+	// return "","",nil
+}
+func parseMsgParamsDisputeOne(e []types.Event) (sessionID string, from string, payload *tofnd.TrafficOut, id uint64) {
+
+	//panic(e)
+	if len(e[0].Attributes) < 4 {
+		//fmt.Println("attributes less than 4", e)
+		return 
+	}
 	innerMsg := e[0].Attributes[0].Value
-	id := e[0].Attributes[1].Value
-	from = e[0].Attributes[2].Value
+	sessionID = string(e[0].Attributes[1].Value)
+	from = string(e[0].Attributes[2].Value)
+	idString := string(e[0].Attributes[3].Value)
 
-
-	//	fmt.Println(innerMsg)
-	//	fmt.Println([]byte(innerMsg))
-	// // tx := e.(tmtypes.EventDataTx).Tx
-
-	// // tx_slice := (tx[39:246])
-	// fmt.Println("---------------------------------------------------------------------------------------------------------: ",e[0])
-	//  msg:= new(dkgnet.MsgRefundMsgRequest)
-
-	//  msg.Unmarshal(innerMsg)
-
-	// msgVal := new(tss.ProcessKeygenTrafficRequest)
-	// for i := 0; i < len([]byte(innerMsg)); i++ {
-	// 	fmt.Println(i)
-	// 	msgVal.Unmarshal([]byte(innerMsg)[i:])
-	// 	fmt.Println(msgVal)
-	// }
-
-	//msgVal.Unmarshal(msg.InnerMessage.Value)
-	//msgVal.Payload.IsBroadcast = true
-	//fmt.Println((innerMsg))
-	//  msgVal2 := new(tss.ProcessKeygenTrafficRequest)
-
-	// msgVal2.Unmarshal([]byte(msgVal.SessionID))
-	// parsers := []*parse.AttributeParser{
-	// 	{Key: tss.AttributeKeySessionID, Map: parse.IdentityMap},
-	// 	{Key: sdk.AttributeKeySender, Map: parse.IdentityMap},
-	// 	{Key: tss.AttributeKeyPayload, Map: func(s string) (interface{}, error) {
-	// 		cdc.MustUnmarshalJSON([]byte(s), &payload)
-	// 		return payload, nil
-	// 	}},
-	// }
-
-	// results, err := parse.Parse(attributes, parsers)
-	// if err != nil {
-	// 	panic(err)
-	// }
+	i, err := strconv.Atoi(idString)
+	if err != nil {
+		fmt.Println("Oops, an error occurred:", err)
+		return
+	}
+	id = uint64(i)
 	tofndT := tofnd.TrafficOut{ToPartyUid: "", Payload: []byte(innerMsg), IsBroadcast: true}
-	return id, sdk.AccAddress([]byte(from)).String(), &tofndT
+	return sessionID, sdk.AccAddress([]byte(from)).String(), &tofndT, id
 	// return "","",nil
 }
 func prepareTrafficIn(principalAddr string, from string, sessionID string, payload *tofnd.TrafficOut, logger log.Logger) *tofnd.MessageIn {
