@@ -584,15 +584,23 @@ func (mgr *Mgr) handleIntermediateKeygenMsgs(keyID string, intermediate <-chan *
 		// sender is set by broadcaster
 		
 		if msg.RoundNum == "2" {
+			fmt.Println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", msg.Payload)
 			var p2pSad P2pSad
-			
-			err := json.Unmarshal((msg.Payload[9 : len(msg.Payload)-1]), &p2pSad)
+			c := 0
+			for {
+			err := json.Unmarshal((msg.Payload[c : len(msg.Payload)-1]), &p2pSad)
 
 			if err != nil {
 				fmt.Println("Error:", err)
+				c = c + 1
 
 			}
-			
+		if err == nil {
+			fmt.Println("c : ", c)
+			break
+		}
+		}
+			fmt.Println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!**********", p2pSad)
 			r3MsgList := []dkgnet.MsgFileDispute{}
 			for i := 0; i < len(p2pSad.VssComplaint); i++ {
 				complaint := p2pSad.VssComplaint[i]
@@ -606,7 +614,7 @@ func (mgr *Mgr) handleIntermediateKeygenMsgs(keyID string, intermediate <-chan *
 
 			}
 			
-			_, err = mgr.broadcaster.BroadcastTxDispute(r3MsgList, false, mgr.me)
+			_, err := mgr.broadcaster.BroadcastTxDispute(r3MsgList, false, mgr.me)
 
 			if err != nil {
 				panic(sdkerrors.Wrap(err, "handler goroutine: failure to broadcast outgoing keygen msg"))

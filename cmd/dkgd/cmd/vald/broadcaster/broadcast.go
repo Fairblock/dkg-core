@@ -3,13 +3,17 @@ package broadcaster
 import (
 	"context"
 	"encoding/hex"
+	"fmt"
+
 	//"fmt"
 
 	//"fmt"
 	"log"
 	"strings"
 	"time"
+
 	dkgnet "github.com/fairblock/dkg-core/x/dkgnet/types"
+
 	//"cosmossdk.io/math"
 	clienttx "github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
@@ -140,7 +144,7 @@ func (c *CosmosClient) BroadcastTxDispute(msgs []dkgnet.MsgFileDispute, adjustGa
 	for i := 0; i < numOfP; i++ {
 		msgsList = append(msgsList, &msgs[i])
 	}
-	//fmt.Println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@: ", msgsList)
+	fmt.Println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@: ", msgsList)
 	//fmt.Println("=========================================================", (messageBuff))
 	n := 1
 	div := (numOfP)/n

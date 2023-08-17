@@ -334,6 +334,7 @@ func handleStream(stream Stream, cancel context.CancelFunc, logger log.Logger) (
 			if err != nil {
 				panic("handler goroutine: failure to receive msg from gRPC server stream")
 				return
+				//break
 			}
 
 			switch msg := msgOneof.GetData().(type) {
