@@ -767,7 +767,7 @@ func (mgr *Mgr) handleKeygenResult(keyID string, resultChan <-chan interface{}) 
 		if err != nil {
 			panic(sdkerrors.Wrap(err, "handler goroutine: failure to broadcast outgoing keygen msg"))
 		}
-		//mgr.Logger.Info(fmt.Sprintf("mpk bytes: ", pkBytes))
+		mgr.Logger.Info(fmt.Sprintf("mpk bytes: ", pkBytes))
 		//mgr.Logger.Info(fmt.Sprintf("handler goroutine: submitted mpk and commitment: ", resp))
 		// for{
 		// 	if mpkFinal.Id != "" {
