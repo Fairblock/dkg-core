@@ -153,7 +153,7 @@ func (c *CosmosClient) BroadcastTxDispute(msgs []dkgnet.MsgFileDispute, adjustGa
 		add = 1
 	}
 	//fmt.Println(div)
-	delay := id * 400
+	delay := id * 500
 	time.Sleep(time.Duration(delay) * time.Millisecond)
 		for i := 0; i < (div+add); i++ {
 			
@@ -201,7 +201,7 @@ func (c *CosmosClient) BroadcastTxDispute(msgs []dkgnet.MsgFileDispute, adjustGa
 		panic("error------------------------------------------------------------")
 	}
 			// batch := []sdk.Msg{}
-			delay := id * 50
+			delay := id * 100
 	time.Sleep(time.Duration(delay) * time.Millisecond)
 			//fmt.Println(i*n, (i*n)+n)	// batch = append(batch, messageBuff[i*10:i*10+10]) messageBuff[i*10:i*10+10]
 		}		
