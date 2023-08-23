@@ -144,7 +144,7 @@ func (c *CosmosClient) BroadcastTxDispute(msgs []dkgnet.MsgFileDispute, adjustGa
 	for i := 0; i < numOfP; i++ {
 		msgsList = append(msgsList, &msgs[i])
 	}
-	fmt.Println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@: ", msgsList)
+	fmt.Println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@: ", "msgsList")
 	//fmt.Println("=========================================================", (messageBuff))
 	n := 1
 	div := (numOfP)/n
@@ -153,7 +153,7 @@ func (c *CosmosClient) BroadcastTxDispute(msgs []dkgnet.MsgFileDispute, adjustGa
 		add = 1
 	}
 	//fmt.Println(div)
-	delay := id * 300
+	delay := id * 400
 	time.Sleep(time.Duration(delay) * time.Millisecond)
 		for i := 0; i < (div+add); i++ {
 			
@@ -201,7 +201,7 @@ func (c *CosmosClient) BroadcastTxDispute(msgs []dkgnet.MsgFileDispute, adjustGa
 		panic("error------------------------------------------------------------")
 	}
 			// batch := []sdk.Msg{}
-			delay := id * 200
+			delay := id * 50
 	time.Sleep(time.Duration(delay) * time.Millisecond)
 			//fmt.Println(i*n, (i*n)+n)	// batch = append(batch, messageBuff[i*10:i*10+10]) messageBuff[i*10:i*10+10]
 		}		
@@ -427,7 +427,8 @@ func (c *CosmosClient) signTxMsgs(msgs []cosmostypes.Msg, adjustGas bool) ([]byt
 			}
 		}
 	}
-
+	_ = newGasLimit 
+	fmt.Println("calculated gas: ", newGasLimit)
 	txBuilder.SetGasLimit(newGasLimit)
 
 	signerData := authsigning.SignerData{

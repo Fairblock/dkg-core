@@ -68,7 +68,7 @@ var received = 0
 var indices = []int{}
 var numOfP = 0
 var messageBuff = map[int]types.Event{}
-
+var disputes = []KeygenEvent{}
 func findMissingNumbers(numbers []int, n int) []int {
 	present := make(map[int]bool)
 
@@ -159,6 +159,7 @@ func (mgr *Mgr) CheckTimeout(e types.Event) error {
 						}
 					}
 					if !skip {
+						
 					found := mgr.findMissingDispute(uint64(i))
 					if !found {
 						break
@@ -180,7 +181,7 @@ func (mgr *Mgr) CheckTimeout(e types.Event) error {
 }
 
 func (mgr *Mgr) findMissingDispute(index uint64) bool {
-
+fmt.Println("looking for disputes...", index)
 	event, exist := messageBuff[int(index)]
 	if exist {
 
@@ -195,7 +196,7 @@ func (mgr *Mgr) findMissingDispute(index uint64) bool {
 		// fmt.Println("---------------------------------------------------------------")
 		//keyID, from, payload, i := parseMsgParams(e)
 
-		fmt.Println("fetched idex: ", i, mgr.me)
+		fmt.Println("dispute fetched idex: ", i, mgr.me)
 		msgIn := prepareTrafficIn(mgr.principalAddr, from, keyID, payload, mgr.Logger)
 		time.Sleep(time.Duration(50) * time.Millisecond)
 		stream, ok := mgr.getKeygenStream(keyID)
@@ -229,6 +230,7 @@ func (mgr *Mgr) findMissingDispute(index uint64) bool {
 
 		e := tx.TxResult.Events
 		for j := 4; j < len(e); j++ {
+			fmt.Println("fetched dispute : ", e)
 			keyID, from, payload, i := parseMsgParamsDisputeOne(e)
 			if i == index {
 				found = true
@@ -237,7 +239,7 @@ func (mgr *Mgr) findMissingDispute(index uint64) bool {
 				// fmt.Println("---------------------------------------------------------------")
 				//keyID, from, payload, i := parseMsgParams(e)
 				time.Sleep(time.Duration(10) * time.Millisecond)
-				fmt.Println("fetched idex: ", i, mgr.me)
+				fmt.Println("dispute fetched idex: ", i, mgr.me)
 				msgIn := prepareTrafficIn(mgr.principalAddr, from, keyID, payload, mgr.Logger)
 
 				stream, ok := mgr.getKeygenStream(keyID)
@@ -473,12 +475,21 @@ func (mgr *Mgr) findMissing(index uint64) {
 }
 
 func (mgr *Mgr) ProcessKeygenMsgDispute(e []KeygenEvent) error {
+	
+	
+		for {
+			if round > 1{
+				break
+			}
+		}
+	
 	for i := 0; i < len(e); i++ {
 	keyID, from, payload, index := parseMsgParamsDispute(e[i])
+	fmt.Println("dispute has been received")
 if index > uint64(numOfP * (numOfP + 1)){	
 	if keyID == mgr.keyId {
-
-		indices = append(indices, int(index))
+		fmt.Println("dispute: ", index)
+	indices = append(indices, int(index))
 	msgIn := prepareTrafficIn(mgr.principalAddr, from, keyID, payload, mgr.Logger)
 
 	stream, ok := mgr.getKeygenStream(keyID)
@@ -584,7 +595,7 @@ func (mgr *Mgr) handleIntermediateKeygenMsgs(keyID string, intermediate <-chan *
 		// sender is set by broadcaster
 		
 		if msg.RoundNum == "2" {
-			fmt.Println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", msg.Payload)
+			//fmt.Println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", msg.Payload)
 			var p2pSad P2pSad
 			c := 0
 			for {
@@ -600,7 +611,7 @@ func (mgr *Mgr) handleIntermediateKeygenMsgs(keyID string, intermediate <-chan *
 			break
 		}
 		}
-			fmt.Println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!**********", p2pSad)
+			//fmt.Println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!**********", p2pSad)
 			r3MsgList := []dkgnet.MsgFileDispute{}
 			for i := 0; i < len(p2pSad.VssComplaint); i++ {
 				complaint := p2pSad.VssComplaint[i]
@@ -735,7 +746,7 @@ func (mgr *Mgr) handleKeygenResult(keyID string, resultChan <-chan interface{}) 
 
 		_ = suite
 		shareS := suite.G1().Scalar().SetBytes(shareB)
-		mgr.Logger.Info(fmt.Sprintf("share bytes: ", shareB))
+		//mgr.Logger.Info(fmt.Sprintf("share bytes: ", shareB))
 		commitment := suite.G1().Point().Mul(shareS, pk)
 		filenamePk := fmt.Sprintf("pk-%d.txt", index)
 		filenameShare := fmt.Sprintf("share-%d.txt", index)
@@ -751,13 +762,13 @@ func (mgr *Mgr) handleKeygenResult(keyID string, resultChan <-chan interface{}) 
 
 		}
 		msg := dkgnet.MsgKeygenResult{Creator: mgr.principalAddr, Mpk: pk.String(), Commitment: commitment.String()}
-		resp, err := mgr.broadcaster.BroadcastTx(&msg, false)
+		_, err = mgr.broadcaster.BroadcastTx(&msg, false)
 
 		if err != nil {
 			panic(sdkerrors.Wrap(err, "handler goroutine: failure to broadcast outgoing keygen msg"))
 		}
-		mgr.Logger.Info(fmt.Sprintf("mpk bytes: ", pkBytes))
-		mgr.Logger.Info(fmt.Sprintf("handler goroutine: submitted mpk and commitment: ", resp))
+		//mgr.Logger.Info(fmt.Sprintf("mpk bytes: ", pkBytes))
+		//mgr.Logger.Info(fmt.Sprintf("handler goroutine: submitted mpk and commitment: ", resp))
 		// for{
 		// 	if mpkFinal.Id != "" {
 		// 		os.Exit(0)

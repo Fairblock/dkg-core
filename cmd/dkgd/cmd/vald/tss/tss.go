@@ -485,7 +485,7 @@ func parseMsgParams(e []types.Event) (sessionID string, from string, payload *to
 func parseMsgParamsDispute(e KeygenEvent) (sessionID string, from string, payload *tofnd.TrafficOut, id uint64) {
 
 	//panic(e)
-	fmt.Println(e)
+	fmt.Println("receiving events...")
 	if len(e.Attributes) < 4 {
 		//fmt.Println("attributes less than 4", e)
 		return 
@@ -508,7 +508,7 @@ func parseMsgParamsDispute(e KeygenEvent) (sessionID string, from string, payloa
 	b := []byte{byte(value)} 
 	id = uint64(i)
 	
-	fmt.Println("innermsg : ",b, innerMsg)
+	fmt.Println("innermsg : ", innerMsg)
 	if faultersMap[innerMsg]{
 		return
 	}
@@ -518,7 +518,7 @@ func parseMsgParamsDispute(e KeygenEvent) (sessionID string, from string, payloa
 	// return "","",nil
 }
 func parseMsgParamsDisputeOne(e []types.Event) (sessionID string, from string, payload *tofnd.TrafficOut, id uint64) {
-
+fmt.Println("query disputes ...")
 	//panic(e)
 	if len(e[0].Attributes) < 4 {
 		//fmt.Println("attributes less than 4", e)
