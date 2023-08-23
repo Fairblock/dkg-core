@@ -428,7 +428,7 @@ func (c *CosmosClient) signTxMsgs(msgs []cosmostypes.Msg, adjustGas bool) ([]byt
 		}
 	}
 	_ = newGasLimit 
-	fmt.Println("calculated gas: ", newGasLimit)
+	//fmt.Println("calculated gas: ", newGasLimit)
 	txBuilder.SetGasLimit(newGasLimit)
 
 	signerData := authsigning.SignerData{

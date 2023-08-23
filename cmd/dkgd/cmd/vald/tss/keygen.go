@@ -161,6 +161,7 @@ func (mgr *Mgr) CheckTimeout(e types.Event) error {
 					if !skip {
 						
 					found := mgr.findMissingDispute(uint64(i))
+					fmt.Println(found, i)
 					if !found {
 						break
 					}
@@ -230,8 +231,9 @@ fmt.Println("looking for disputes...", index)
 
 		e := tx.TxResult.Events
 		for j := 4; j < len(e); j++ {
-			fmt.Println("fetched dispute : ", e)
+			fmt.Println("fetched dispute ")
 			keyID, from, payload, i := parseMsgParamsDisputeOne(e)
+			fmt.Println("fetched dispute : ", keyID,from,payload,i, index)
 			if i == index {
 				found = true
 				// fmt.Println("---------------------------------------------------------------")
@@ -475,7 +477,7 @@ func (mgr *Mgr) findMissing(index uint64) {
 }
 
 func (mgr *Mgr) ProcessKeygenMsgDispute(e []KeygenEvent) error {
-	
+	fmt.Println("ProcessKeygenMsgDispute")
 	
 		for {
 			if round > 1{
