@@ -314,7 +314,7 @@ func ConsumeH(subscriber <-chan ctypes.ResultEvent, tssMgr *tss.Mgr) jobs.Job {
 						fmt.Println("timeout-----------------------------------------------")
 					tssMgr.CheckTimeout(newBlock[0])}
 					if newBlock[0].Type == "dkg-mpk"{
-						//fmt.Println("mpk from chain: ",newBlock[0].Attributes[0].Value)
+						fmt.Println("mpk from chain: ",newBlock[0].Attributes[0].Value)
 						tss.SetMpk(newBlock[0].Attributes[0].Value,string(newBlock[0].Attributes[1].Value))
 						//os.Exit(0)
 					}}
