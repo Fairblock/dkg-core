@@ -534,8 +534,14 @@ fmt.Println("query disputes ...", e, e[4].Attributes)
 		fmt.Println("Oops, an error occurred:", err)
 		return
 	}
+	value, err := strconv.Atoi(string(innerMsg)) // Convert string to int
+	if err != nil {
+		fmt.Println("Conversion failed:", err)
+		return
+	}
+	b := []byte{byte(value)} 
 	id = uint64(i)
-	tofndT := tofnd.TrafficOut{ToPartyUid: "", Payload: []byte(innerMsg), IsBroadcast: true}
+	tofndT := tofnd.TrafficOut{ToPartyUid: "", Payload: b, IsBroadcast: true}
 	return sessionID, sdk.AccAddress([]byte(from)).String(), &tofndT, id
 	// return "","",nil
 }
