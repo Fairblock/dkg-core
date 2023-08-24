@@ -509,10 +509,10 @@ func parseMsgParamsDispute(e KeygenEvent) (sessionID string, from string, payloa
 	id = uint64(i)
 	
 	fmt.Println("innermsg : ", innerMsg)
-	if faultersMap[innerMsg]{
-		return
-	}
-	faultersMap[innerMsg] = true
+	// if faultersMap[innerMsg]{
+	// 	return
+	// }
+	// faultersMap[innerMsg] = true
 	tofndT := tofnd.TrafficOut{ToPartyUid: "", Payload: b , IsBroadcast: true}
 	return keyId, sdk.AccAddress([]byte(from)).String(), &tofndT, id
 	// return "","",nil
