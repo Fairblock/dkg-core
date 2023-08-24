@@ -518,16 +518,16 @@ func parseMsgParamsDispute(e KeygenEvent) (sessionID string, from string, payloa
 	// return "","",nil
 }
 func parseMsgParamsDisputeOne(e []types.Event) (sessionID string, from string, payload *tofnd.TrafficOut, id uint64) {
-fmt.Println("query disputes ...", e, e[0].Attributes)
+fmt.Println("query disputes ...", e, e[4].Attributes)
 	//panic(e)
-	if len(e[0].Attributes) < 4 {
+	if len(e[4].Attributes) < 4 {
 		//fmt.Println("attributes less than 4", e)
 		return 
 	}
-	innerMsg := e[0].Attributes[0].Value
-	sessionID = string(e[0].Attributes[1].Value)
-	from = string(e[0].Attributes[2].Value)
-	idString := string(e[0].Attributes[3].Value)
+	innerMsg := e[4].Attributes[0].Value
+	sessionID = string(e[4].Attributes[1].Value)
+	from = string(e[4].Attributes[2].Value)
+	idString := string(e[4].Attributes[3].Value)
 
 	i, err := strconv.Atoi(idString)
 	if err != nil {

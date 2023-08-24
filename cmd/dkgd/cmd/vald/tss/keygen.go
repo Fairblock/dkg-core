@@ -230,7 +230,7 @@ fmt.Println("looking for disputes...", index)
 	for _, tx := range result.Txs {
 
 		e := tx.TxResult.Events
-		for j := 4; j < len(e); j++ {
+		//for j := 4; j < len(e); j++ {
 			fmt.Println("fetched dispute ")
 			keyID, from, payload, i := parseMsgParamsDisputeOne(e)
 			fmt.Println("fetched dispute : ", keyID,from,payload,i, index)
@@ -259,11 +259,11 @@ fmt.Println("looking for disputes...", index)
 			}
 			if index != i {
 				if i != 1000000000000 {
-					messageBuff[int(i)] = e[j]
+					messageBuff[int(i)] = e[4]
 				}
 			}
 
-		}
+		//}
 	}
 	return found
 }
