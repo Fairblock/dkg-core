@@ -246,7 +246,7 @@ func (c *CosmosClient) BroadcastTxs(msg *dkgnet.MsgRefundMsgRequest, adjustGas b
 		return nil,nil
 	}
 	//fmt.Println("=========================================================", (messageBuff))
-	n := 20
+	n := 30
 	div := (numOfP-1)/n
 	add := (numOfP-1) % n
 	if add != 0 {
@@ -301,7 +301,7 @@ func (c *CosmosClient) BroadcastTxs(msg *dkgnet.MsgRefundMsgRequest, adjustGas b
 		panic("error------------------------------------------------------------")
 	}
 			// batch := []sdk.Msg{}
-			delay := id * 200
+			delay := id * 300
 	time.Sleep(time.Duration(delay) * time.Millisecond)
 			//fmt.Println(i*n, (i*n)+n)	// batch = append(batch, messageBuff[i*10:i*10+10]) messageBuff[i*10:i*10+10]
 		}		
