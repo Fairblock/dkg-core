@@ -72,8 +72,7 @@ func GetValdCommand() *cobra.Command {
 			serverCtx := server.GetServerContextFromCmd(cmd)
 			logger := serverCtx.Logger.With("module", "vald")
 
-			// in case of panic we still want to try and cleanup resources,
-			// but we have to make sure it's not called more than once if the program is stopped by an interrupt signal
+			
 			defer once.Do(cleanUp)
 
 			sigs := make(chan os.Signal, 1)
@@ -101,12 +100,12 @@ func GetValdCommand() *cobra.Command {
 			valAddr := serverCtx.Viper.GetString("validator-addr")
 			valKey := serverCtx.Viper.GetString("validator-key")
 			capacity := serverCtx.Viper.GetString("channel-capacity")
-			
+
 			// valList := serverCtx.Viper.GetString("validator-key")
 			if capacity == "" {
 				return fmt.Errorf("capacity not set")
 			}
-		
+
 			if valAddr == "" {
 				return fmt.Errorf("validator address not set")
 			}
@@ -138,7 +137,7 @@ func GetValdCommand() *cobra.Command {
 			stateSource := NewRWFile(fPath)
 
 			logger.Info("start listening to events")
-			listen(cliCtx, txf, valdConf, valAddr, valKey, recoveryJSON, stateSource, logger,capacity)
+			listen(cliCtx, txf, valdConf, valAddr, valKey, recoveryJSON, stateSource, logger, capacity)
 			logger.Info("shutting down")
 			return nil
 		},
@@ -172,7 +171,7 @@ func setPersistentFlags(cmd *cobra.Command) {
 	cmd.PersistentFlags().String(flags.FlagChainID, app.Name, "The network chain ID")
 }
 
-func listen(ctx sdkClient.Context, txf tx.Factory, dkgCfg config.ValdConfig, valAddr string, valKey string, recoveryJSON []byte, stateSource ReadWriter, logger log.Logger,  capacity string) {
+func listen(ctx sdkClient.Context, txf tx.Factory, dkgCfg config.ValdConfig, valAddr string, valKey string, recoveryJSON []byte, stateSource ReadWriter, logger log.Logger, capacity string) {
 	encCfg := app.MakeEncodingConfig()
 	cdc := encCfg.Amino
 
@@ -184,6 +183,9 @@ func listen(ctx sdkClient.Context, txf tx.Factory, dkgCfg config.ValdConfig, val
 		),
 		"/websocket",
 	)
+	if err != nil {
+		logger.Error(err.Error())
+	}
 	err = client.Start()
 	if err != nil {
 		logger.Error(err.Error())
@@ -208,7 +210,7 @@ func listen(ctx sdkClient.Context, txf tx.Factory, dkgCfg config.ValdConfig, val
 		}
 	}
 	channelCap, err := strconv.ParseUint(capacity, 10, 64)
-	if err != nil{
+	if err != nil {
 		panic(err)
 	}
 	query := "tm.event = 'Tx'"
@@ -216,7 +218,7 @@ func listen(ctx sdkClient.Context, txf tx.Factory, dkgCfg config.ValdConfig, val
 	if err != nil {
 		panic(err)
 	}
-	out, err := client.Subscribe(context.Background(), "", "tm.event='NewBlock'",int(channelCap))
+	out, err := client.Subscribe(context.Background(), "", "tm.event='NewBlock'", int(channelCap))
 	if err != nil {
 		panic(err)
 	}
@@ -227,8 +229,6 @@ func listen(ctx sdkClient.Context, txf tx.Factory, dkgCfg config.ValdConfig, val
 		ConsumeH(out, tssMgr),
 	}
 
-	// errGroup runs async processes and cancels their context if ANY of them returns an error.
-	// Here, we don't want to stop on errors, but simply log it and continue, so errGroup doesn't cut it
 	logErr := func(err error) { logger.Error(err.Error()) }
 
 	mgr := jobs.NewMgr(logErr)
@@ -252,45 +252,40 @@ func Consume(subscriber <-chan ctypes.ResultEvent, tssMgr *tss.Mgr) jobs.Job {
 					d := e.Data.(tmtypes.EventDataTx).Result.Log
 
 					e2 := e.Data.(tmtypes.EventDataTx).Result.Events
-					//fmt.Println("---------> ", e2)
+
 					var events []tss.EventMsg
 					if err := json.Unmarshal([]byte(d), &events); err != nil {
 						errChan <- err
 					}
-					if len(events)> 0{
-						if len(events[0].Events)>0{
-					//fmt.Println(events)
-					if events[0].Events[0].Type == "keygen" {
+					if len(events) > 0 {
+						if len(events[0].Events) > 0 {
 
-						key := events[0].Events[0].Attributes[0].Key
+							if events[0].Events[0].Type == "keygen" {
 
-						if key == "start" {
+								key := events[0].Events[0].Attributes[0].Key
 
-							if err := tssMgr.ProcessKeygenStart(events, e.Data.(tmtypes.EventDataTx).Height); err != nil {
-								errChan <- err
+								if key == "start" {
+
+									if err := tssMgr.ProcessKeygenStart(events, e.Data.(tmtypes.EventDataTx).Height); err != nil {
+										errChan <- err
+									}
+
+								}
+								if key == "message" {
+
+									if err := tssMgr.ProcessKeygenMsg(e2, e.Data.(tmtypes.EventDataTx).Height); err != nil {
+										errChan <- err
+									}
+								}
+								if key == "dispute" {
+									fmt.Println("received: ", events[0].Events)
+									if err := tssMgr.ProcessKeygenMsgDispute(events[0].Events); err != nil {
+										errChan <- err
+									}
+								}
 							}
-
 						}
-						if key == "message" {
-
-							if err := tssMgr.ProcessKeygenMsg(e2, e.Data.(tmtypes.EventDataTx).Height); err != nil {
-								errChan <- err
-							}
-						}
-						if key == "dispute" {
-							fmt.Println("received: ", events[0].Events)
-							if err := tssMgr.ProcessKeygenMsgDispute(events[0].Events); err != nil {
-								errChan <- err
-							}
-						}
-					}}}
-					// if events[0].Events[0].Type == "dkg-timeout"{
-					
-					// 	//TODO: fix
-					// fmt.Println("timeout...")
-
-					// tssMgr.CheckTimeout(events[0].Events[0])
-					// }
+					}
 
 				}()
 
@@ -305,25 +300,23 @@ func ConsumeH(subscriber <-chan ctypes.ResultEvent, tssMgr *tss.Mgr) jobs.Job {
 			select {
 			case e := <-subscriber:
 				go func() {
-					
+
 					newBlock := e.Data.(tmtypes.EventDataNewBlock).ResultEndBlock.Events
-					// just for testing to see if it works
-					//fmt.Println(newBlock)
-					if len(newBlock)>0{
-					if newBlock[0].Type == "dkg-timeout"{
-						fmt.Println("timeout-----------------------------------------------")
-					tssMgr.CheckTimeout(newBlock[0])}
-					if newBlock[0].Type == "dkg-mpk"{
-						fmt.Println("mpk from chain: ",newBlock[0].Attributes[0].Value)
-						tss.SetMpk(newBlock[0].Attributes[0].Value,string(newBlock[0].Attributes[1].Value))
-						//os.Exit(0)
-					}}
-					
-				
+
+					if len(newBlock) > 0 {
+						if newBlock[0].Type == "dkg-timeout" {
+							fmt.Println("timeout-----------------------------------------------")
+							tssMgr.CheckTimeout(newBlock[0])
+						}
+						if newBlock[0].Type == "dkg-mpk" {
+							fmt.Println("mpk from chain: ", newBlock[0].Attributes[0].Value)
+							tss.SetMpk(newBlock[0].Attributes[0].Value, string(newBlock[0].Attributes[1].Value))
+
+						}
+					}
+
 				}()
-			
-				// Sleep for a short duration to yield CPU time
-			
+
 			}
 		}
 	}
@@ -343,7 +336,6 @@ func createTSSMgr(client *tmclient.HTTP, broadcaster *broadcast.CosmosClient, cl
 		}
 		logger.Debug("successful connection to tofnd gRPC server")
 
-		// creates clients to communicate with the external tofnd process service
 		gg20client := tofnd.NewGG20Client(conn)
 
 		tssMgr := tss.NewMgr(client, gg20client, cliCtx, 2*time.Hour, valAddr, broadcaster, logger, cdc)

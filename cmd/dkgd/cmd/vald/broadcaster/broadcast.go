@@ -3,18 +3,13 @@ package broadcaster
 import (
 	"context"
 	"encoding/hex"
-	"fmt"
 
-	//"fmt"
-
-	//"fmt"
 	"log"
 	"strings"
 	"time"
 
 	dkgnet "github.com/fairblock/dkg-core/x/dkgnet/types"
 
-	//"cosmossdk.io/math"
 	clienttx "github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
@@ -45,7 +40,9 @@ type CosmosClient struct {
 	accAddress cosmostypes.AccAddress
 	chainID    string
 }
+
 var messageBuff = []cosmostypes.Msg{}
+
 func PrivateKeyToAccAddress(privateKeyHex string) (cosmostypes.AccAddress, error) {
 	keyBytes, err := hex.DecodeString(privateKeyHex)
 	if err != nil {
@@ -138,82 +135,77 @@ func (c *CosmosClient) handleBroadcastResult(resp *cosmostypes.TxResponse, err e
 	return nil
 }
 func (c *CosmosClient) BroadcastTxDispute(msgs []dkgnet.MsgFileDispute, adjustGas bool, id int) (*cosmostypes.TxResponse, error) {
-	// fmt.Println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&: ",msg.Creator)
+
 	msgsList := []cosmostypes.Msg{}
 	numOfP := len(msgs)
 	for i := 0; i < numOfP; i++ {
 		msgsList = append(msgsList, &msgs[i])
 	}
-	fmt.Println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@: ", "msgsList")
-	//fmt.Println("=========================================================", (messageBuff))
+
 	n := 1
-	div := (numOfP)/n
+	div := (numOfP) / n
 	add := (numOfP) % n
 	if add != 0 {
 		add = 1
 	}
-	//fmt.Println(div)
+
 	delay := id * 500
 	time.Sleep(time.Duration(delay) * time.Millisecond)
-		for i := 0; i < (div+add); i++ {
-			
-			if i == (div){
-				
-				txBytes, err := c.signTxMsgs(msgsList[i*n:], false)
-				//fmt.Println("txBytes last: ", txBytes, id)
-				if err != nil {
-			
-					return nil, err
-				}
-				c.account.Sequence++
+	for i := 0; i < (div + add); i++ {
 
-				resp, err := c.txClient.BroadcastTx(
-					context.Background(),
-					&tx.BroadcastTxRequest{
-						TxBytes: txBytes,
-						Mode:    tx.BroadcastMode_BROADCAST_MODE_SYNC,
-					},
-				)
-				if err != nil {
-					return nil, err
-				}
-				return resp.TxResponse, c.handleBroadcastResult(resp.TxResponse, err)
+		if i == (div) {
+
+			txBytes, err := c.signTxMsgs(msgsList[i*n:], false)
+
+			if err != nil {
+
+				return nil, err
 			}
-		//messages := msgsList[i*n:((i*n)+n)]
-			txBytes, err := c.signTxMsgs(msgsList[i*n:((i*n)+n)], false)
-			//fmt.Println("&&&&&&&&&&&&&&&&&&& dispute: ",len(txBytes))
-				if err != nil {
-			
-					return nil, err
-				}
-				c.account.Sequence++
+			c.account.Sequence++
 
-	_ , err = c.txClient.BroadcastTx(
-		context.Background(),
-		&tx.BroadcastTxRequest{
-			TxBytes: txBytes,
-			Mode:    tx.BroadcastMode_BROADCAST_MODE_SYNC,
-		},
-	)
-	
-	
-	if err != nil {
-		panic("error------------------------------------------------------------")
+			resp, err := c.txClient.BroadcastTx(
+				context.Background(),
+				&tx.BroadcastTxRequest{
+					TxBytes: txBytes,
+					Mode:    tx.BroadcastMode_BROADCAST_MODE_SYNC,
+				},
+			)
+			if err != nil {
+				return nil, err
+			}
+			return resp.TxResponse, c.handleBroadcastResult(resp.TxResponse, err)
+		}
+
+		txBytes, err := c.signTxMsgs(msgsList[i*n:((i*n)+n)], false)
+
+		if err != nil {
+
+			return nil, err
+		}
+		c.account.Sequence++
+
+		_, err = c.txClient.BroadcastTx(
+			context.Background(),
+			&tx.BroadcastTxRequest{
+				TxBytes: txBytes,
+				Mode:    tx.BroadcastMode_BROADCAST_MODE_SYNC,
+			},
+		)
+
+		if err != nil {
+			return nil, err
+		}
+
+		delay := id * 100
+		time.Sleep(time.Duration(delay) * time.Millisecond)
+
 	}
-			// batch := []sdk.Msg{}
-			delay := id * 100
-	time.Sleep(time.Duration(delay) * time.Millisecond)
-			//fmt.Println(i*n, (i*n)+n)	// batch = append(batch, messageBuff[i*10:i*10+10]) messageBuff[i*10:i*10+10]
-		}		
-	
-return nil,nil
 
+	return nil, nil
 
-	
 }
 
 func (c *CosmosClient) BroadcastTx(msg cosmostypes.Msg, adjustGas bool) (*cosmostypes.TxResponse, error) {
-	// fmt.Println()
 
 	txBytes, err := c.signTxMsg(msg, adjustGas)
 	if err != nil {
@@ -238,78 +230,74 @@ func (c *CosmosClient) BroadcastTx(msg cosmostypes.Msg, adjustGas bool) (*cosmos
 }
 
 func (c *CosmosClient) BroadcastTxs(msg *dkgnet.MsgRefundMsgRequest, adjustGas bool, numOfP int, id int) (*cosmostypes.TxResponse, error) {
-	// fmt.Println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&: ",msg.Creator)
 
 	messageBuff = append(messageBuff, msg)
-	
+
 	if len(messageBuff) != (numOfP - 1) {
-		return nil,nil
+		return nil, nil
 	}
-	//fmt.Println("=========================================================", (messageBuff))
+
 	n := 30
-	div := (numOfP-1)/n
-	add := (numOfP-1) % n
+	div := (numOfP - 1) / n
+	add := (numOfP - 1) % n
 	if add != 0 {
 		add = 1
 	}
-	//fmt.Println(div)
+
 	delay := id * 300
 	time.Sleep(time.Duration(delay) * time.Millisecond)
-		for i := 0; i < (div+add); i++ {
-			
-			if i == (div){
-				
-				txBytes, err := c.signTxMsgs(messageBuff[i*n:], adjustGas)
-				//fmt.Println("txBytes last: ", txBytes, id)
-				if err != nil {
-			
-					return nil, err
-				}
-				c.account.Sequence++
+	for i := 0; i < (div + add); i++ {
 
-				resp, err := c.txClient.BroadcastTx(
-					context.Background(),
-					&tx.BroadcastTxRequest{
-						TxBytes: txBytes,
-						Mode:    tx.BroadcastMode_BROADCAST_MODE_SYNC,
-					},
-				)
-				if err != nil {
-					return nil, err
-				}
-				return resp.TxResponse, c.handleBroadcastResult(resp.TxResponse, err)
+		if i == (div) {
+
+			txBytes, err := c.signTxMsgs(messageBuff[i*n:], adjustGas)
+
+			if err != nil {
+
+				return nil, err
 			}
-		//messages := messageBuff[i*n:((i*n)+n)]
-			txBytes, err := c.signTxMsgs(messageBuff[i*n:((i*n)+n)], adjustGas)
-			//fmt.Println("&&&&&&&&&&&&&&&&&&&: ",len(txBytes))
-				if err != nil {
-			
-					return nil, err
-				}
-				c.account.Sequence++
+			c.account.Sequence++
 
-	_ , err = c.txClient.BroadcastTx(
-		context.Background(),
-		&tx.BroadcastTxRequest{
-			TxBytes: txBytes,
-			Mode:    tx.BroadcastMode_BROADCAST_MODE_SYNC,
-		},
-	)
-	
-	
-	if err != nil {
-		panic("error------------------------------------------------------------")
+			resp, err := c.txClient.BroadcastTx(
+				context.Background(),
+				&tx.BroadcastTxRequest{
+					TxBytes: txBytes,
+					Mode:    tx.BroadcastMode_BROADCAST_MODE_SYNC,
+				},
+			)
+			if err != nil {
+				return nil, err
+			}
+			return resp.TxResponse, c.handleBroadcastResult(resp.TxResponse, err)
+		}
+
+		txBytes, err := c.signTxMsgs(messageBuff[i*n:((i*n)+n)], adjustGas)
+
+		if err != nil {
+
+			return nil, err
+		}
+		c.account.Sequence++
+
+		_, err = c.txClient.BroadcastTx(
+			context.Background(),
+			&tx.BroadcastTxRequest{
+				TxBytes: txBytes,
+				Mode:    tx.BroadcastMode_BROADCAST_MODE_SYNC,
+			},
+		)
+
+		if err != nil {
+			return nil, err
+		}
+
+		delay := id * 300
+		time.Sleep(time.Duration(delay) * time.Millisecond)
+
 	}
-			// batch := []sdk.Msg{}
-			delay := id * 300
-	time.Sleep(time.Duration(delay) * time.Millisecond)
-			//fmt.Println(i*n, (i*n)+n)	// batch = append(batch, messageBuff[i*10:i*10+10]) messageBuff[i*10:i*10+10]
-		}		
-	
-return nil,nil
 
+	return nil, nil
 
-	
 }
 
 func (c *CosmosClient) WaitForTx(hash string, rate time.Duration) (*tx.GetTxResponse, error) {
@@ -360,8 +348,6 @@ func (c *CosmosClient) signTxMsg(msg cosmostypes.Msg, adjustGas bool) ([]byte, e
 		ChainID:       c.chainID,
 		AccountNumber: c.account.AccountNumber,
 		Sequence:      c.account.Sequence,
-		// PubKey:        c.publicKey,
-		//Address:       c.account.Address,
 	}
 
 	sigData := signing.SingleSignatureData{
@@ -382,7 +368,9 @@ func (c *CosmosClient) signTxMsg(msg cosmostypes.Msg, adjustGas bool) ([]byte, e
 		signMode, signerData, txBuilder, &c.privateKey,
 		encodingCfg.TxConfig, c.account.Sequence,
 	)
-
+	if err != nil {
+		return nil, err
+	}
 	err = txBuilder.SetSignatures(sigV2)
 	if err != nil {
 		return nil, err
@@ -400,7 +388,7 @@ func (c *CosmosClient) signTxMsgs(msgs []cosmostypes.Msg, adjustGas bool) ([]byt
 	txBuilder := encodingCfg.TxConfig.NewTxBuilder()
 	signMode := encodingCfg.TxConfig.SignModeHandler().DefaultMode()
 
-	err := txBuilder.SetMsgs(msgs...)  // here msgs is a slice of messages
+	err := txBuilder.SetMsgs(msgs...) // here msgs is a slice of messages
 	if err != nil {
 		return nil, err
 	}
@@ -416,7 +404,7 @@ func (c *CosmosClient) signTxMsgs(msgs []cosmostypes.Msg, adjustGas bool) ([]byt
 			WithSequence(c.account.Sequence).
 			WithGasAdjustment(defaultGasAdjustment)
 
-		// Since CalculateGas expects a single message, you might want to iterate 
+		// Since CalculateGas expects a single message, you might want to iterate
 		// through your messages and calculate gas for each, or create a new function
 		// to calculate gas for all messages together.
 		// Here's an example of how you could do it with a loop:
@@ -427,8 +415,8 @@ func (c *CosmosClient) signTxMsgs(msgs []cosmostypes.Msg, adjustGas bool) ([]byt
 			}
 		}
 	}
-	_ = newGasLimit 
-	//fmt.Println("calculated gas: ", newGasLimit)
+	_ = newGasLimit
+
 	txBuilder.SetGasLimit(newGasLimit)
 
 	signerData := authsigning.SignerData{
@@ -455,7 +443,9 @@ func (c *CosmosClient) signTxMsgs(msgs []cosmostypes.Msg, adjustGas bool) ([]byt
 		signMode, signerData, txBuilder, &c.privateKey,
 		encodingCfg.TxConfig, c.account.Sequence,
 	)
-
+	if err != nil {
+		return nil, err
+	}
 	err = txBuilder.SetSignatures(sigV2)
 	if err != nil {
 		return nil, err
