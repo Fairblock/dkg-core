@@ -149,7 +149,7 @@ func (c *CosmosClient) BroadcastTxDispute(msgs []dkgnet.MsgFileDispute, adjustGa
 		add = 1
 	}
 
-	delay := id * 500
+	delay := id * 100
 	time.Sleep(time.Duration(delay) * time.Millisecond)
 	for i := 0; i < (div + add); i++ {
 
@@ -196,7 +196,7 @@ func (c *CosmosClient) BroadcastTxDispute(msgs []dkgnet.MsgFileDispute, adjustGa
 			return nil, err
 		}
 
-		delay := id * 100
+		delay := id * 50
 		time.Sleep(time.Duration(delay) * time.Millisecond)
 
 	}

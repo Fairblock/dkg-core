@@ -280,7 +280,7 @@ func parseHeartBeatParams(cdc *codec.LegacyAmino, attributes map[string]string) 
 	return results[0].([]tss.KeyInfo)
 }
 func parseMsgParamsOne(e types.Event) (sessionID string, from string, payload *tofnd.TrafficOut, index uint64) {
-	fmt.Println("processig")
+	
 	if len(e.Attributes) == 0 {
 		return "", "", nil, 1000000000000
 	}
@@ -306,7 +306,7 @@ func parseMsgParamsOne(e types.Event) (sessionID string, from string, payload *t
 		fmt.Println("processig error")
 		return "", "", nil, 1000000000000
 	}
-	fmt.Println(msgVal.Payload.IsBroadcast, round, " ******************************************")
+	
 	return msgVal.SessionID, msgVal.Sender.String(), msgVal.Payload, index
 }
 func parseMsgParams(e []types.Event) (sessionID string, from string, payload *tofnd.TrafficOut, index uint64) {
@@ -320,7 +320,7 @@ func parseMsgParams(e []types.Event) (sessionID string, from string, payload *to
 	return msgVal.SessionID, msgVal.Sender.String(), msgVal.Payload, index
 }
 func parseMsgParamsDispute(e KeygenEvent) (sessionID string, from string, payload *tofnd.TrafficOut, id uint64) {
-	fmt.Println("receiving events...")
+	
 	if len(e.Attributes) < 4 {
 		return
 	}
@@ -340,12 +340,12 @@ func parseMsgParamsDispute(e KeygenEvent) (sessionID string, from string, payloa
 	}
 	b := []byte{byte(value)}
 	id = uint64(i)
-	fmt.Println("innermsg : ", innerMsg)
+	
 	tofndT := tofnd.TrafficOut{ToPartyUid: "", Payload: b, IsBroadcast: true}
 	return keyId, sdk.AccAddress([]byte(from)).String(), &tofndT, id
 }
 func parseMsgParamsDisputeOne(e []types.Event) (sessionID string, from string, payload *tofnd.TrafficOut, id uint64) {
-	fmt.Println("query disputes ...", e, e[4].Attributes)
+	
 	if len(e[4].Attributes) < 4 {
 		return
 	}
