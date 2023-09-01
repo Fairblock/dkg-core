@@ -173,3 +173,23 @@ func (msg *MsgTimeout) ValidateBasic() error {
 func (m MsgTimeout) Type() string {
 	return "MsgTimeout"
 }
+
+func (m MsgRegisterValidator) GetSigners() []sdk.AccAddress {
+	return []sdk.AccAddress{sdk.AccAddress(m.Creator)}
+}
+
+func (msg *MsgRegisterValidator) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgRegisterValidator) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	return nil
+}
+func (m MsgRegisterValidator) Type() string {
+	return "MsgRegisterValidator"
+}

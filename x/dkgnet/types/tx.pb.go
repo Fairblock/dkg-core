@@ -978,6 +978,70 @@ func (m *MsgMsgRefundMsgRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) 
 	}
 	return len(dAtA) - i, nil
 }
+
+type MsgRegisterValidator struct {
+	Creator       string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
+	Address       string `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty"`
+	Participation bool   `protobuf:"varint,3,opt,name=participation,proto3" json:"participation,omitempty"`
+}
+
+func (m *MsgRegisterValidator) Reset()         { *m = MsgRegisterValidator{} }
+func (m *MsgRegisterValidator) String() string { return proto.CompactTextString(m) }
+func (*MsgRegisterValidator) ProtoMessage()    {}
+func (*MsgRegisterValidator) Descriptor() ([]byte, []int) {
+	return fileDescriptor_1a4aecb3c66a91d8, []int{11}
+}
+func (m *MsgRegisterValidator) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgRegisterValidator) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgRegisterValidator.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgRegisterValidator) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgRegisterValidator.Merge(m, src)
+}
+func (m *MsgRegisterValidator) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgRegisterValidator) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgRegisterValidator.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgRegisterValidator proto.InternalMessageInfo
+
+func (m *MsgRegisterValidator) GetCreator() string {
+	if m != nil {
+		return m.Creator
+	}
+	return ""
+}
+
+func (m *MsgRegisterValidator) GetAddress() string {
+	if m != nil {
+		return m.Address
+	}
+	return ""
+}
+
+func (m *MsgRegisterValidator) GetParticipation() bool {
+	if m != nil {
+		return m.Participation
+	}
+	return false
+}
+
+
+
+
 type MsgFileDispute struct {
 	Creator     string   `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
 	Dispute     *Dispute `protobuf:"bytes,2,opt,name=dispute,proto3" json:"dispute,omitempty"`
@@ -1543,7 +1607,7 @@ func (m *MsgFileDisputeResponse) Size() (n int) {
 
 type MsgKeygenResult struct {
 	Creator    string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
-	Mpk        string `protobuf:"bytes,2,opt,name=mpk,proto3" json:"mpk,omitempty"`
+	MyIndex        string `protobuf:"bytes,2,opt,name=myIndex,proto3" json:"myIndex,omitempty"`
 	Commitment string `protobuf:"bytes,3,opt,name=commitment,proto3" json:"commitment,omitempty"`
 }
 
@@ -1587,9 +1651,9 @@ func (m *MsgKeygenResult) GetCreator() string {
 	return ""
 }
 
-func (m *MsgKeygenResult) GetMpk() string {
+func (m *MsgKeygenResult) GetMyIndex() string {
 	if m != nil {
-		return m.Mpk
+		return m.MyIndex
 	}
 	return ""
 }
@@ -1628,10 +1692,10 @@ func (m *MsgKeygenResult) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x1a
 	}
-	if len(m.Mpk) > 0 {
-		i -= len(m.Mpk)
-		copy(dAtA[i:], m.Mpk)
-		i = encodeVarintTx(dAtA, i, uint64(len(m.Mpk)))
+	if len(m.MyIndex) > 0 {
+		i -= len(m.MyIndex)
+		copy(dAtA[i:], m.MyIndex)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.MyIndex)))
 		i--
 		dAtA[i] = 0x12
 	}
@@ -1654,7 +1718,7 @@ func (m *MsgKeygenResult) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovTx(uint64(l))
 	}
-	l = len(m.Mpk)
+	l = len(m.MyIndex)
 	if l > 0 {
 		n += 1 + l + sovTx(uint64(l))
 	}
@@ -1727,7 +1791,7 @@ func (m *MsgKeygenResult) Unmarshal(dAtA []byte) error {
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Mpk", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field MyIndex", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -1755,7 +1819,7 @@ func (m *MsgKeygenResult) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Mpk = string(dAtA[iNdEx:postIndex])
+			m.MyIndex = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
@@ -2332,7 +2396,210 @@ func init() {
 	proto.RegisterType((*MsgKeygenResult)(nil), "dkg.dkg.MsgKeygenResult")
 	proto.RegisterType((*MsgTimeout)(nil), "dkg.dkg.MsgTimeout")
 	proto.RegisterType((*MsgFileDisputeResponse)(nil), "dkg.dkg.MsgFileDisputeResponse")
+	proto.RegisterType((*MsgRegisterValidator)(nil), "dkg.dkg.MsgRegisterValidator")
 }
+func (m *MsgRegisterValidator) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgRegisterValidator) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgRegisterValidator) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Participation {
+		i--
+		if m.Participation {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x18
+	}
+	if len(m.Address) > 0 {
+		i -= len(m.Address)
+		copy(dAtA[i:], m.Address)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Address)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Creator) > 0 {
+		i -= len(m.Creator)
+		copy(dAtA[i:], m.Creator)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Creator)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgRegisterValidator) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Creator)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Address)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.Participation {
+		n += 2
+	}
+	return n
+}
+
+func (m *MsgRegisterValidator) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgRegisterValidator: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgRegisterValidator: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Creator = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Address", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Address = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Participation", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.Participation = bool(v != 0)
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+
 
 func init() { proto.RegisterFile("dkgnet/v1beta1/tx.proto", fileDescriptor_a791a0da77994a4e) }
 

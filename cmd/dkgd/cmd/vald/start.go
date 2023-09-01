@@ -30,7 +30,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/server"
-
+	dkgnet "github.com/fairblock/dkg-core/x/dkgnet/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/spf13/cobra"
 	"github.com/tendermint/tendermint/libs/log"
@@ -209,6 +209,13 @@ func listen(ctx sdkClient.Context, txf tx.Factory, dkgCfg config.ValdConfig, val
 			panic(fmt.Errorf("unable to perform tss recovery: %v", err))
 		}
 	}
+	msg := dkgnet.MsgRegisterValidator{Creator:valAddr,Address:valAddr,Participation:true}
+	
+
+_, err = bc.BroadcastTx(&msg, false)
+if err != nil {
+	panic(sdkerrors.Wrap(err, "handler goroutine: failure to broadcast outgoing register msg"))
+}
 	channelCap, err := strconv.ParseUint(capacity, 10, 64)
 	if err != nil {
 		panic(err)
@@ -257,6 +264,7 @@ func Consume(subscriber <-chan ctypes.ResultEvent, tssMgr *tss.Mgr) jobs.Job {
 					if err := json.Unmarshal([]byte(d), &events); err != nil {
 						errChan <- err
 					}
+					
 					if len(events) > 0 {
 						if len(events[0].Events) > 0 {
 
@@ -264,13 +272,13 @@ func Consume(subscriber <-chan ctypes.ResultEvent, tssMgr *tss.Mgr) jobs.Job {
 
 								key := events[0].Events[0].Attributes[0].Key
 
-								if key == "start" {
+								// if key == "start" {
 
-									if err := tssMgr.ProcessKeygenStart(events, e.Data.(tmtypes.EventDataTx).Height); err != nil {
-										errChan <- err
-									}
+								// 	if err := tssMgr.ProcessKeygenStart(events); err != nil {
+								// 		errChan <- err
+								// 	}
 
-								}
+								// }
 								if key == "message" {
 
 									if err := tssMgr.ProcessKeygenMsg(e2, e.Data.(tmtypes.EventDataTx).Height); err != nil {
@@ -302,7 +310,7 @@ func ConsumeH(subscriber <-chan ctypes.ResultEvent, tssMgr *tss.Mgr) jobs.Job {
 				go func() {
 
 					newBlock := e.Data.(tmtypes.EventDataNewBlock).ResultEndBlock.Events
-
+					//fmt.Println(newBlock)
 					if len(newBlock) > 0 {
 						if newBlock[0].Type == "dkg-timeout" {
 							fmt.Println("timeout-----------------------------------------------")
@@ -312,6 +320,11 @@ func ConsumeH(subscriber <-chan ctypes.ResultEvent, tssMgr *tss.Mgr) jobs.Job {
 							fmt.Println("mpk from chain: ", newBlock[0].Attributes[0].Value)
 							tss.SetMpk(newBlock[0].Attributes[0].Value, string(newBlock[0].Attributes[1].Value))
 
+						}
+						if newBlock[0].Type == "keygen" {
+							if err := tssMgr.ProcessKeygenStart(newBlock[0]); err != nil {
+								errChan <- err
+							}
 						}
 					}
 

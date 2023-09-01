@@ -180,11 +180,13 @@ func (mgr *Mgr) findMissingDispute(index uint64) bool {
 	}
 	return found
 }
-func (mgr *Mgr) ProcessKeygenStart(e []EventMsg, height int64) error {
-	mgr.startHeight = int(height)
+func (mgr *Mgr) ProcessKeygenStart(e types.Event) error {
+	fmt.Println("start")
+	// mgr.startHeight = int(height)
 	keyID, threshold, participants, timeout, err := parseKeygenStartParams(e)
 	blocks = int(timeout)
 	mgr.keyId = keyID
+	fmt.Println(keyID,threshold,participants,timeout, err)
 	if err != nil {
 		return err
 	}
@@ -198,7 +200,7 @@ func (mgr *Mgr) ProcessKeygenStart(e []EventMsg, height int64) error {
 	}
 	numOfP = len(list)
 	mgr.me = index
-	return mgr.thresholdKeygenStart(height, keyID, timeout, threshold, index, list)
+	return mgr.thresholdKeygenStart( keyID, timeout, threshold, index, list)
 }
 func init() {
 	rand.Seed(time.Now().UnixNano())
@@ -213,9 +215,9 @@ func randSeq(n int) string {
 	}
 	return string(b)
 }
-func (mgr *Mgr) thresholdKeygenStart(height int64, keyID string, timeout int64, threshold uint32, myIndex int, participants []string) error {
+func (mgr *Mgr) thresholdKeygenStart(keyID string, timeout int64, threshold uint32, myIndex int, participants []string) error {
 	done := false
-	session := mgr.timeoutQueue.Enqueue(keyID, height+timeout)
+	session := mgr.timeoutQueue.Enqueue(keyID, timeout)
 	rand.Seed(time.Now().UnixNano())
 	stream, cancel, err := mgr.startKeygen(randSeq(35), threshold, uint32(myIndex), participants)
 	if err != nil {
@@ -383,11 +385,11 @@ func (mgr *Mgr) ProcessTimeout() error {
 	}
 	return nil
 }
-func parseKeygenStartParams(e []EventMsg) (string, uint32, []string, int64, error) {
-	keyID := e[0].Events[0].Attributes[0].Value
-	t := e[0].Events[0].Attributes[1].Value
-	participants := e[0].Events[0].Attributes[2].Value
-	timeout := e[0].Events[0].Attributes[3].Value
+func parseKeygenStartParams(e types.Event) (string, uint32, []string, int64, error) {
+	keyID := string(e.Attributes[0].Value)
+	t := string(e.Attributes[1].Value)
+	participants := e.Attributes[2].Value
+	timeout := string(e.Attributes[3].Value)
 	var participant_list []string
 	err := json.Unmarshal([]byte(participants), &participant_list)
 	if err != nil {
@@ -536,12 +538,20 @@ func (mgr *Mgr) handleKeygenResult(keyID string, resultChan <-chan interface{}) 
 		if err != nil {
 			fmt.Printf("Failed to write to file: %s\n", err)
 		}
-		msg := dkgnet.MsgKeygenResult{Creator: mgr.principalAddr, Mpk: pk.String(), Commitment: commitment.String()}
-		_, err = mgr.broadcaster.BroadcastTx(&msg, false)
+		me := strconv.Itoa(mgr.me)
+		msg := dkgnet.MsgKeygenResult{Creator: mgr.principalAddr, MyIndex: me, Commitment: commitment.String()}
+		resp, err := mgr.broadcaster.BroadcastTx(&msg, false)
 		if err != nil {
 			panic(sdkerrors.Wrap(err, "handler goroutine: failure to broadcast outgoing keygen msg"))
 		}
-		mgr.Logger.Info(fmt.Sprintf("mpk bytes: ", pkBytes, "me: ", mgr.me))
+		msgr := dkgnet.MsgRegisterValidator{Creator:mgr.principalAddr,Address:mgr.principalAddr,Participation:true}
+	
+
+		_, err = mgr.broadcaster.BroadcastTx(&msgr, false)
+		if err != nil {
+			panic(sdkerrors.Wrap(err, "handler goroutine: failure to broadcast outgoing register msg"))
+		}
+		mgr.Logger.Info(fmt.Sprintf("mpk bytes: ", pkBytes, "me: ", mgr.me, "resp:", resp))
 	default:
 		return fmt.Errorf("invalid data type")
 	}
