@@ -322,6 +322,7 @@ func ConsumeH(subscriber <-chan ctypes.ResultEvent, tssMgr *tss.Mgr) jobs.Job {
 
 						}
 						if newBlock[0].Type == "keygen" {
+							//tssMgr = renewMgr(tssMgr)
 							if err := tssMgr.ProcessKeygenStart(newBlock[0]); err != nil {
 								errChan <- err
 							}

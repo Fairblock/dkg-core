@@ -268,6 +268,7 @@ func (c *CosmosClient) BroadcastTxs(msg *dkgnet.MsgRefundMsgRequest, adjustGas b
 			if err != nil {
 				return nil, err
 			}
+			messageBuff = []cosmostypes.Msg{}
 			return resp.TxResponse, c.handleBroadcastResult(resp.TxResponse, err)
 		}
 
@@ -295,7 +296,7 @@ func (c *CosmosClient) BroadcastTxs(msg *dkgnet.MsgRefundMsgRequest, adjustGas b
 		time.Sleep(time.Duration(delay) * time.Millisecond)
 
 	}
-
+	messageBuff = []cosmostypes.Msg{}
 	return nil, nil
 
 }

@@ -79,7 +79,7 @@ func (mgr *Mgr) CheckTimeout(e types.Event) error {
 			if string(e.Attributes[0].Value) == "0" {
 				if len(indices) < numOfP {
 					fmt.Println("round 1 missing")
-					
+
 					missing := findMissingNumbers(indices, numOfP)
 					for i := 0; i < len(missing); i++ {
 						mgr.findMissing(uint64(missing[i]))
@@ -89,13 +89,13 @@ func (mgr *Mgr) CheckTimeout(e types.Event) error {
 			if string(e.Attributes[0].Value) == "1" {
 				if len(indices) < numOfP*(numOfP+1) {
 					fmt.Println("round 2 missing")
-					
+
 					missing := findMissingNumbers(indices, numOfP*(numOfP+1))
 					for i := 0; i < len(missing); i++ {
 						mgr.findMissing(uint64(missing[i]))
 					}
 				}
-				
+
 			}
 			if string(e.Attributes[0].Value) == "2" {
 				for i := numOfP*(numOfP+1) + 1; i < (numOfP*numOfP*2)+1; i++ {
@@ -182,11 +182,17 @@ func (mgr *Mgr) findMissingDispute(index uint64) bool {
 }
 func (mgr *Mgr) ProcessKeygenStart(e types.Event) error {
 	fmt.Println("start")
+	round = 0
+	mpkFinal = MPK{}
+	received = 0
+	indices = []int{}
+	numOfP = 0
+	messageBuff = map[int]types.Event{}
 	// mgr.startHeight = int(height)
 	keyID, threshold, participants, timeout, err := parseKeygenStartParams(e)
 	blocks = int(timeout)
 	mgr.keyId = keyID
-	fmt.Println(keyID,threshold,participants,timeout, err)
+	fmt.Println(keyID, threshold, participants, timeout, err)
 	if err != nil {
 		return err
 	}
@@ -200,7 +206,7 @@ func (mgr *Mgr) ProcessKeygenStart(e types.Event) error {
 	}
 	numOfP = len(list)
 	mgr.me = index
-	return mgr.thresholdKeygenStart( keyID, timeout, threshold, index, list)
+	return mgr.thresholdKeygenStart(keyID, timeout, threshold, index, list)
 }
 func init() {
 	rand.Seed(time.Now().UnixNano())
@@ -289,7 +295,7 @@ func (mgr *Mgr) ProcessKeygenMsg(e []types.Event, h int64) error {
 	return nil
 }
 func (mgr *Mgr) findMissing(index uint64) {
-	
+
 	event, exist := messageBuff[int(index)]
 	if exist {
 		fmt.Println(exist)
@@ -442,11 +448,11 @@ func (mgr *Mgr) handleIntermediateKeygenMsgs(keyID string, intermediate <-chan *
 			for {
 				err := json.Unmarshal((msg.Payload[c : len(msg.Payload)-1]), &p2pSad)
 				if err != nil {
-					
+
 					c = c + 1
 				}
 				if err == nil {
-					
+
 					break
 				}
 			}
@@ -455,7 +461,7 @@ func (mgr *Mgr) handleIntermediateKeygenMsgs(keyID string, intermediate <-chan *
 				complaint := p2pSad.VssComplaint[i]
 				byteSlice := make([]byte, 32)
 				binary.BigEndian.PutUint32(byteSlice, uint32(complaint.Share.Index))
-				
+
 				msgR3 := dkgnet.MsgFileDispute{Creator: mgr.principalAddr, Dispute: &dkgnet.Dispute{AddressOfAccuser: complaint.Accuser, AddressOfAccusee: complaint.Faulter, Share: &dkgnet.Share{Value: complaint.Share.Scalar, Index: byteSlice, Id: uint64(complaint.Share.Index)}, Commit: &dkgnet.Commit{Commitments: complaint.Commit}, Kij: complaint.Kij, CZkProof: complaint.Proof[0][:], RZkProof: complaint.Proof[1][:], Id: 1, AccuserId: uint64(complaint.AccuserId), FaulterId: uint64(complaint.FaulterId), CReal: complaint.Proof[2][:]}, IdOfAccuser: uint64(complaint.Share.Index), KeyId: keyID}
 				r3MsgList = append(r3MsgList, msgR3)
 			}
@@ -469,7 +475,7 @@ func (mgr *Mgr) handleIntermediateKeygenMsgs(keyID string, intermediate <-chan *
 		refundableMsg := dkgnet.NewMsgRefundMsgRequest(mgr.principalAddr, argAddr, tssMsg)
 		if msg.RoundNum == "1" {
 			if msg.IsBroadcast {
-				
+
 				delay := mgr.me * 100
 				time.Sleep(time.Duration(delay) * time.Millisecond)
 				_, err := mgr.broadcaster.BroadcastTx(refundableMsg, false)
@@ -544,8 +550,7 @@ func (mgr *Mgr) handleKeygenResult(keyID string, resultChan <-chan interface{}) 
 		if err != nil {
 			panic(sdkerrors.Wrap(err, "handler goroutine: failure to broadcast outgoing keygen msg"))
 		}
-		msgr := dkgnet.MsgRegisterValidator{Creator:mgr.principalAddr,Address:mgr.principalAddr,Participation:true}
-	
+		msgr := dkgnet.MsgRegisterValidator{Creator: mgr.principalAddr, Address: mgr.principalAddr, Participation: true}
 
 		_, err = mgr.broadcaster.BroadcastTx(&msgr, false)
 		if err != nil {
