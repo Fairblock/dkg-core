@@ -550,7 +550,7 @@ func (mgr *Mgr) handleKeygenResult(keyID string, resultChan <-chan interface{}) 
 		if err != nil {
 			panic(sdkerrors.Wrap(err, "handler goroutine: failure to broadcast outgoing keygen msg"))
 		}
-		msgr := dkgnet.MsgRegisterValidator{Creator: mgr.principalAddr, Address: mgr.principalAddr, Participation: true}
+		msgr := dkgnet.MsgRegisterValidator{Creator: mgr.principalAddr, Participation: true}
 
 		_, err = mgr.broadcaster.BroadcastTx(&msgr, false)
 		if err != nil {

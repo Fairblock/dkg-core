@@ -209,7 +209,7 @@ func listen(ctx sdkClient.Context, txf tx.Factory, dkgCfg config.ValdConfig, val
 			panic(fmt.Errorf("unable to perform tss recovery: %v", err))
 		}
 	}
-	msg := dkgnet.MsgRegisterValidator{Creator:valAddr,Address:valAddr,Participation:true}
+	msg := dkgnet.MsgRegisterValidator{Creator:valAddr,Participation:true}
 	
 
 _, err = bc.BroadcastTx(&msg, false)

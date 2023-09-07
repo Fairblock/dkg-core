@@ -981,8 +981,7 @@ func (m *MsgMsgRefundMsgRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) 
 
 type MsgRegisterValidator struct {
 	Creator       string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
-	Address       string `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty"`
-	Participation bool   `protobuf:"varint,3,opt,name=participation,proto3" json:"participation,omitempty"`
+	Participation bool   `protobuf:"varint,2,opt,name=participation,proto3" json:"participation,omitempty"`
 }
 
 func (m *MsgRegisterValidator) Reset()         { *m = MsgRegisterValidator{} }
@@ -1025,20 +1024,12 @@ func (m *MsgRegisterValidator) GetCreator() string {
 	return ""
 }
 
-func (m *MsgRegisterValidator) GetAddress() string {
-	if m != nil {
-		return m.Address
-	}
-	return ""
-}
-
 func (m *MsgRegisterValidator) GetParticipation() bool {
 	if m != nil {
 		return m.Participation
 	}
 	return false
 }
-
 
 
 
@@ -2426,14 +2417,7 @@ func (m *MsgRegisterValidator) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 			dAtA[i] = 0
 		}
 		i--
-		dAtA[i] = 0x18
-	}
-	if len(m.Address) > 0 {
-		i -= len(m.Address)
-		copy(dAtA[i:], m.Address)
-		i = encodeVarintTx(dAtA, i, uint64(len(m.Address)))
-		i--
-		dAtA[i] = 0x12
+		dAtA[i] = 0x10
 	}
 	if len(m.Creator) > 0 {
 		i -= len(m.Creator)
@@ -2452,10 +2436,6 @@ func (m *MsgRegisterValidator) Size() (n int) {
 	var l int
 	_ = l
 	l = len(m.Creator)
-	if l > 0 {
-		n += 1 + l + sovTx(uint64(l))
-	}
-	l = len(m.Address)
 	if l > 0 {
 		n += 1 + l + sovTx(uint64(l))
 	}
@@ -2527,38 +2507,6 @@ func (m *MsgRegisterValidator) Unmarshal(dAtA []byte) error {
 			m.Creator = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Address", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Address = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 3:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Participation", wireType)
 			}
@@ -2599,7 +2547,6 @@ func (m *MsgRegisterValidator) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-
 
 func init() { proto.RegisterFile("dkgnet/v1beta1/tx.proto", fileDescriptor_a791a0da77994a4e) }
 
