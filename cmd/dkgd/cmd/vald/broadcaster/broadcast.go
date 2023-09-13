@@ -459,3 +459,5 @@ func (c *CosmosClient) signTxMsgs(msgs []cosmostypes.Msg, adjustGas bool) ([]byt
 
 	return txBytes, nil
 }
+
+

@@ -286,7 +286,7 @@ func Consume(subscriber <-chan ctypes.ResultEvent, tssMgr *tss.Mgr) jobs.Job {
 									}
 								}
 								if key == "dispute" {
-									fmt.Println("received: ", events[0].Events)
+									//fmt.Println("received: ", events[0].Events)
 									if err := tssMgr.ProcessKeygenMsgDispute(events[0].Events); err != nil {
 										errChan <- err
 									}

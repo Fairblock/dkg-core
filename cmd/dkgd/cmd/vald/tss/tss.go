@@ -227,7 +227,7 @@ func abort(stream Stream) error {
 	}
 	return nil
 }
-func handleStream(stream Stream, cancel context.CancelFunc, logger log.Logger) (broadcast <-chan *tofnd.TrafficOut, result <-chan interface{}, err <-chan error) {
+func handleStream(stream Stream, cancel context.CancelFunc, logger log.Logger, me int) (broadcast <-chan *tofnd.TrafficOut, result <-chan interface{}, err <-chan error) {
 	broadcastChan := make(chan *tofnd.TrafficOut)
 	resChan := make(chan interface{})
 	errChan := make(chan error, 2)
@@ -248,7 +248,7 @@ func handleStream(stream Stream, cancel context.CancelFunc, logger log.Logger) (
 				return
 			}
 			if err != nil {
-				panic("handler goroutine: failure to receive msg from gRPC server stream")
+				fmt.Println("handler goroutine: failure to receive msg from gRPC server stream", me, err)
 				return
 			}
 			switch msg := msgOneof.GetData().(type) {

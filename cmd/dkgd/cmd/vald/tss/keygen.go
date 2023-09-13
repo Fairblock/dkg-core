@@ -5,6 +5,13 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"math/rand"
+	"sort"
+	"strconv"
+	"sync"
+	"time"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	bls "github.com/drand/kyber-bls12381"
@@ -12,11 +19,6 @@ import (
 	"github.com/fairblock/dkg-core/x/tss/tofnd"
 	tss "github.com/fairblock/dkg-core/x/tss/types"
 	"github.com/tendermint/tendermint/abci/types"
-	"io/ioutil"
-	"math/rand"
-	"sort"
-	"strconv"
-	"time"
 )
 
 type MPK struct {
@@ -54,10 +56,20 @@ var mpkFinal = MPK{}
 var round = 0
 var blocks = 20
 var received = 0
-var indices = []int{}
+var indices = AtomicSlice{indicesList: []int{}}
 var numOfP = 0
 var messageBuff = map[int]types.Event{}
-var disputes = []KeygenEvent{}
+
+type AtomicSlice struct {
+	indicesList []int
+	mu   sync.Mutex
+}
+func (a *AtomicSlice) Append(item int) {
+	a.mu.Lock()         // Lock the mutex
+	defer a.mu.Unlock() // Ensure the mutex is unlocked when we're done
+
+	a.indicesList = append(a.indicesList, item)
+}
 
 func findMissingNumbers(numbers []int, n int) []int {
 	present := make(map[int]bool)
@@ -77,20 +89,24 @@ func (mgr *Mgr) CheckTimeout(e types.Event) error {
 		_, ok := mgr.getKeygenStream(mgr.keyId)
 		if ok {
 			if string(e.Attributes[0].Value) == "0" {
-				if len(indices) < numOfP {
+				if len(indices.indicesList) < numOfP {
 					fmt.Println("round 1 missing")
-
-					missing := findMissingNumbers(indices, numOfP)
+					
+					missing := findMissingNumbers(indices.indicesList, numOfP)
 					for i := 0; i < len(missing); i++ {
 						mgr.findMissing(uint64(missing[i]))
 					}
+					missing = findMissingNumbers(indices.indicesList, numOfP)
+					fmt.Println(missing)
 				}
 			}
 			if string(e.Attributes[0].Value) == "1" {
-				if len(indices) < numOfP*(numOfP+1) {
+				
+				if len(indices.indicesList) < numOfP*(numOfP+1) {
 					fmt.Println("round 2 missing")
 
-					missing := findMissingNumbers(indices, numOfP*(numOfP+1))
+					missing := findMissingNumbers(indices.indicesList, numOfP*(numOfP+1))
+					
 					for i := 0; i < len(missing); i++ {
 						mgr.findMissing(uint64(missing[i]))
 					}
@@ -100,8 +116,8 @@ func (mgr *Mgr) CheckTimeout(e types.Event) error {
 			if string(e.Attributes[0].Value) == "2" {
 				for i := numOfP*(numOfP+1) + 1; i < (numOfP*numOfP*2)+1; i++ {
 					skip := false
-					for k := 0; k < len(indices); k++ {
-						if indices[k] == i {
+					for k := 0; k < len(indices.indicesList); k++ {
+						if indices.indicesList[k] == i {
 							skip = true
 							break
 						}
@@ -123,16 +139,19 @@ func (mgr *Mgr) CheckTimeout(e types.Event) error {
 	return nil
 }
 func (mgr *Mgr) findMissingDispute(index uint64) bool {
-	fmt.Println("looking for disputes...", index)
+	//fmt.Println("looking for disputes...", index)
 	event, exist := messageBuff[int(index)]
 	if exist {
-		fmt.Println(exist)
+		//fmt.Println(exist)
 		received = int(index)
-		keyID, from, payload, i := parseMsgParamsDisputeOne([]types.Event{event})
+		keyID, from, payload, _ := parseMsgParamsDisputeOne([]types.Event{event})
 		if payload == nil {
 			return false
 		}
-		fmt.Println("dispute fetched idex: ", i, mgr.me)
+		if keyID != mgr.keyId {
+			return false
+		}
+	//	fmt.Println("dispute fetched idex: ", i, mgr.me)
 		msgIn := prepareTrafficIn(mgr.principalAddr, from, keyID, payload, mgr.Logger)
 		time.Sleep(time.Duration(50) * time.Millisecond)
 		stream, ok := mgr.getKeygenStream(keyID)
@@ -159,10 +178,14 @@ func (mgr *Mgr) findMissingDispute(index uint64) bool {
 		//fmt.Println("fetched dispute ")
 		keyID, from, payload, i := parseMsgParamsDisputeOne(e)
 		//fmt.Println("fetched dispute : ", keyID, from, payload, i, index)
+		if keyID != mgr.keyId {
+			
+			return false
+		}
 		if i == index {
 			found = true
 			time.Sleep(time.Duration(10) * time.Millisecond)
-			fmt.Println("dispute fetched idex: ", i, mgr.me)
+		//	fmt.Println("dispute fetched idex: ", i, mgr.me)
 			msgIn := prepareTrafficIn(mgr.principalAddr, from, keyID, payload, mgr.Logger)
 			stream, ok := mgr.getKeygenStream(keyID)
 			if !ok {
@@ -185,14 +208,14 @@ func (mgr *Mgr) ProcessKeygenStart(e types.Event) error {
 	round = 0
 	mpkFinal = MPK{}
 	received = 0
-	indices = []int{}
+	indices = AtomicSlice{indicesList: []int{}}
 	numOfP = 0
 	messageBuff = map[int]types.Event{}
 	// mgr.startHeight = int(height)
 	keyID, threshold, participants, timeout, err := parseKeygenStartParams(e)
 	blocks = int(timeout)
 	mgr.keyId = keyID
-	fmt.Println(keyID, threshold, participants, timeout, err)
+	//fmt.Println(keyID, threshold, participants, timeout, err)
 	if err != nil {
 		return err
 	}
@@ -231,7 +254,7 @@ func (mgr *Mgr) thresholdKeygenStart(keyID string, timeout int64, threshold uint
 	}
 	mgr.setKeygenStream(keyID, stream)
 	errChan := make(chan error, 120)
-	intermediateMsgs, result, streamErrChan := handleStream(stream, cancel, mgr.Logger)
+	intermediateMsgs, result, streamErrChan := handleStream(stream, cancel, mgr.Logger, mgr.me)
 	go func() {
 		err, ok := <-streamErrChan
 		if ok {
@@ -261,26 +284,41 @@ func (mgr *Mgr) thresholdKeygenStart(keyID string, timeout int64, threshold uint
 }
 func (mgr *Mgr) ProcessKeygenMsg(e []types.Event, h int64) error {
 	received = received + 1
+	
 	for i := 4; i < len(e); i++ {
 		keyID, from, payload, index := parseMsgParamsOne(e[i])
 		if payload != nil {
+			
+			if payload.RoundNum != strconv.Itoa(round) {
+				fmt.Println("wrong round ", payload.RoundNum, round)
+				return nil
+			}
 			if round == 1 {
 				if index <= uint64(numOfP) {
+					fmt.Println("wrong message 1")
 					return nil
 				}
 			}
 			if round == 0 {
 				if index > uint64(numOfP) {
+					fmt.Println("wrong message 0")
 					return nil
 				}
 			}
-			for k := 0; k < len(indices); k++ {
-				if indices[k] == int(index) {
+			for k := 0; k < len(indices.indicesList); k++ {
+				if indices.indicesList[k] == int(index) {
+					fmt.Println("repeated message")
 					return nil
 				}
 			}
-			fmt.Println(i, index, " ----> loop")
-			indices = append(indices, int(index))
+			if keyID != mgr.keyId {
+				fmt.Println("wrong id")
+				return nil
+			}
+			
+			indices.Append(int(index))
+			//indices = append(indices, int(index))
+			fmt.Println(mgr.me, index, " ----> loop")
 			msgIn := prepareTrafficIn(mgr.principalAddr, from, keyID, payload, mgr.Logger)
 			stream, ok := mgr.getKeygenStream(keyID)
 			if !ok {
@@ -304,7 +342,11 @@ func (mgr *Mgr) findMissing(index uint64) {
 		if payload == nil {
 			panic("wrong----")
 		}
+		if keyID != mgr.keyId {
+			return 
+		}
 		fmt.Println("fetched idex: ", i, mgr.me)
+		
 		msgIn := prepareTrafficIn(mgr.principalAddr, from, keyID, payload, mgr.Logger)
 		time.Sleep(time.Duration(50) * time.Millisecond)
 		stream, ok := mgr.getKeygenStream(keyID)
@@ -314,7 +356,8 @@ func (mgr *Mgr) findMissing(index uint64) {
 		if err := stream.Send(msgIn); err != nil {
 			mgr.Logger.Info("failure to send incoming msg to gRPC server")
 		}
-		indices = append(indices, int(i))
+		indices.Append(int(i))
+		// indices = append(indices, int(i))
 		return
 	}
 	received = int(index)
@@ -330,6 +373,9 @@ func (mgr *Mgr) findMissing(index uint64) {
 		e := tx.TxResult.Events
 		for j := 4; j < len(e); j++ {
 			keyID, from, payload, i := parseMsgParamsOne(e[j])
+			if keyID != mgr.keyId {
+				return
+			}
 			if i == index {
 				time.Sleep(time.Duration(10) * time.Millisecond)
 				fmt.Println("fetched idex: ", i, mgr.me)
@@ -341,7 +387,8 @@ func (mgr *Mgr) findMissing(index uint64) {
 				if err := stream.Send(msgIn); err != nil {
 					mgr.Logger.Info("failure to send incoming msg to gRPC server")
 				}
-				indices = append(indices, int(i))
+				indices.Append(int(i))
+				// indices = append(indices, int(i))
 			}
 			if index != i {
 				if i != 1000000000000 {
@@ -352,7 +399,7 @@ func (mgr *Mgr) findMissing(index uint64) {
 	}
 }
 func (mgr *Mgr) ProcessKeygenMsgDispute(e []KeygenEvent) error {
-	fmt.Println("ProcessKeygenMsgDispute")
+//	fmt.Println("ProcessKeygenMsgDispute")
 	for {
 		if round > 1 {
 			break
@@ -360,11 +407,12 @@ func (mgr *Mgr) ProcessKeygenMsgDispute(e []KeygenEvent) error {
 	}
 	for i := 0; i < len(e); i++ {
 		keyID, from, payload, index := parseMsgParamsDispute(e[i])
-		fmt.Println("dispute has been received")
+		//fmt.Println("dispute has been received")
 		if index > uint64(numOfP*(numOfP+1)) {
 			if keyID == mgr.keyId {
 				fmt.Println("dispute: ", index)
-				indices = append(indices, int(index))
+				indices.Append(int(index))
+				// indices = append(indices, int(index))
 				msgIn := prepareTrafficIn(mgr.principalAddr, from, keyID, payload, mgr.Logger)
 				stream, ok := mgr.getKeygenStream(keyID)
 				if !ok {
@@ -573,3 +621,5 @@ func (mgr *Mgr) setKeygenStream(keyID string, stream Stream) {
 	defer mgr.keygen.Unlock()
 	mgr.keygenStreams[keyID] = NewLockableStream(stream)
 }
+
+
